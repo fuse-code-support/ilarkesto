@@ -45,6 +45,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AEditableMultiSelectionField extends AEditableField {
 
+	private static final int ITEM_COUNT_TO_SHOW_SELECT_ALL_ACTIONS = 10;
+
 	private boolean showAsTable = false;
 
 	private Map<String, CheckBox> checkboxes;
@@ -149,7 +151,7 @@ public abstract class AEditableMultiSelectionField extends AEditableField {
 			panel.add(Widgets.clear());
 		}
 
-		if (optionKeys.size() >= 10) {
+		if (optionKeys.size() >= ITEM_COUNT_TO_SHOW_SELECT_ALL_ACTIONS) {
 			panel.add(new ActionButton(new SelectAllCheckboxesAction()));
 			panel.add(new ActionButton(new DeselectAllCheckboxesAction()));
 		}
@@ -210,7 +212,9 @@ public abstract class AEditableMultiSelectionField extends AEditableField {
 		@Override
 		protected void init(BuilderPanel wrapper) {
 			super.init(wrapper);
-			wrapper.createTitle("", new SelectAllInTableAction(), new DeselectAllInTableAction());
+
+			if (items.size() >= ITEM_COUNT_TO_SHOW_SELECT_ALL_ACTIONS)
+				wrapper.createTitle("", new SelectAllInTableAction(), new DeselectAllInTableAction());
 
 			add(new AColumn() {
 
