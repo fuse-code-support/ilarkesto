@@ -2,6 +2,7 @@ package ilarkesto.gwt.client.desktop.fields;
 
 import ilarkesto.gwt.client.desktop.Widgets;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.WhiteSpace;
@@ -61,6 +62,17 @@ public abstract class AEditableMultiLineTextField extends AEditableField {
 		String value = getValue();
 		if (value == null) value = getAlternateValueIfValueIsNull();
 		textArea.setValue(value);
+		if (value != null && getParent() == null) {
+			// if an AlternativeValue is set and the field isnt part of a MutliFieldField
+			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+
+				@Override
+				public void execute() {
+					// selectAll only works if widget is attached to the DOM
+					textArea.selectAll();
+				}
+			});
+		}
 
 		if (getEditVetoMessage() == null) {
 			textArea.addKeyUpHandler(new EnterKeyUpHandler());
