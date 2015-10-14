@@ -170,6 +170,19 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 	}
 
+	public void updateFootCells() {
+		int rowIndex = -1;
+		if (isColumnTitlesEnabled()) rowIndex++;
+		if (isColumnFilteringEnabled()) rowIndex++;
+		rowIndex += rows.size();
+		for (int i = 0; i < getFootRowCount(); i++) {
+			rowIndex++;
+			for (AColumn column : columns) {
+				table.setWidget(rowIndex, column.index, column.getFootCellWidget(i));
+			}
+		}
+	}
+
 	protected int getInitialSortColumnIndex() {
 		return -1;
 	}
