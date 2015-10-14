@@ -56,7 +56,7 @@ public class KunagiConnector {
 		data.put("spamPreventionCode", "no-spam");
 		String ret = httpDownloader.post(url, data, IO.UTF_8);
 		if (ret.contains("Submitting issue failed") || ret.contains("Submitting your feedback failed")) {
-			log.error("Submitting issue failed:", ret);
+			log.error("Submitting issue failed:", ret, "\n", name, email, subject, text, additionalInfo);
 			throw new RuntimeException(ret);
 		}
 		log.info("Issue submitted:", ret);
