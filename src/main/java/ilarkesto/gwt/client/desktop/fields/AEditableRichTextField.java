@@ -130,12 +130,7 @@ public abstract class AEditableRichTextField extends AEditableField {
 		@Override
 		public void onKeyUp(KeyUpEvent event) {
 			if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER && event.getNativeEvent().getCtrlKey()) {
-				AEditableMultiFieldField parent = getParent();
-				if (parent == null) {
-					getFieldEditorDialogBox().submit();
-				} else {
-					parent.getFieldEditorDialogBox().submit();
-				}
+				submitOrParentSubmit();
 			}
 		}
 

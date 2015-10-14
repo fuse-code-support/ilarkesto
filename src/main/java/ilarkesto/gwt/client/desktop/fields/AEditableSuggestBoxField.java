@@ -96,12 +96,7 @@ public abstract class AEditableSuggestBoxField<T> extends AEditableField {
 		@Override
 		public void onKeyUp(KeyUpEvent event) {
 			if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-				AEditableMultiFieldField parent = getParent();
-				if (parent == null) {
-					getFieldEditorDialogBox().submit();
-				} else {
-					parent.getFieldEditorDialogBox().submit();
-				}
+				submitOrParentSubmit();
 			}
 		}
 
