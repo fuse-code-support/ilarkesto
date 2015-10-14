@@ -507,7 +507,18 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		for (Row row : rows) {
 			table.getRowFormatter().setVisible(row.tableRowIndex, row.matchesColumnFilters());
 		}
+		onColumnFiltersChanged();
 	}
+
+	public List<String> getColumnFilterTexts() {
+		ArrayList<String> ret = new ArrayList<String>();
+		for (AColumn column : columns) {
+			ret.add(column.filterText == null ? "" : column.filterText);
+		}
+		return ret;
+	}
+
+	protected void onColumnFiltersChanged() {}
 
 	private final class Row {
 
@@ -591,7 +602,11 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			return filterTextbox;
 		}
 
-		public boolean matchesFilter(O object) {
+		final boolean matchesFilter(O object) {
+			return matchesFilter(object, filterText);
+		}
+
+		protected boolean matchesFilter(O object, String filterText) {
 			if (filterText == null) return true;
 			Object value = getFilterValue(object);
 			if (value == null) return false;
