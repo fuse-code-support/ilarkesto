@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -16,12 +16,42 @@ package ilarkesto.core.time;
 
 import ilarkesto.testng.ATest;
 
+import java.util.Arrays;
+
 import org.testng.annotations.Test;
 
 public class DateRangeTest extends ATest {
 
 	private static final DateRange range2014 = new DateRange("2014-01-01 - 2014-12-31");
 	private static final DateRange range10 = new DateRange("2014-01-11 - 2014-01-20");
+
+	private static final DateRange january = new DateRange("2015-01-01 - 2015-01-31");
+	private static final DateRange march = new DateRange("2015-03-01 - 2015-03-31");
+	private static final DateRange april = new DateRange("2015-04-01 - 2015-04-30");
+	private static final DateRange lateAprilEarlyMay = new DateRange("2015-04-29 - 2015-05-02");
+
+	@Test
+	public void mergeOverlappingAndAdjacent() {
+		assertTrue(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(january)).contains(january));
+		assertTrue(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(january)).size() == 1);
+
+		assertTrue(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(january, march)).contains(january));
+		assertTrue(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(january, march)).contains(march));
+		assertFalse(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(january, march)).contains(april));
+		assertTrue(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(january, march)).size() == 2);
+
+		assertTrue(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(april, january, lateAprilEarlyMay, march))
+				.contains(january));
+		assertFalse(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(april, january, lateAprilEarlyMay, march))
+				.contains(april));
+		assertFalse(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(april, january, lateAprilEarlyMay, march))
+				.contains(march));
+		assertTrue(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(april, january, lateAprilEarlyMay, march))
+				.contains(new DateRange("2015-03-01 - 2015-05-02")));
+		assertTrue(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(april, january, lateAprilEarlyMay, march))
+				.size() == 2);
+
+	}
 
 	@Test
 	public void containsAll() {

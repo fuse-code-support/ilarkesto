@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -16,6 +16,9 @@ package ilarkesto.core.time;
 
 import ilarkesto.core.base.Args;
 import ilarkesto.core.base.Str.Formatable;
+import ilarkesto.core.fp.AStream;
+import ilarkesto.core.fp.BiFunction;
+import ilarkesto.core.fp.BiPredicate;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -300,12 +303,27 @@ public class DateRange implements Comparable<DateRange>, Serializable, Formatabl
 		return dateRange == null ? null : dateRange.end;
 	}
 
+	public static final BiPredicate<DateRange, DateRange> overlapOrAdjacent = new BiPredicate<DateRange, DateRange>() {
+
+		@Override
+		public boolean test(DateRange first, DateRange second) {
+			return (first.expand(first.getEnd().addDays(1)).containsAny(second.expand(second.getEnd().addDays(1))));
+		}
+	};
+
+	public static final BiFunction<DateRange, DateRange, DateRange> enclosing = new BiFunction<DateRange, DateRange, DateRange>() {
+
+		@Override
+		public DateRange apply(DateRange firstParameter, DateRange secondParameter) {
+			return firstParameter.expand(secondParameter);
+		}
+	};
+
 	/**
 	 * Merge all overlapping date ranges.
 	 */
 	public static Collection<DateRange> mergeOverlappingAndAdjacent(Collection<DateRange> zeitraums) {
-		// TODO impl! Hogi machts :-D
-		return zeitraums;
+		return AStream.start(zeitraums).merge(enclosing, overlapOrAdjacent).list();
 	}
 
 }
