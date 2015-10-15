@@ -162,6 +162,7 @@ public abstract class AStream<A> {
 						merged = merger.apply(merged, current);
 						mergeIterator.remove();
 						wasMerged = true;
+						break;
 					}
 				}
 			}
