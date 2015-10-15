@@ -18,6 +18,7 @@ import ilarkesto.core.base.Args;
 import ilarkesto.core.base.Str.Formatable;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 public class DateRange implements Comparable<DateRange>, Serializable, Formatable {
 
@@ -284,6 +285,13 @@ public class DateRange implements Comparable<DateRange>, Serializable, Formatabl
 
 	// --- utils ---
 
+	public DateRange expand(Date date) {
+		if (date == null) return this;
+		if (date.isBefore(start)) return new DateRange(date, end);
+		if (date.isAfter(end)) return new DateRange(start, date);
+		return this;
+	}
+
 	public static Date getStart(DateRange dateRange) {
 		return dateRange == null ? null : dateRange.start;
 	}
@@ -292,11 +300,12 @@ public class DateRange implements Comparable<DateRange>, Serializable, Formatabl
 		return dateRange == null ? null : dateRange.end;
 	}
 
-	public DateRange expand(Date date) {
-		if (date == null) return this;
-		if (date.isBefore(start)) return new DateRange(date, end);
-		if (date.isAfter(end)) return new DateRange(start, date);
-		return this;
+	/**
+	 * Merge all overlapping date ranges.
+	 */
+	public static Collection<DateRange> mergeOverlappingAndAdjacent(Collection<DateRange> zeitraums) {
+		// TODO impl! Hogi machts :-D
+		return zeitraums;
 	}
 
 }
