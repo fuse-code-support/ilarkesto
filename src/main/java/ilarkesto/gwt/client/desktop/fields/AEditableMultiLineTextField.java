@@ -39,7 +39,8 @@ public abstract class AEditableMultiLineTextField extends AEditableField {
 	}
 
 	public void validateValue(String value) throws RuntimeException {
-		if (value == null && isMandatory()) throw new RuntimeException("Eingabe erforderlich.");
+		if (value == null && isMandatory() && !isSubmittingEmptyMandatoryFieldAllowed())
+			throw new RuntimeException("Eingabe erforderlich.");
 	}
 
 	@Override
