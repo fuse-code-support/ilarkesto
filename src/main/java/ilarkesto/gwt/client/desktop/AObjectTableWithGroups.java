@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -230,15 +230,14 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 	}
 
 	protected Widget createGroupWidget(G group) {
-		if (group instanceof String) {
-			Label title = Widgets.text(group);
-			Style style = title.getElement().getStyle();
-			style.setColor("white");
-			style.setBackgroundColor(Colors.googleBlue);
-			style.setPadding(Widgets.defaultSpacing, Unit.PX);
-			return title;
-		}
-		return Widgets.widget(group);
+		if (group instanceof IsWidget) return ((IsWidget) group).asWidget();
+
+		Label title = Widgets.text(group);
+		Style style = title.getElement().getStyle();
+		style.setColor("white");
+		style.setBackgroundColor(Colors.googleBlue);
+		style.setPadding(Widgets.defaultSpacing, Unit.PX);
+		return title;
 	}
 
 	@Override
