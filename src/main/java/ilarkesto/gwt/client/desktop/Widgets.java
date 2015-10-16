@@ -37,6 +37,7 @@ import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.WhiteSpace;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
@@ -61,6 +62,15 @@ import com.google.gwt.user.datepicker.client.DateBox;
 public class Widgets {
 
 	public static int defaultSpacing = 8;
+
+	public static HTML link(String href) {
+		return link(href, Str.formatUrlAsLink(href));
+	}
+
+	public static HTML link(String href, String text) {
+		if (Str.isBlank(href)) return null;
+		return new HTML("<a href=\"" + href + "\" target=\"_blank\">" + SafeHtmlUtils.htmlEscape(text) + "</a>");
+	}
 
 	public static Image icon(String iconName) {
 		return icon(iconName, null);
