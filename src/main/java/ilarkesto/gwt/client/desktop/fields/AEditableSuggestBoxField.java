@@ -34,7 +34,8 @@ public abstract class AEditableSuggestBoxField<T> extends AEditableField {
 	}
 
 	public void validateValue(T value) throws RuntimeException {
-		if (value == null && isMandatory()) throw new RuntimeException("Eingabe erforderlich.");
+		if (value == null && isMandatory() && !isSubmittingEmptyMandatoryFieldAllowed())
+			throw new RuntimeException("Eingabe erforderlich.");
 	}
 
 	@Override
