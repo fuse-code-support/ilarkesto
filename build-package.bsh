@@ -91,7 +91,7 @@ chmod 444 $SRC/build/ilarkesto/jar/ilarkesto.jar
 echo "building tarball"
 
 cd $SRC/build
-tar -cj --owner=root --group=root -f ilarkesto.tbz ilarkesto
+tar -cj -f ilarkesto.tbz ilarkesto
 if [ $? != 0 ]; then exit 1; fi
 echo ""
 echo "-> build/ilarkesto.tbz"
