@@ -39,7 +39,7 @@ public abstract class AGwtServiceImpl extends RemoteServiceServlet {
 		return 500;
 	}
 
-	protected void logRuntime(String method, long runtime) {}
+	protected void logRuntime(AGwtConversation conversation, String method, long runtime) {}
 
 	@Override
 	protected void onBeforeRequestDeserialized(String serializedRequest) {
