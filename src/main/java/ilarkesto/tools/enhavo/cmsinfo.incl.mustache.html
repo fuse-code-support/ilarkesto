@@ -10,16 +10,24 @@ function enhavoCmsBuildInfo() {
     var lastTimestamp;
     
     function loadBuildlog() {
+        console.log("requesting .buildlog.json");
         var xmlhttp = new XMLHttpRequest();
         var url = ".buildlog.json";
         xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            if (xmlhttp.readyState == 4) {
+                if (xmlhttp.status != 200) {
+                    console.log("AJAX request failed:", xmlhttp.status, xmlhttp.statusText);
+                    return;
+                }
+                
                 var buildlog = JSON.parse(xmlhttp.responseText);
+                console.log(".buildlog.json received");
                 
                 if (lastTimestamp && lastTimestamp !== buildlog.timestamp) {
                     lastTimestamp = buildlog.timestamp;
                     console.log(buildlog);
-                    if (buildlog.success) {                        
+                    if (buildlog.success) { 
+                        console.log("initiating reload");
                         location.reload();
                     }
                 }

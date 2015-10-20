@@ -34,6 +34,14 @@ public class Utl {
 
 	public static final BigDecimal BD_HUNDRED = new BigDecimal(100);
 
+	public static int getOptimalScale(BigDecimal bd) {
+		bd = bd.stripTrailingZeros();
+		String s = bd.toPlainString();
+		int idx = s.indexOf('.');
+		if (idx < 0) return 0;
+		return s.length() - idx - 1;
+	}
+
 	public static BigDecimal multiply(BigDecimal fak1, BigDecimal fak2) {
 		if (fak1 == null || fak2 == null) return null;
 		return fak1.multiply(fak2);
