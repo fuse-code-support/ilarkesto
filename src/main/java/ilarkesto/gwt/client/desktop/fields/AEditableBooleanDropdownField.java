@@ -20,7 +20,7 @@ import ilarkesto.core.base.Str;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AEditableBooleanDropdownField extends AEditableDropdownField {
+public abstract class AEditableBooleanDropdownField extends AEditableSelectOneField {
 
 	private String trueLabel = "Ja";
 	private String falseLabel = "Nein";

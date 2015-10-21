@@ -43,7 +43,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class AEditableMultiSelectionField extends AEditableField {
+public abstract class AEditableSelectManyField extends AEditableField {
 
 	private static final int ITEM_COUNT_TO_SHOW_SELECT_ALL_ACTIONS = 10;
 
@@ -105,7 +105,7 @@ public abstract class AEditableMultiSelectionField extends AEditableField {
 		return showAsTable || optionKeys.size() >= 23;
 	}
 
-	public AEditableMultiSelectionField setShowAsTable(boolean showAsTable) {
+	public AEditableSelectManyField setShowAsTable(boolean showAsTable) {
 		this.showAsTable = showAsTable;
 		return this;
 	}

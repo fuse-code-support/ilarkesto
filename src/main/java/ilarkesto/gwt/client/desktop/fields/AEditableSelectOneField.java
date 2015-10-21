@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -16,9 +16,12 @@ package ilarkesto.gwt.client.desktop.fields;
 
 import ilarkesto.core.base.EnumMapper;
 import ilarkesto.core.base.Utl;
+import ilarkesto.gwt.client.desktop.AObjectTable;
+import ilarkesto.gwt.client.desktop.BuilderPanel;
 import ilarkesto.gwt.client.desktop.Colors;
 import ilarkesto.gwt.client.desktop.Widgets;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,15 +42,19 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
-public abstract class AEditableDropdownField extends AEditableField {
+public abstract class AEditableSelectOneField extends AEditableField {
 
 	private static final String NULL_KEY = "__NULL__";
 
 	private ListBox listBox;
-
 	private Map<String, RadioButton> radioButtons;
+	private ItemsTable table;
+
+	private boolean showAsTable;
 
 	public abstract void applyValue(String value);
 
@@ -69,11 +76,15 @@ public abstract class AEditableDropdownField extends AEditableField {
 	}
 
 	private String getSelectedValue() {
-		if (isShowAsRadioButtons(getOptionKeys())) {
+		if (table != null) {
+			String selectedKey = table.getSelectedKey();
+			if (NULL_KEY.equals(selectedKey)) return null;
+			return selectedKey;
+		} else if (radioButtons != null) {
 			for (String value : radioButtons.keySet()) {
 				RadioButton radioButton = radioButtons.get(value);
 				if (!radioButton.getValue()) continue;
-				if (NULL_KEY.equals(value)) value = null;
+				if (NULL_KEY.equals(value)) return null;
 				return value;
 			}
 		} else {
@@ -87,28 +98,45 @@ public abstract class AEditableDropdownField extends AEditableField {
 
 	@Override
 	public IsWidget createEditorWidget() {
-		return isShowAsRadioButtons(getOptionKeys()) ? createRadioButtonPanel() : createListBox();
+		if (isShowAsTable()) {
+			table = createItemsTable(getOptions());
+			return table;
+		} else if (isShowAsRadioButtons()) {
+			return createRadioButtonPanel();
+		} else {
+			return createListBox();
+		}
+	}
+
+	protected ItemsTable createItemsTable(EnumMapper<String, String> options) {
+		return new ItemsTable(options);
+	}
+
+	public AEditableSelectOneField setShowAsTable(boolean showAsTable) {
+		this.showAsTable = showAsTable;
+		return this;
+	}
+
+	protected boolean isShowAsTable() {
+		return showAsTable;
 	}
 
 	private Collection<String> getOptionKeys() {
 		return getOptions().getKeys();
 	}
 
-	protected boolean isShowAsRadioButtons(Collection<String> optionKeys) {
-		return isShowAsRadioButtons() && optionKeys.size() <= 20;
-	}
-
 	protected boolean isShowAsRadioButtons() {
-		if (getParent() == null) return true;
-		if (isRadioButtonsHorizontal(getOptionKeys())) return true;
-		return !isParentMultiField();
+		int optionsCount = getOptionKeys().size();
+		if (optionsCount > 20) return false;
+		if (isParentMultiField() && optionsCount > 2) return false;
+		return true;
 	}
 
 	private boolean isParentMultiField() {
 		return getParent() instanceof AEditableMultiFieldField;
 	}
 
-	protected boolean isRadioButtonsHorizontal(Collection<String> optionKeys) {
+	private boolean isRadioButtonsHorizontal(Collection<String> optionKeys) {
 		return isMandatory() ? optionKeys.size() <= 2 : optionKeys.size() <= 1;
 	}
 
@@ -281,6 +309,135 @@ public abstract class AEditableDropdownField extends AEditableField {
 
 	protected String getAlternateValueIfValueIsNull() {
 		return null;
+	}
+
+	public class ItemsTable extends AObjectTable<Item> {
+
+		private ArrayList<Item> items;
+
+		public ItemsTable(EnumMapper<String, String> options) {
+			String selectedKey = getSelectedOptionKey();
+			items = new ArrayList<Item>();
+			for (String key : options.getKeys()) {
+				Item item = new Item(key, options.getValueForKey(key));
+				items.add(item);
+				if (Utl.equals(key, selectedKey)) item.selected = true;
+			}
+		}
+
+		@Override
+		protected void init(BuilderPanel wrapper) {
+			super.init(wrapper);
+
+			add(new AColumn() {
+
+				@Override
+				public Widget getCellWidget(Item o) {
+					if (!o.selected) return null;
+					return Widgets.icon("checked", 32);
+				}
+
+				@Override
+				protected boolean isTrimmed() {
+					return true;
+				}
+
+				@Override
+				public TextBox getFilterWidget() {
+					return null;
+				}
+
+			});
+
+			initColumns();
+
+		}
+
+		protected void initColumns() {
+			add(new AColumn() {
+
+				@Override
+				public Object getCellValue(Item o) {
+					return o.value;
+				}
+
+			});
+		}
+
+		@Override
+		protected Collection<Item> getObjects() {
+			return items;
+		}
+
+		@Override
+		protected void onClick(Item object, int column) {
+			if (getEditVetoMessage() != null) return;
+			for (Item item : items) {
+				item.selected = item == object;
+			}
+
+			if (!isParentMultiField()) {
+				if (fieldEditorDialogBox == null) return;
+				fieldEditorDialogBox.submit();
+				return;
+			}
+
+			update();
+		}
+
+		@Override
+		protected boolean isClickable() {
+			return getEditVetoMessage() == null;
+		}
+
+		@Override
+		protected boolean isColumnFilteringEnabled() {
+			return items.size() > 42;
+		}
+
+		public String getSelectedKey() {
+			for (Item item : items) {
+				if (item.selected) return item.key;
+			}
+			return null;
+		}
+
+		@Override
+		protected String getRowColor(Item o) {
+			if (o.selected) return Colors.googlePurple;
+			return Colors.greyedText;
+		}
+
+	}
+
+	public static class Item {
+
+		private String key;
+		private Object value;
+		private boolean selected;
+
+		public Item(String key, Object value) {
+			super();
+			this.key = key;
+			this.value = value;
+		}
+
+		public String getKey() {
+			return key;
+		}
+
+		public Object getValue() {
+			return value;
+		}
+
+		public boolean isSelected() {
+			return selected;
+		}
+
+		public <T> T getValue(Class<T> valueType) {
+			return (T) value;
+		}
+
 	}
 
 }
