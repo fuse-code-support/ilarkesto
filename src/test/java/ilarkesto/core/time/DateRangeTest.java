@@ -1,19 +1,20 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
 package ilarkesto.core.time;
 
+import ilarkesto.core.base.Utl;
 import ilarkesto.testng.ATest;
 
 import java.util.Arrays;
@@ -29,6 +30,25 @@ public class DateRangeTest extends ATest {
 	private static final DateRange march = new DateRange("2015-03-01 - 2015-03-31");
 	private static final DateRange april = new DateRange("2015-04-01 - 2015-04-30");
 	private static final DateRange lateAprilEarlyMay = new DateRange("2015-04-29 - 2015-05-02");
+
+	@Test
+	public void splitIntoYears() {
+		assertEquals(new DateRange("2015-01-01 - 2015-12-31").splitIntoYears(),
+			Utl.toList(new DateRange("2015-01-01 - 2015-12-31")));
+		assertEquals(new DateRange("2015-01-05 - 2017-12-25").splitIntoYears(), Utl.toList(new DateRange(
+				"2015-01-05 - 2015-12-31"), new DateRange("2016-01-01 - 2016-12-31"), new DateRange(
+				"2017-01-01 - 2017-12-25")));
+	}
+
+	@Test
+	public void getYearWithMostDaysOrLatest() {
+		assertEquals(new DateRange("2015-01-01 - 2015-12-31").getYearWithMostDaysOrLatest(), 2015);
+		assertEquals(new DateRange("2015-01-01 - 2016-06-31").getYearWithMostDaysOrLatest(), 2015);
+		assertEquals(new DateRange("2015-06-01 - 2016-12-31").getYearWithMostDaysOrLatest(), 2016);
+		assertEquals(new DateRange("2015-12-30 - 2016-01-01").getYearWithMostDaysOrLatest(), 2015);
+		assertEquals(new DateRange("2015-12-31 - 2016-01-01").getYearWithMostDaysOrLatest(), 2016);
+		assertEquals(new DateRange("2015-06-01 - 2017-06-01").getYearWithMostDaysOrLatest(), 2016);
+	}
 
 	@Test
 	public void mergeOverlappingAndAdjacent() {

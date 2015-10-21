@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -21,7 +21,9 @@ import ilarkesto.core.fp.BiFunction;
 import ilarkesto.core.fp.BiPredicate;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class DateRange implements Comparable<DateRange>, Serializable, Formatable {
 
@@ -87,6 +89,30 @@ public class DateRange implements Comparable<DateRange>, Serializable, Formatabl
 
 	public int getMonthCount() {
 		return (end.getMonth() + end.getYear() + 1) - (start.getMonth() + start.getYear());
+	}
+
+	public int getYearWithMostDaysOrLatest() {
+		List<DateRange> years = splitIntoYears();
+		DateRange winner = years.get(years.size() - 1);
+		for (DateRange year : years) {
+			if (year.getDayCount() > winner.getDayCount()) winner = year;
+		}
+		return winner.end.year;
+	}
+
+	public List<DateRange> splitIntoYears() {
+		int count = end.year - start.year + 1;
+		ArrayList<DateRange> ret = new ArrayList<DateRange>(count);
+		if (count == 1) {
+			ret.add(this);
+		} else {
+			for (int i = 0; i < count; i++) {
+				Date s = i == 0 ? start : new Date(start.year + i, 1, 1);
+				Date e = i == count - 1 ? end : new Date(start.year + i, 12, 31);
+				ret.add(new DateRange(s, e));
+			}
+		}
+		return ret;
 	}
 
 	public TimePeriod getTimePeriodBetweenStartAndEnd() {
