@@ -39,8 +39,8 @@ public abstract class AAction implements Command, ClickHandler {
 	@Override
 	public final void execute() {
 		String executionVeto = getExecutionVeto();
-		if (executionVeto != null) throw new RuntimeException("Action not executable:" + executionVeto);
-		if (!isPermitted()) throw new RuntimeException("Action not permitted: " + this);
+		if (executionVeto != null) throw new VetoException(executionVeto);
+		if (!isPermitted()) throw new PermissionDeniedException();
 
 		try {
 			Persistence.runInTransaction(Str.getSimpleName(getClass()), new Runnable() {
@@ -77,7 +77,13 @@ public abstract class AAction implements Command, ClickHandler {
 	public void onClick(ClickEvent event) {
 		this.clickEvent = event;
 		event.stopPropagation();
-		execute();
+		try {
+			execute();
+		} catch (VetoException ex) {
+			Widgets.showDialog("Action aborted", ex.getMessage());
+		} catch (PermissionDeniedException ex) {
+			Widgets.showDialog("Acton aborted", "Berechtigung fehlt");
+		}
 	}
 
 	protected String getIconName() {
@@ -160,6 +166,17 @@ public abstract class AAction implements Command, ClickHandler {
 			t.schedule(500);
 
 		}
+	}
+
+	class VetoException extends RuntimeException {
+
+		public VetoException(String veto) {
+			super(veto);
+		}
+	}
+
+	class PermissionDeniedException extends RuntimeException {
+
 	}
 
 }
