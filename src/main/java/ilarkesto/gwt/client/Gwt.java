@@ -33,7 +33,10 @@ import java.util.Set;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ErrorEvent;
+import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -45,6 +48,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -597,6 +601,24 @@ public class Gwt {
 		String targetString = getTargetString(event);
 		if (targetString == null) return false;
 		return targetString.contains(string);
+	}
+
+	public static <W extends Widget> W hide(W widget) {
+		if (widget == null) return null;
+		widget.getElement().getStyle().setDisplay(Display.NONE);
+		return widget;
+	}
+
+	public static Image hideOnError(final Image image) {
+		if (image == null) return null;
+		image.addErrorHandler(new ErrorHandler() {
+
+			@Override
+			public void onError(ErrorEvent ev) {
+				Gwt.hide(image);
+			}
+		});
+		return image;
 	}
 
 }
