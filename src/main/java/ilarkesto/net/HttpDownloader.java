@@ -36,9 +36,7 @@ public class HttpDownloader {
 
 	private Map<String, String> cookieStore = new HashMap<String, String>();
 
-	public HttpDownloader() {
-		System.out.println("instantiated");
-	}
+	public HttpDownloader() {}
 
 	public static HttpDownloader create() {
 		return Reflect.newInstance(defaultType);
