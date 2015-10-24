@@ -19,6 +19,7 @@ public class FormFieldsStatus {
 	private int total;
 	private int valuesSet;
 	private int valuesNotSet;
+	private int mandatoryValuesSet;
 	private int mandatoryValuesNotSet;
 
 	public void addField(Object value, boolean mandatory) {
@@ -29,6 +30,7 @@ public class FormFieldsStatus {
 		total++;
 		if (valueSet) {
 			valuesSet++;
+			if (mandatory) mandatoryValuesSet++;
 		} else {
 			valuesNotSet++;
 			if (mandatory) mandatoryValuesNotSet++;
@@ -51,6 +53,10 @@ public class FormFieldsStatus {
 		return mandatoryValuesNotSet;
 	}
 
+	public int getMandatoryValuesSet() {
+		return mandatoryValuesSet;
+	}
+
 	public boolean containsNotSetMandatory() {
 		return mandatoryValuesNotSet > 0;
 	}
@@ -66,6 +72,10 @@ public class FormFieldsStatus {
 	@Override
 	public String toString() {
 		return getValuesSet() + "/" + getTotal();
+	}
+
+	public boolean containsMandatory() {
+		return mandatoryValuesSet > 0 || mandatoryValuesNotSet > 0;
 	}
 
 }
