@@ -16,7 +16,7 @@ package ilarkesto.gwt.client.desktop.fields;
 
 import ilarkesto.core.base.Str;
 import ilarkesto.gwt.client.AAction;
-import ilarkesto.gwt.client.desktop.AObjectTable;
+import ilarkesto.gwt.client.desktop.AObjectTableWithGroups;
 import ilarkesto.gwt.client.desktop.ActionButton;
 import ilarkesto.gwt.client.desktop.BuilderPanel;
 import ilarkesto.gwt.client.desktop.Colors;
@@ -195,7 +195,7 @@ public abstract class AEditableSelectManyField extends AEditableField {
 		return values.size() > 1 && Str.getTotalLength(values) >= 120;
 	}
 
-	public class ItemsTable extends AObjectTable<Item> {
+	public class ItemsTable extends AObjectTableWithGroups<Item, Object> {
 
 		private ArrayList<Item> items;
 
@@ -285,6 +285,16 @@ public abstract class AEditableSelectManyField extends AEditableField {
 		protected String getRowColor(Item o) {
 			if (o.selected) return Colors.googlePurple;
 			return Colors.greyedText;
+		}
+
+		@Override
+		protected boolean isGroupingEnabled() {
+			return false;
+		}
+
+		@Override
+		protected Object getGroup(Item o) {
+			throw new IllegalStateException("getGroup() should never be called here");
 		}
 
 		class SelectAllInTableAction extends AAction {

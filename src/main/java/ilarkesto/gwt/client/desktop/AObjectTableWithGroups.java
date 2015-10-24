@@ -231,11 +231,14 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 	protected Widget createGroupWidget(G group) {
 		if (group instanceof IsWidget) return ((IsWidget) group).asWidget();
+		return createGroupHeader(group, "white", Colors.googleBlue);
+	}
 
-		Label title = Widgets.text(group);
+	protected Widget createGroupHeader(Object text, String textColor, String backgroundColor) {
+		Label title = Widgets.text(text);
 		Style style = title.getElement().getStyle();
-		style.setColor("white");
-		style.setBackgroundColor(Colors.googleBlue);
+		style.setColor(textColor);
+		style.setBackgroundColor(backgroundColor);
 		style.setPadding(Widgets.defaultSpacing, Unit.PX);
 		return title;
 	}
@@ -572,12 +575,17 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		}
 	};
 
+	protected int compareGroups(G a, G b) {
+		return Utl.compare(a, b);
+	}
+
 	private final Comparator<G> groupComparator = new Comparator<G>() {
 
 		@Override
 		public int compare(G a, G b) {
-			return Utl.compare(a, b);
+			return compareGroups(a, b);
 		}
+
 	};
 
 	public class AColumn implements Updatable {
