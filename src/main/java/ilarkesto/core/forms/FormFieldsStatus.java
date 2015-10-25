@@ -14,6 +14,8 @@
  */
 package ilarkesto.core.forms;
 
+import ilarkesto.core.base.Str;
+
 public class FormFieldsStatus {
 
 	private int total;
@@ -23,7 +25,13 @@ public class FormFieldsStatus {
 	private int mandatoryValuesNotSet;
 
 	public void addField(Object value, boolean mandatory) {
-		addField(value != null, mandatory);
+		addField(isValueSet(value), mandatory);
+	}
+
+	private boolean isValueSet(Object value) {
+		if (value == null) return false;
+		if (value instanceof String) return !Str.isBlank((String) value);
+		return true;
 	}
 
 	public void addField(boolean valueSet, boolean mandatory) {
