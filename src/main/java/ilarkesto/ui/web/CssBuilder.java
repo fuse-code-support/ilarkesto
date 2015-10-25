@@ -800,6 +800,14 @@ public class CssBuilder {
 			return background("url(" + imageUrl + ")");
 		}
 
+		public Style backgroundSize(int backgroundSize) {
+			return backgroundSize(backgroundSize + "px");
+		}
+
+		public Style backgroundSize(String backgroundSize) {
+			return attr("background-size", backgroundSize);
+		}
+
 		public Style backgroundNone() {
 			return background("none");
 		}
