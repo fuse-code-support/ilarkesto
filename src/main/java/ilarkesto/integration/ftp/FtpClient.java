@@ -222,12 +222,18 @@ public class FtpClient {
 		if (file == null || !file.exists()) return;
 
 		FTPFile ftpFile = getFile(path);
-		if (ftpFile != null) {
+		if (isSame(ftpFile, file)) {
 			log.debug("  Skipping upload, already there:", path);
 			return;
 		}
 
 		upload(path, file);
+	}
+
+	private boolean isSame(FTPFile ftpFile, File file) {
+		if (ftpFile == null) return file == null;
+		if (ftpFile.getSize() != file.length()) return false;
+		return true;
 	}
 
 	public void uploadFile(String path, File file) {
