@@ -34,6 +34,21 @@ public class Utl {
 
 	public static final BigDecimal BD_HUNDRED = new BigDecimal(100);
 
+	public static <T> List<List<T>> splitByCount(Collection<T> collection, int countPerGroup) {
+		if (countPerGroup < 2) throw new IllegalArgumentException("countPerGroup < 2");
+		ArrayList<List<T>> ret = new ArrayList<List<T>>();
+		ArrayList<T> group = null;
+		for (T item : collection) {
+			if (group == null) {
+				group = new ArrayList<T>();
+				ret.add(group);
+			}
+			group.add(item);
+			if (group.size() == countPerGroup) group = null;
+		}
+		return ret;
+	}
+
 	public static int getOptimalScale(BigDecimal bd) {
 		bd = bd.stripTrailingZeros();
 		String s = bd.toPlainString();
