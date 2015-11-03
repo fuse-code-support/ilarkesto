@@ -96,6 +96,12 @@ public class Widgets {
 		return image;
 	}
 
+	public static Image loaderAnimation() {
+		Image image = new Image("img/loader.gif");
+		image.setWidth("24px");
+		return image;
+	}
+
 	public static FlowPanel flowPanel(Object... objects) {
 		FlowPanel panel = new FlowPanel();
 		for (Object object : objects) {
@@ -558,7 +564,7 @@ public class Widgets {
 	}
 
 	public static Widget waitinfo() {
-		return waitinfo(null);
+		return loaderAnimation();
 	}
 
 	public static Widget waitinfo(String text) {
