@@ -710,7 +710,12 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 			if (index == 0) ret = Widgets.indent(ret, getIndentation(o));
 
-			String href = getHref(o, cellWidget);
+			String href = null;
+			try {
+				href = getHref(o, cellWidget);
+			} catch (Exception ex) {
+				log.error(Str.getSimpleName(getClass()) + ".getHref() (for column " + index + ") failed.", ex);
+			}
 			if (href == null) return ret;
 
 			return Widgets.anchor(ret, href, null);
