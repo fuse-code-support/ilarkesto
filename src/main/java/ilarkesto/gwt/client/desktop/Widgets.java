@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -594,12 +594,12 @@ public class Widgets {
 		extensionPoint.addGotoEntityClickHandler(focusPanel, entity);
 	}
 
-	public static AAction selfdocAction(String selfdocKey) {
-		return extensionPoint.selfdocAction(selfdocKey);
+	public static AAction selfdocAction(String selfdocKey, String title, String tooltip) {
+		return extensionPoint.selfdocAction(selfdocKey, title, tooltip);
 	}
 
-	public static ASelfdocPanel selfdocPanel(String selfdocKey) {
-		return extensionPoint.selfdocPanel(selfdocKey);
+	public static ASelfdocPanel selfdocPanel(String selfdocKey, String title, String tooltip) {
+		return extensionPoint.selfdocPanel(selfdocKey, title, tooltip);
 	}
 
 	public static Workspace workspace() {
@@ -631,7 +631,7 @@ public class Widgets {
 			return new Workspace(new BreadcrumbHelper());
 		}
 
-		public ASelfdocPanel selfdocPanel(String selfdocKey) {
+		public ASelfdocPanel selfdocPanel(String selfdocKey, String title, String tooltip) {
 			throw new RuntimeException("Not implemented in ilarkesto. Widgets.extensionPoint not activated.");
 		}
 
@@ -644,7 +644,7 @@ public class Widgets {
 			throw new RuntimeException("Not implemented in ilarkesto. Widgets.extensionPoint not activated.");
 		}
 
-		public AAction selfdocAction(String selfdocKey) {
+		public AAction selfdocAction(String selfdocKey, String title, String tooltip) {
 			throw new RuntimeException("Not implemented in ilarkesto. Widgets.extensionPoint not activated.");
 		}
 	}

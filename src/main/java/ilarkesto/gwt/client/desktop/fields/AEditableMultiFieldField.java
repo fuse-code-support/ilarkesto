@@ -57,7 +57,8 @@ public abstract class AEditableMultiFieldField extends AEditableField {
 			if (subField.isSelfdocEnabled()) {
 				String selfdocKey = subField.getSelfdocKey();
 				panel.add(Widgets.horizontalPanel(0, subField.createEditorWidgetForUse(),
-					new ActionButton(Widgets.selfdocAction(selfdocKey), false)));
+					new ActionButton(Widgets.selfdocAction(selfdocKey, subField.getLabel(), subField.getTooltip()),
+							false)));
 			} else {
 				panel.add(subField.createEditorWidgetForUse());
 			}

@@ -167,7 +167,7 @@ public abstract class AEditableField extends AField {
 			ret.add(new EditAction());
 		} else if (isSelfdocEnabled()) {
 			String selfdocKey = getSelfdocKey();
-			ret.add(Widgets.selfdocAction(selfdocKey));
+			ret.add(Widgets.selfdocAction(selfdocKey, getLabel(), getTooltip()));
 		}
 
 		return ret;
