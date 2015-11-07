@@ -133,14 +133,14 @@ public final class Money implements Comparable<Money>, Serializable, Formatable 
 		return new Money(0, cent * -1, currency);
 	}
 
-	public Money substract(Money... subtrahends) throws MultipleCurrenciesException {
+	public Money subtract(Money... subtrahends) throws MultipleCurrenciesException {
 		return computeDifference(this, subtrahends);
 	}
 
 	public Money subtractPercent(BigDecimal percent) {
 		if (percent == null) return this;
 		try {
-			return substract(percent(percent));
+			return subtract(percent(percent));
 		} catch (MultipleCurrenciesException ex) {
 			throw new RuntimeException(ex);
 		}
