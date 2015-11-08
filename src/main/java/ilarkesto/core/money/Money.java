@@ -133,6 +133,10 @@ public final class Money implements Comparable<Money>, Serializable, Formatable 
 		return new Money(0, cent * -1, currency);
 	}
 
+	public Money substract(Money subtrahend) throws MultipleCurrenciesException {
+		return computeDifference(this, subtrahend);
+	}
+
 	public Money subtract(Money... subtrahends) throws MultipleCurrenciesException {
 		return computeDifference(this, subtrahends);
 	}
