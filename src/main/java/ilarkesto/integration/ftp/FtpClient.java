@@ -254,7 +254,11 @@ public class FtpClient {
 
 		}
 
-		chmod(chmodForUploadedFiles, path);
+		try {
+			chmod(chmodForUploadedFiles, path);
+		} catch (Exception ex) {
+			log.error("command failed: chmod " + chmodForUploadedFiles + " " + path, ex);
+		}
 	}
 
 	public void executeCommand(String command) {
