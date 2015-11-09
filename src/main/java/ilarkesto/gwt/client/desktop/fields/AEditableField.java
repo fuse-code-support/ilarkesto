@@ -255,12 +255,17 @@ public abstract class AEditableField extends AField {
 		return true;
 	}
 
+	protected boolean isIgnoreClicksOnImageElements() {
+		return true;
+	}
+
 	private class ValueClickHandler implements ClickHandler {
 
 		@Override
 		public void onClick(ClickEvent event) {
 			event.stopPropagation();
-			if (Gwt.targetStringContains(event, "[object HTMLImageElement]")) return;
+			if (isIgnoreClicksOnImageElements() && Gwt.targetStringContains(event, "[object HTMLImageElement]"))
+				return;
 			if (Gwt.targetStringContains(event, "goon-AnchorButton")) return;
 
 			onValueClicked(event);
