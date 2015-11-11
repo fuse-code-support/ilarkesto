@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -17,8 +17,10 @@ package ilarkesto.persistence.file;
 import ilarkesto.core.base.RuntimeTracker;
 import ilarkesto.core.persistance.ACachingEntitiesBackend;
 import ilarkesto.core.persistance.AEntity;
+import ilarkesto.core.persistance.Entity;
 import ilarkesto.core.persistance.EntityDoesNotExistException;
 import ilarkesto.core.persistance.Transient;
+import ilarkesto.core.time.DateAndTime;
 import ilarkesto.io.AFileStorage;
 import ilarkesto.io.IO;
 import ilarkesto.json.JsonMapper;
@@ -40,6 +42,9 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 	protected abstract List<Class<? extends ilarkesto.core.persistance.AEntity>> getEntityTypes();
 
 	protected abstract TypeResolver createTypeResolver();
+
+	private DateAndTime loadTime;
+	private DateAndTime lastSaveTime;
 
 	public AJsonFilesEntitiesBackend(AFileStorage storage) {
 		this.storage = storage;
@@ -84,8 +89,8 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 
 		saveVersion(softwareVersion);
 
+		loadTime = DateAndTime.now();
 		log.info(cache.size(), "entities loaded in", rt.getRuntimeFormated());
-
 	}
 
 	private void saveVersion(int version) {
@@ -145,9 +150,33 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 		}
 		log.info("Entity changes saved:", rt.getRuntimeFormated(), "(" + saveCount, "saved,", deleteCount, "deleted)");
 
+		lastSaveTime = DateAndTime.now();
 		onEntityChangesSaved(modified, deleted, created);
 
 		if (callback != null) callback.run();
+	}
+
+	@Override
+	public String loadOutsourcedString(Entity entity, String propertyName) {
+		File file = getOutsourcedPropertyFile(entity, propertyName);
+		log.info("Load:", file);
+		if (!file.exists()) return null;
+		return IO.readFile(file, IO.UTF_8);
+	}
+
+	@Override
+	public void saveOutsourcedString(Entity entity, String propertyName, String value) {
+		File file = getOutsourcedPropertyFile(entity, propertyName);
+		log.info("Save:", file);
+		if (value == null) {
+			IO.delete(file);
+		} else {
+			IO.writeFile(file, value, IO.UTF_8);
+		}
+	}
+
+	private File getOutsourcedPropertyFile(Entity entity, String propertyName) {
+		return storage.getFile(entity.getClass().getSimpleName() + "/" + entity.getId() + "." + propertyName + ".txt");
 	}
 
 	protected void onEntityChangesSaved(Collection<AEntity> modified, Collection<String> deleted,
@@ -165,6 +194,10 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 		for (Map.Entry<Class, Integer> entry : cache.countEntities().entrySet()) {
 			sb.append("* ").append(entry.getKey().getSimpleName()).append(": ").append(entry.getValue()).append("\n");
 		}
+
+		sb.append("\nTimes:\n");
+		sb.append("* loadTime: ").append(loadTime).append("\n");
+		sb.append("* lastSaveTime: ").append(lastSaveTime).append("\n");
 
 		return sb.toString();
 	}

@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -282,18 +282,19 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 	private void writeProperty(PropertyModel p) {
 		String pNameUpper = Str.uppercaseFirstLetter(p.getName());
 
-		ln();
 		ln("    // -----------------------------------------------------------");
 		ln("    // - " + p.getName());
 		ln("    // -----------------------------------------------------------");
 
 		// --- property ---
-		ln();
-		s("    private " + getFieldType(p) + " " + getFieldName(p).substring(5));
-		if (p.isCollection()) {
-			s(" = new " + getFieldImpl(p) + "()");
+		if (!isOutsourced(p)) {
+			ln();
+			s("    private " + getFieldType(p) + " " + getFieldName(p).substring(5));
+			if (p.isCollection()) {
+				s(" = new " + getFieldImpl(p) + "()");
+			}
+			ln(";");
 		}
-		ln(";");
 
 		String getterMethodPrefix = p.isBoolean() ? "is" : "get";
 
@@ -441,6 +442,10 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 
 	}
 
+	public boolean isOutsourced(PropertyModel p) {
+		return p instanceof StringPropertyModel && ((StringPropertyModel) p).isOutsourced();
+	}
+
 	private void writeSuperbeanProperty(PropertyModel p) {
 		if (!isLegacyBean(bean)) {
 			if (p.isReference()) {
@@ -459,7 +464,7 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 		if (p.isModified()) {
 			String fieldName = getFieldName(p);
 			ln("            fireModified(\"" + Str.removePrefix(fieldName, "this.") + "\", " + persistenceUtilClass
-					+ ".propertyAsString(" + fieldName + "));");
+					+ ".propertyAsString(" + (isOutsourced(p) ? p.getName() : fieldName) + "));");
 		}
 	}
 
@@ -491,8 +496,9 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 					ln("        return new " + getFieldImpl(p) + "(" + p.getName() + ");");
 				}
 			} else {
-				if (p.isValueObject()) {
-					ln("        return " + p.getName() + ";");
+				if (isOutsourced(p)) {
+					ln("        return " + Persistence.class.getName() + ".loadOutsourcedString(this, \"" + p.getName()
+							+ "\");");
 				} else {
 					ln("        return " + p.getName() + ";");
 				}
@@ -527,7 +533,9 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 				}
 				writeModified(p);
 			} else {
-				ln("        if (is" + pNameUpper + "(" + p.getName() + ")) return;");
+				if (!isOutsourced(p)) {
+					ln("        if (is" + pNameUpper + "(" + p.getName() + ")) return;");
+				}
 				if (p.isMandatory() && !p.isPrimitive()) {
 					ln("        if (" + p.getName()
 							+ " == null) throw new IllegalArgumentException(\"Mandatory field can not be set to null: "
@@ -547,11 +555,16 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 							+ p.getName() + "\", " + p.getName() + ");");
 					ln("        }");
 				}
-				if (p.isValueObject()) {
-					ln("        " + getFieldName(p) + " = " + p.getName() + ".clone();");
-					ln("        " + getFieldName(p) + ".bind(this);");
+				if (isOutsourced(p)) {
+					ln("        " + Persistence.class.getName() + ".saveOutsourcedString(this, \"" + p.getName()
+							+ "\", " + p.getName() + ");");
 				} else {
-					ln("        " + getFieldName(p) + " = " + p.getName() + ";");
+					if (p.isValueObject()) {
+						ln("        " + getFieldName(p) + " = " + p.getName() + ".clone();");
+						ln("        " + getFieldName(p) + ".bind(this);");
+					} else {
+						ln("        " + getFieldName(p) + " = " + p.getName() + ";");
+					}
 				}
 				writeModified(p);
 			}
@@ -818,7 +831,7 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 			ln("    }");
 		}
 
-		if (!p.isPrimitive()) {
+		if (!p.isPrimitive() && !isOutsourced(p)) {
 			// --- isXxxSet ---
 			ln();
 			ln("    public final boolean is" + pNameUpper + "Set() {");
@@ -827,29 +840,31 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 		}
 
 		// --- isXxx ---
-		ln();
-		String type4 = p.getType();
-		if (p instanceof ReferencePropertyModel)
-			type4 = getBeanClass(((ReferencePropertyModel) p).getReferencedEntity());
-		ln("    public final boolean is" + pNameUpper + "(" + type4 + " " + p.getName() + ") {");
-		if (p.isPrimitive()) {
-			ln("        return " + getFieldName(p) + " == " + p.getName() + ";");
-		} else {
-			ln("        if (" + getFieldName(p) + " == null && " + p.getName() + " == null) return true;");
-			if (p.isReference()) {
-				ln("        return " + p.getName() + " != null && " + p.getName() + ".getId().equals("
-						+ getFieldName(p) + ");");
+		if (!isOutsourced(p)) {
+			ln();
+			String type4 = p.getType();
+			if (p instanceof ReferencePropertyModel)
+				type4 = getBeanClass(((ReferencePropertyModel) p).getReferencedEntity());
+			ln("    public final boolean is" + pNameUpper + "(" + type4 + " " + p.getName() + ") {");
+			if (p.isPrimitive()) {
+				ln("        return " + getFieldName(p) + " == " + p.getName() + ";");
 			} else {
-				if (p.getType().equals(BigDecimal.class.getName())) {
-					ln("        return " + getFieldName(p) + " != null && " + p.getName() + " != null && "
-							+ getFieldName(p) + ".compareTo(" + p.getName() + ") == 0;");
+				ln("        if (" + getFieldName(p) + " == null && " + p.getName() + " == null) return true;");
+				if (p.isReference()) {
+					ln("        return " + p.getName() + " != null && " + p.getName() + ".getId().equals("
+							+ getFieldName(p) + ");");
 				} else {
-					ln("        return " + getFieldName(p) + " != null && " + getFieldName(p) + ".equals("
-							+ p.getName() + ");");
+					if (p.getType().equals(BigDecimal.class.getName())) {
+						ln("        return " + getFieldName(p) + " != null && " + p.getName() + " != null && "
+								+ getFieldName(p) + ".compareTo(" + p.getName() + ") == 0;");
+					} else {
+						ln("        return " + getFieldName(p) + " != null && " + getFieldName(p) + ".equals("
+								+ p.getName() + ");");
+					}
 				}
 			}
+			ln("    }");
 		}
-		ln("    }");
 
 		// --- updateXxx(Object value) ---
 		ln();

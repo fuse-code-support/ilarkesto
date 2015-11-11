@@ -123,6 +123,10 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 		ln("    public void storeProperties(Map<String, String> properties) {");
 		ln("        super.storeProperties(properties);");
 		for (PropertyModel p : bean.getProperties()) {
+			if (isOutsourced(p)) {
+				comment("TODO outsourced");
+				continue;
+			}
 			String propertyVar;
 			if (p.isCollection()) {
 				propertyVar = p.isReference() ? p.getName() + "Ids" : p.getName();
@@ -532,6 +536,7 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 		String queryName = "A" + bean.getName() + "Query";
 
 		for (PropertyModel p : bean.getPropertiesAndSuperbeanProperties()) {
+			if (isOutsourced(p)) continue;
 			ln();
 			if (p.isUnique()) {
 

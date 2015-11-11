@@ -22,6 +22,7 @@ public class StringPropertyModel extends SimplePropertyModel {
 	private boolean templateAvailable;
 	private boolean masked;
 	private boolean encrypted;
+	private boolean outsourced;
 
 	public StringPropertyModel(BeanModel entityModel, String name) {
 		super(entityModel, name, false, false, String.class.getName());
@@ -30,6 +31,15 @@ public class StringPropertyModel extends SimplePropertyModel {
 	public StringPropertyModel setMasked(boolean masked) {
 		this.masked = masked;
 		return this;
+	}
+
+	public StringPropertyModel setOutsourced(boolean outsourced) {
+		this.outsourced = outsourced;
+		return this;
+	}
+
+	public boolean isOutsourced() {
+		return outsourced;
 	}
 
 	public boolean isMasked() {

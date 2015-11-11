@@ -16,6 +16,7 @@ package ilarkesto.gwt.client.persistence;
 
 import ilarkesto.core.persistance.ACachingEntitiesBackend;
 import ilarkesto.core.persistance.AEntity;
+import ilarkesto.core.persistance.Entity;
 import ilarkesto.core.persistance.EntityDoesNotExistException;
 import ilarkesto.core.persistance.Transaction;
 import ilarkesto.gwt.client.AGwtApplication;
@@ -62,6 +63,16 @@ public class GwtRpcDatabase extends ACachingEntitiesBackend {
 			t.setIgnoreModificationEvents(false);
 		}
 		return entities;
+	}
+
+	@Override
+	public String loadOutsourcedString(Entity entity, String propertyName) {
+		throw new RuntimeException(getClass().getName() + ".loadOutsourcedString() is not implemented");
+	}
+
+	@Override
+	public void saveOutsourcedString(Entity entity, String propertyName, String value) {
+		throw new RuntimeException(getClass().getName() + ".saveOutsourcedString() is not implemented");
 	}
 
 	public void onEntityDeletionsReceived(Set<String> entityIds) {
