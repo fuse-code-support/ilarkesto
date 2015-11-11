@@ -484,4 +484,14 @@ public class Utl {
 		return ret;
 	}
 
+	public static boolean isLong(String s) {
+		if (s == null) return false;
+		try {
+			Long.parseLong(s);
+		} catch (NumberFormatException ex) {
+			return false;
+		}
+		return true;
+	}
+
 }
