@@ -199,6 +199,11 @@ public abstract class AEditableField extends AField {
 		getFieldEditorDialogBox().show();
 	}
 
+	public void cancelEditor() {
+		if (fieldEditorDialogBox == null) return;
+		fieldEditorDialogBox.cancel();
+	}
+
 	public FieldEditorDialogBox getFieldEditorDialogBox() {
 		if (fieldEditorDialogBox == null) fieldEditorDialogBox = new FieldEditorDialogBox(this);
 		return fieldEditorDialogBox;

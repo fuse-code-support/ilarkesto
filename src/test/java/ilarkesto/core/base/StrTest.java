@@ -23,6 +23,12 @@ import org.testng.annotations.Test;
 public class StrTest extends ATest {
 
 	@Test
+	public void escapeJavaString() {
+		assertEquals(Str.escapeJavaString("a\"b"), "a\\\"b");
+		assertEquals(Str.escapeJavaString("a\nb"), "a\\\nb");
+	}
+
+	@Test
 	public void formatUrlAsLink() {
 		assertEquals(Str.formatUrlAsLink("http://koczewski.de", 12), "koczewski.de");
 		assertEquals(Str.formatUrlAsLink("http://koczewski.de/which-is-very-long", 20), "koczewski.de/..-long");
