@@ -69,7 +69,8 @@ public class Zeiterfassung {
 		for (Entry<String, Long> entry : minutesByHiszillaId.entrySet()) {
 			Long minutes = entry.getValue();
 			String hiszillaId = entry.getKey();
-			System.out.println(minutes + " | " + hiszillaId + " | https://hiszilla.his.de/hiszilla/show_bug.cgi?id="
+			String time = String.valueOf(minutes.floatValue() / 60f);
+			System.out.println(time + " | " + hiszillaId + " | https://hiszilla.his.de/hiszilla/show_bug.cgi?id="
 					+ hiszillaId);
 		}
 	}
