@@ -621,4 +621,16 @@ public class Gwt {
 		return image;
 	}
 
+	public static Image replaceSourceOnError(final Image image, final String srcOnError) {
+		if (image == null) return null;
+		image.addErrorHandler(new ErrorHandler() {
+
+			@Override
+			public void onError(ErrorEvent ev) {
+				image.setUrl(srcOnError);
+			}
+		});
+		return image;
+	}
+
 }
