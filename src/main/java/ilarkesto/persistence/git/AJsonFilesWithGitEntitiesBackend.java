@@ -16,6 +16,7 @@ package ilarkesto.persistence.git;
 
 import ilarkesto.base.Env;
 import ilarkesto.core.base.Bytes;
+import ilarkesto.core.base.Utl;
 import ilarkesto.core.persistance.AEntity;
 import ilarkesto.di.Context;
 import ilarkesto.di.app.AApplication;
@@ -44,8 +45,19 @@ public abstract class AJsonFilesWithGitEntitiesBackend extends AJsonFilesEntitie
 			try {
 				git.addAll();
 			} catch (Exception ex) {
-				log.error("git add failed:", ex);
+				String message = Utl.getRootCauseMessage(ex);
+				if (message != null && message.contains(".git/index.lock")) {
+					git.deleteIndexLock();
+					try {
+						git.addAll();
+					} catch (Exception ex2) {
+						log.error("git add failed:", ex);
+					}
+				} else {
+					log.error("git add failed:", ex);
+				}
 			}
+
 			try {
 				git.commit(Context.get().toString());
 			} catch (Exception ex) {
