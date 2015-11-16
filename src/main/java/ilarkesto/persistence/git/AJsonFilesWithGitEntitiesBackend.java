@@ -41,8 +41,16 @@ public abstract class AJsonFilesWithGitEntitiesBackend extends AJsonFilesEntitie
 	protected void onEntityChangesSaved(Collection<AEntity> modified, Collection<String> deleted,
 			Collection<AEntity> created) {
 		if (git.isInitialized()) {
-			git.addAll();
-			git.commit(Context.get().toString());
+			try {
+				git.addAll();
+			} catch (Exception ex) {
+				log.error("git add failed:", ex);
+			}
+			try {
+				git.commit(Context.get().toString());
+			} catch (Exception ex) {
+				log.error("git commit failed:", ex);
+			}
 		}
 
 		AWebApplication webApplication = AWebApplication.get();
