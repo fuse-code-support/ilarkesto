@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -16,7 +16,9 @@ package ilarkesto.gwt.client.desktop.fields;
 
 import ilarkesto.core.base.EnumMapper;
 import ilarkesto.core.base.Utl;
+import ilarkesto.gwt.client.AAction;
 import ilarkesto.gwt.client.desktop.AObjectTable;
+import ilarkesto.gwt.client.desktop.ActionButton;
 import ilarkesto.gwt.client.desktop.BuilderPanel;
 import ilarkesto.gwt.client.desktop.Colors;
 import ilarkesto.gwt.client.desktop.Widgets;
@@ -24,6 +26,7 @@ import ilarkesto.gwt.client.desktop.Widgets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.dom.client.Style;
@@ -53,6 +56,7 @@ public abstract class AEditableSelectOneField extends AEditableField {
 	private ListBox listBox;
 	private Map<String, RadioButton> radioButtons;
 	private ItemsTable table;
+	private boolean nullSelectionButtonClicked;
 
 	private boolean showAsTable;
 
@@ -76,6 +80,7 @@ public abstract class AEditableSelectOneField extends AEditableField {
 	}
 
 	private String getSelectedValue() {
+		if (nullSelectionButtonClicked) return null;
 		if (table != null) {
 			String selectedKey = table.getSelectedKey();
 			if (NULL_KEY.equals(selectedKey)) return null;
@@ -106,6 +111,13 @@ public abstract class AEditableSelectOneField extends AEditableField {
 		} else {
 			return createListBox();
 		}
+	}
+
+	@Override
+	protected List<? extends IsWidget> getAdditionalDialogButtons(FieldEditorDialogBox dialogBox) {
+		List<IsWidget> ret = new ArrayList<IsWidget>();
+		if (isShowAsTable() && !isMandatory()) ret.add(new ActionButton(new SelectNoneAction()));
+		return ret;
 	}
 
 	protected ItemsTable createItemsTable(EnumMapper<String, String> options) {
@@ -436,6 +448,21 @@ public abstract class AEditableSelectOneField extends AEditableField {
 
 		public <T> T getValue(Class<T> valueType) {
 			return (T) value;
+		}
+
+	}
+
+	class SelectNoneAction extends AAction {
+
+		@Override
+		protected void onExecute() {
+			nullSelectionButtonClicked = true;
+			AEditableSelectOneField.this.submitOrParentSubmit();
+		}
+
+		@Override
+		public String getLabel() {
+			return "Auswahl aufheben";
 		}
 
 	}
