@@ -139,6 +139,7 @@ public class Str {
 		s = s.replace(String.valueOf(sz), "ss");
 		s = s.replace(String.valueOf(EUR), "EUR");
 
+		s = s.replace(',', '_');
 		s = s.replace(':', '_');
 		s = s.replace(';', '_');
 		s = s.replace('&', '_');
