@@ -31,6 +31,8 @@ public class ActionButton implements IsWidget {
 	private Button button;
 	private boolean focusable;
 	private boolean forceText;
+	private Integer iconSize;
+	private Float iconOpacity;
 
 	public ActionButton(AAction action, boolean focusable) {
 		Args.assertNotNull(action, "action");
@@ -53,6 +55,8 @@ public class ActionButton implements IsWidget {
 				if (icon == null || forceText) {
 					button.setText(action.getLabel());
 				} else {
+					if (iconSize != null) icon.setSize(iconSize + "px", iconSize + "px");
+					if (iconOpacity != null) icon.getElement().getStyle().setOpacity(iconOpacity.floatValue());
 					button.getElement().appendChild(icon.getElement());
 					button.addStyleDependentName("iconOnly");
 					String title = action.getLabel();
@@ -75,6 +79,16 @@ public class ActionButton implements IsWidget {
 
 	public ActionButton setForceText(boolean forceText) {
 		this.forceText = forceText;
+		return this;
+	}
+
+	public ActionButton setIconSize(Integer iconSize) {
+		this.iconSize = iconSize;
+		return this;
+	}
+
+	public ActionButton setIconOpacity(float iconOpacity) {
+		this.iconOpacity = iconOpacity;
 		return this;
 	}
 

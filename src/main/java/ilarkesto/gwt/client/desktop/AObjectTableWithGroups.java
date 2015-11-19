@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -28,8 +28,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.FontStyle;
@@ -110,11 +112,14 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		int rowIndex = -1;
 
 		if (isColumnTitlesEnabled()) {
+			Set<String> keys = new HashSet<String>();
 			rowIndex++;
 			for (AColumn column : columns) {
 				String columnTitle;
+				String columnDescription = null;
 				try {
 					columnTitle = column.getTitle();
+					columnDescription = column.getDescription();
 				} catch (Exception ex) {
 					log.error(ex);
 					columnTitle = "ERROR: " + Str.formatException(ex);
@@ -123,15 +128,38 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 				boolean customSortingEnabled = isCustomSortingEnabled();
 
 				Widget titleWidget = Widgets.textFieldlabel(columnTitle, false);
-				if (titleWidget != null && customSortingEnabled && isShowColumnSortingToggleIcon())
-					titleWidget.addStyleName("columnTitleWithSortToggle");
 
-				if (titleWidget != null && (sortColumnIndex == column.index)) {
-					// Sortierte Spalte hervorheben
-					Style style = titleWidget.getElement().getStyle();
-					style.setColor("#444");
-					style.setFontWeight(FontWeight.BOLD);
-					if (reverseSort) style.setFontStyle(FontStyle.ITALIC);
+				if (titleWidget != null) {
+					String key = column.getKey();
+					if (key != null) {
+						if (key.contains(",")) log.error("Character ',' not allowed in column selfdoc key: " + key);
+						if (keys.contains(key))
+							log.error("Column with same key already exists: " + key
+									+ ". Override getKey() in column and provide a different key for the column.");
+						keys.add(key);
+
+						AAction selfdocAction = Widgets.selfdocAction(getSelfdocKey() + ":column:" + key, columnTitle,
+							columnDescription);
+						if (selfdocAction != null) {
+							ActionButton button = new ActionButton(selfdocAction);
+							button.setIconSize(16);
+							button.setIconOpacity(0.7f);
+							titleWidget = Widgets.horizontalFlowPanel(0, titleWidget, button);
+						}
+					}
+
+					if (columnDescription != null) titleWidget.setTitle(columnDescription);
+
+					if (customSortingEnabled && isShowColumnSortingToggleIcon())
+						titleWidget.addStyleName("columnTitleWithSortToggle");
+
+					if (sortColumnIndex == column.index) {
+						// Sortierte Spalte hervorheben
+						Style style = titleWidget.getElement().getStyle();
+						style.setColor("#444");
+						style.setFontWeight(FontWeight.BOLD);
+						if (reverseSort) style.setFontStyle(FontStyle.ITALIC);
+					}
 				}
 
 				table.setWidget(rowIndex, column.index, Widgets.frame(titleWidget, Widgets.defaultSpacing, 0,
@@ -458,6 +486,10 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		return null;
 	}
 
+	public String getSelfdocKey() {
+		return getClass().getSimpleName();
+	}
+
 	public List<Row> createRows(Collection<O> objects, int rowIndex) {
 		List<Row> ret;
 		if (!isGroupingEnabled()) {
@@ -604,6 +636,22 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 		public String getTitle() {
 			return null;
+		}
+
+		public String getDescription() {
+			return null;
+		}
+
+		public String getTitleAndDescription() {
+			String title = getTitle();
+			if (title == null) return null;
+			String description = getDescription();
+			if (description == null) return title;
+			return title + ": " + description;
+		}
+
+		public String getKey() {
+			return getTitle();
 		}
 
 		public TextBox getFilterWidget() {

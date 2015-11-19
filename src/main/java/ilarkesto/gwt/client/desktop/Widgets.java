@@ -595,6 +595,7 @@ public class Widgets {
 	}
 
 	public static AAction selfdocAction(String selfdocKey, String title, String tooltip) {
+		if (selfdocKey == null) return null;
 		return extensionPoint.selfdocAction(selfdocKey, title, tooltip);
 	}
 
@@ -632,7 +633,7 @@ public class Widgets {
 		}
 
 		public ASelfdocPanel selfdocPanel(String selfdocKey, String title, String tooltip) {
-			throw new RuntimeException("Not implemented in ilarkesto. Widgets.extensionPoint not activated.");
+			return null;
 		}
 
 		public void addGotoEntityClickHandler(FocusPanel focusPanel, AEntity entity) {
@@ -640,12 +641,11 @@ public class Widgets {
 		}
 
 		public Widget gotoEntityButton(AEntity entity) {
-			if (entity == null) return null;
-			throw new RuntimeException("Not implemented in ilarkesto. Widgets.extensionPoint not activated.");
+			return null;
 		}
 
 		public AAction selfdocAction(String selfdocKey, String title, String tooltip) {
-			throw new RuntimeException("Not implemented in ilarkesto. Widgets.extensionPoint not activated.");
+			return null;
 		}
 	}
 
