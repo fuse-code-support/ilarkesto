@@ -14,7 +14,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RichTextArea;
-import com.google.gwt.user.client.ui.RichTextArea.FontSize;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -70,8 +69,8 @@ public abstract class AEditableRichTextField extends AEditableField {
 
 			@Override
 			public void onInitialize(InitializeEvent event) {
-				textArea.getFormatter().setFontName("Helvetica");
-				textArea.getFormatter().setFontSize(FontSize.X_SMALL);
+				// textArea.getFormatter().setFontName("Helvetica");
+				// textArea.getFormatter().setFontSize(FontSize.X_SMALL);
 			}
 		});
 		Style style = textArea.getElement().getStyle();
