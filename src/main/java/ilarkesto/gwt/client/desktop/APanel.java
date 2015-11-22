@@ -55,7 +55,14 @@ public abstract class APanel implements IsWidget, Updatable {
 
 	protected void onClear() {}
 
-	protected void onInit(BuilderPanel panel) {}
+	protected void onInit(BuilderPanel panel) {
+		String selfdocKey = getSelfdocKey();
+		if (selfdocKey != null) panel.prepareTitleAction(Widgets.selfdocAction(selfdocKey, null, null));
+	}
+
+	protected String getSelfdocKey() {
+		return getClass().getSimpleName();
+	}
 
 	protected boolean isAutoClearOnUpdate() {
 		return true;

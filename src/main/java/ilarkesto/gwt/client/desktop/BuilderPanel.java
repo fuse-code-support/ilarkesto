@@ -17,7 +17,9 @@ package ilarkesto.gwt.client.desktop;
 import ilarkesto.core.persistance.AEntity;
 import ilarkesto.gwt.client.AAction;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -38,6 +40,8 @@ public class BuilderPanel implements IsWidget {
 	private TextAlign childTextAlign;
 	private String childWidth;
 
+	private List<AAction> titleActions;
+
 	public BuilderPanel() {
 		panel = new FlowPanel();
 		panel.getElement().getStyle().setWidth(100, Unit.PCT);
@@ -47,6 +51,12 @@ public class BuilderPanel implements IsWidget {
 		this();
 		setStyleCard();
 		createTitle(cardTitle);
+	}
+
+	public void prepareTitleAction(AAction action) {
+		if (action == null) return;
+		if (titleActions == null) titleActions = new ArrayList<AAction>();
+		titleActions.add(action);
 	}
 
 	private final SimplePanel getColorMarker(String color) {
@@ -61,10 +71,16 @@ public class BuilderPanel implements IsWidget {
 	}
 
 	public final BuilderPanel createTitle(String title, AAction... actions) {
-		BuilderPanel titleRow = createTitle(title);
+		BuilderPanel titleRow = createTitleInternal(title);
 		for (AAction action : actions) {
 			if (action == null) continue;
 			titleRow.addWithPadding(action);
+		}
+		if (titleActions != null) {
+			for (AAction action : titleActions) {
+				if (action == null) continue;
+				titleRow.addWithPadding(action);
+			}
 		}
 		return titleRow;
 	}
@@ -73,7 +89,7 @@ public class BuilderPanel implements IsWidget {
 		return createTitle(title).addWithPadding(Widgets.gotoEntityButton(entity));
 	}
 
-	public final BuilderPanel createTitle(String title) {
+	private final BuilderPanel createTitleInternal(String title) {
 		BuilderPanel titleRow = createHorizontalChild();
 
 		titleRow.addWithPadding(Widgets.textTitle(title));
