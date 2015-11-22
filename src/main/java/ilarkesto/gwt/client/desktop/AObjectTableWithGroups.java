@@ -474,7 +474,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 	protected abstract G getGroup(O o);
 
-	protected String getHref(O o) {
+	protected String getHref(O o, int index) {
 		return null;
 	}
 
@@ -723,7 +723,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 		public String getHref(O o, Widget cellWidget) {
 			if (cellWidget instanceof Button) return null;
-			return AObjectTableWithGroups.this.getHref(o);
+			return AObjectTableWithGroups.this.getHref(o, index);
 		}
 
 		protected String getWidth() {
