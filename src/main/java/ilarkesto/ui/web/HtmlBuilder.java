@@ -606,8 +606,19 @@ public class HtmlBuilder {
 		LINKcss(toString(href));
 	}
 
+	public void LINKcss(String href, String integrity, String crossorigin) {
+		startTag(LINK, true).set("rel", "stylesheet").setHref(href).set("integrity", integrity)
+				.set("crossorigin", crossorigin).end();
+	}
+
 	public void LINKcss(String href) {
 		LINK("stylesheet", "text/css", href);
+	}
+
+	public void SCRIPTinclude(String src, String integrity, String crossorigin) {
+		startTag(SCRIPT, true).setSrc(src).set("integrity", integrity).set("crossorigin", crossorigin);
+		closeStartingTag();
+		endTag(SCRIPT);
 	}
 
 	public void SCRIPT(String type, String language, String src, String code) {
@@ -725,6 +736,10 @@ public class HtmlBuilder {
 		return startDIV().setClass(clazz);
 	}
 
+	public Tag startDIV(String clazz, String id) {
+		return startDIV().setClass(clazz).setId(id);
+	}
+
 	public Tag startDIV() {
 		return startTag(DIV, true);
 	}
@@ -737,6 +752,22 @@ public class HtmlBuilder {
 		startDIV(clazz);
 		text(text);
 		endDIV();
+	}
+
+	// --- NAV ---
+
+	private static final String NAV = "nav";
+
+	public Tag startNAV(String clazz, String id) {
+		return startNAV().setId(id).setClass(clazz);
+	}
+
+	public Tag startNAV() {
+		return startTag(NAV);
+	}
+
+	public void endNAV() {
+		endTag(NAV);
 	}
 
 	// --- H ---
