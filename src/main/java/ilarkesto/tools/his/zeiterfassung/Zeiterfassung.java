@@ -138,6 +138,8 @@ public class Zeiterfassung {
 		String line = null;
 		while ((line = in.readLine()) != null) {
 			if (Str.isBlank(line)) continue;
+			line = line.trim();
+			if (line.startsWith("//")) continue;
 			if (line.startsWith("---")) {
 				hiszillaLineReached = true;
 				continue;
