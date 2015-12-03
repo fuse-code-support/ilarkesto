@@ -824,6 +824,7 @@ public abstract class IO {
 	}
 
 	public static boolean deleteDirectorysIfEmpty(File dir) {
+		if (dir == null) return false;
 		if (!dir.isDirectory()) return false;
 		for (File file : dir.listFiles()) {
 			if (!file.isDirectory()) return false;
