@@ -591,10 +591,13 @@ public class Gwt {
 		if (nativeEvent == null) return null;
 		EventTarget eventTarget = nativeEvent.getEventTarget();
 		if (eventTarget == null) return null;
-		String source = eventTarget.toSource();
-		if (source == null) source = eventTarget.toString();
-		if (source == null) return null;
-		return source;
+		return eventTarget.toString();
+
+		// String source = eventTarget.toSource();
+		// Log.TEST("***> source", source);
+		// if (source == null) source = eventTarget.toString();
+		// Log.TEST("***> source", source);
+		// return source;
 	}
 
 	public static boolean targetStringContains(ClickEvent event, String string) {

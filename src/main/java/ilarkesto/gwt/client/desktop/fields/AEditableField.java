@@ -177,12 +177,13 @@ public abstract class AEditableField extends AField {
 		return Str.getSimpleName(getClass());
 	}
 
-	protected void onValueClicked(final ClickEvent event) {
+	private void onValueClicked(final ClickEvent event) {
 		activate(event);
 	}
 
-	public void activate(final ClickEvent event) {
+	public final void activate(final ClickEvent event) {
 		List<AAction> actions = getEditActions();
+		log.debug(getClass().getSimpleName() + ".activate():", actions);
 		if (actions.isEmpty()) return;
 		if (actions.size() == 1) {
 			AAction aAction = actions.get(0);
@@ -269,9 +270,14 @@ public abstract class AEditableField extends AField {
 		@Override
 		public void onClick(ClickEvent event) {
 			event.stopPropagation();
-			if (isIgnoreClicksOnImageElements() && Gwt.targetStringContains(event, "[object HTMLImageElement]"))
-				return;
-			if (Gwt.targetStringContains(event, "goon-AnchorButton")) return;
+
+			String targetString = Gwt.getTargetString(event);
+			log.debug(AEditableField.this.getClass().getSimpleName() + ".onClick():", targetString);
+
+			if (targetString != null) {
+				if (isIgnoreClicksOnImageElements() && targetString.contains("[object HTMLImageElement]")) return;
+				if (targetString.contains("goon-AnchorButton")) return;
+			}
 
 			onValueClicked(event);
 		}
