@@ -72,7 +72,16 @@ public class FulltextFeedConverter {
 		String link = item.getLink();
 		if (Str.isBlank(link)) return;
 
+		replaceDescription(item, link);
+	}
+
+	private static void replaceDescription(FeedItem item, String link) {
 		String text = downloadText(link);
+		if (link.startsWith("http://www.zeit.de") && !link.contains("/komplettansicht")
+				&& text.contains("Auf einer Seite lesen")) {
+			replaceDescription(item, link + "/komplettansicht");
+			return;
+		}
 		if (Str.isBlank(text)) return;
 		item.setDescription(text);
 	}
@@ -110,12 +119,13 @@ public class FulltextFeedConverter {
 			return text;
 		}
 
-		if ((idx = text.indexOf("<div class=\"article-body\">")) > 0) {
+		if ((idx = text.indexOf("<div class=\"article-body")) > 0) {
 			log.debug("zeit.de");
 			String nextPageUrl = extractZeitDeNextPageUrl(text);
 			text = text.substring(idx);
 			text = Str.removeSuffixStartingWith(text, "<a href=\"http://www.zeit.de\"");
 			text = Str.removeSuffixStartingWith(text, "<div class=\"articlefooter af\">");
+			text = Str.removeSuffixStartingWith(text, "<div class=\"article-pagination");
 			if (nextPageUrl != null) {
 				String next = downloader.downloadText(nextPageUrl, IO.UTF_8);
 				if (!Str.isBlank(next)) return text;
