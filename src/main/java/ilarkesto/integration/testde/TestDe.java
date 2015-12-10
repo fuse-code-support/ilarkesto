@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -22,16 +22,16 @@ import ilarkesto.core.base.Str;
 import ilarkesto.core.html.Html;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.Date;
-import ilarkesto.io.IO;
-import ilarkesto.net.HttpDownloader;
+import ilarkesto.net.httpclient.HttpRequest;
+import ilarkesto.net.httpclient.HttpSession;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -43,11 +43,10 @@ public class TestDe {
 
 	public static final String URL_BASE = "https://www.test.de";
 	public static final String URL_TEST_INDEX = URL_BASE + "/tests/";
-	public static final String URL_LOGIN = URL_BASE + "/meintest/login/";
+	public static final String URL_LOGIN = URL_BASE + "/meintest/login/?target=%2f";
 	public static final String URL_LOGOUT = URL_BASE + "/service/logout/";
 
-	public static HttpDownloader http = HttpDownloader.create();
-	private static final String charset = IO.UTF_8;
+	private static HttpSession httpSession = new HttpSession();
 
 	private static final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
 
@@ -57,7 +56,7 @@ public class TestDe {
 		if (!subArticlePdf.isPdf()) throw new IllegalStateException("Article is not PDF: " + subArticlePdf);
 		String url = loadPdfUrl(subArticlePdf, articleRef, observer);
 		observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
-		http.downloadUrlToFile(url, file);
+		httpSession.downloadToFile(url, file);
 	}
 
 	private static String loadPdfUrl(SubArticleRef subArticlePdf, ArticleRef articleRef, OperationObserver observer)
@@ -74,27 +73,46 @@ public class TestDe {
 		logout(observer);
 		log.info("Login as", loginData.getLogin());
 		observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, URL_LOGIN);
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new LinkedHashMap<String, String>();
+		params.put("source", "login");
 		params.put("username", loginData.getLogin());
 		params.put("password", loginData.getPassword());
-		params.put("source", "login");
 		params.put("autologin", "on");
-		String data = http.post(URL_LOGIN, params, charset);
+		params.put("submit", "Einloggen");
+		params.put("submitted", "save");
+		params.put("nextpageid", "");
+
+		HttpRequest request = httpSession.request(URL_LOGIN);
+		request.addHeader("Cache-Control", "max-age=0");
+		request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+		request.addHeader("Accept-Encoding", "gzip, deflate");
+		request.addHeader("Accept-Language", "en-US,en;q=0.8,de;q=0.6");
+		request.addHeader("Cache-Control", "max-age=0");
+		request.addHeader("Host", "www.test.de");
+		request.addHeader("Origin", "https://www.test.de");
+		request.addHeader("Referer", "https://www.test.de/meintest/login/?target=%2f");
+		request.addHeader("Upgrade-Insecure-Requests", "1");
+		request.addHeader("User-Agent",
+			"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.80 Safari/537.36");
+		request.setPostParameters(params);
+		String data = request.execute().followRedirects(1).checkIfStatusCodeOk().readToString();
+
+		httpSession.postAndDownloadText(URL_LOGIN, params);
 		String error = Str.cutFromTo(data, "<div class=\"msg error\"", "</div>");
 		if (error != null) {
 			if (error.contains("<p>")) error = Str.cutFromTo(error, "<p>", "</p>");
 			throw new RuntimeException(error);
 		}
 
-		final String loggedInIndicator = "/service/logout/";
-		if (!data.contains(loggedInIndicator)) {
-			log.warn("Logged in indicator '" + loggedInIndicator + "' missing:", data);
-			throw new RuntimeException("Login failed. Missing indicator '" + loggedInIndicator + "'");
-		}
+		// final String loggedInIndicator = "/service/logout/";
+		// if (false && !data.contains(loggedInIndicator)) {
+		// log.warn("Logged in indicator '" + loggedInIndicator + "' missing:", data);
+		// throw new RuntimeException("Login failed. Missing indicator '" + loggedInIndicator + "'");
+		// }
 	}
 
 	public static void logout(OperationObserver observer) {
-		http.downloadText(URL_LOGOUT, charset, 1);
+		httpSession.downloadText(URL_LOGOUT);
 	}
 
 	public static String removeSpamFromPageHtml(String html) {
@@ -216,7 +234,7 @@ public class TestDe {
 		String url = TestDe.getPageUrl(pageRef);
 		if (startOffset != null) url += "?start=" + startOffset;
 		observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
-		return http.downloadText(url, charset);
+		return httpSession.downloadText(url);
 	}
 
 	public static Integer parseNextPageStartOffset(String html) {
@@ -271,7 +289,8 @@ public class TestDe {
 		if (indexOffset == 0) throw new IllegalArgumentException("page 0 does not exist");
 		String url = URL_TEST_INDEX + "?seite=" + indexOffset;
 		observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
-		String data = http.downloadText(url, charset, 0);
+
+		String data = httpSession.downloadText(url);
 
 		ArrayList<ArticleRef> ret = new ArrayList<ArticleRef>();
 		Parser parser = new Parser(data);

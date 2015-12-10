@@ -30,14 +30,14 @@ public class RequestExecutor {
 
 	public ilarkesto.net.httpclient.HttpResponse post(String url, Map<String, String> parameters) {
 		ilarkesto.net.httpclient.HttpResponse r = httpSession.request(url).setPostParameters(parameters).execute();
-		if (!r.isResponseCodeOk()) throw new RuntimeException("HTTP POST failed: " + r.readToString());
+		if (!r.isStatusCodeOk()) throw new RuntimeException("HTTP POST failed: " + r.readToString());
 		return r;
 	}
 
 	public String get(String url) {
 		HttpResponse response = httpSession.request(url).execute();
-		if (!response.isResponseCodeOk())
-			throw new RuntimeException("HTTP GET failed with HTTP Code " + response.getResponseCode());
+		if (!response.isStatusCodeOk())
+			throw new RuntimeException("HTTP GET failed with HTTP Code " + response.getStatusCode());
 		return getContent(response);
 	}
 

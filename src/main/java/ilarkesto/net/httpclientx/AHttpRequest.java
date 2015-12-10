@@ -73,7 +73,7 @@ public abstract class AHttpRequest {
 	}
 
 	protected void handleResponse(int responseCode) {
-		if (responseCode == Http.RESPONSE_CODE_OK) {
+		if (responseCode == Http.RESPONSE_SC_OK) {
 			handleResponse();
 			return;
 		}
