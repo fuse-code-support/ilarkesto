@@ -14,9 +14,52 @@
  */
 package ilarkesto.net;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Map;
+
 public class Http {
 
-	public static final int RC_OK = 100;
-	public static final int RC_NOT_FOUND = 404;
+	public static final String REQUEST_HEADER_ACCEPT_CHARSET = "Accept-Charset";
+	public static final String REQUEST_HEADER_CONTENT_TYPE = "Content-Type";
+	public static final String REQUEST_HEADER_CONTENT_LENGTH = "Content-Length";
+	public static final String REQUEST_HEADER_COOKIE = "Cookie";
+
+	public static final String RESPONSE_HEADER_SET_COOKIE = "Set-Cookie";
+	public static final String RESPONSE_HEADER_CONTENT_TYPE = "Content-Type";
+
+	public static final int RESPONSE_CODE_OK = 100;
+	public static final int RESPONSE_CODE_NOT_FOUND = 404;
+
+	public static String encodePostParametersToString(Map<String, String> parameters, String encoding) {
+		StringBuilder postData = new StringBuilder();
+
+		for (Map.Entry<String, String> entry : parameters.entrySet()) {
+			if (postData.length() != 0) {
+				postData.append('&');
+			}
+			try {
+				postData.append(URLEncoder.encode(entry.getKey(), encoding));
+			} catch (UnsupportedEncodingException ex) {
+				throw new RuntimeException(ex);
+			}
+			postData.append('=');
+			try {
+				postData.append(URLEncoder.encode(String.valueOf(entry.getValue()), encoding));
+			} catch (UnsupportedEncodingException ex) {
+				throw new RuntimeException(ex);
+			}
+		}
+
+		return postData.toString();
+	}
+
+	public static byte[] encodePostParametersToByteArray(Map<String, String> parameters, String encoding) {
+		try {
+			return encodePostParametersToString(parameters, encoding).toString().getBytes(encoding);
+		} catch (UnsupportedEncodingException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 
 }

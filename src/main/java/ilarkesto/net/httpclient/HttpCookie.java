@@ -14,10 +14,28 @@
  */
 package ilarkesto.net.httpclient;
 
-public class HttpException extends RuntimeException {
+import ilarkesto.core.logging.Log;
 
-	public HttpException(String message, Throwable cause) {
-		super(message, cause);
+public class HttpCookie {
+
+	private String name;
+	private String value;
+
+	public HttpCookie(String s) {
+		Log.TEST("Cookie: " + s);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	@Override
+	public String toString() {
+		return name + "=" + value;
 	}
 
 }

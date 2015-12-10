@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package ilarkesto.net.httpclient;
+package ilarkesto.net.httpclientx;
 
 import ilarkesto.io.IO;
 import ilarkesto.net.Http;
@@ -73,7 +73,7 @@ public abstract class AHttpRequest {
 	}
 
 	protected void handleResponse(int responseCode) {
-		if (responseCode == Http.RC_OK) {
+		if (responseCode == Http.RESPONSE_CODE_OK) {
 			handleResponse();
 			return;
 		}

@@ -27,7 +27,7 @@ import ilarkesto.integration.rintelnde.BissIndex.Lebenslage.Anliegen;
 import ilarkesto.integration.rintelnde.Branchenbuch.Category;
 import ilarkesto.integration.rintelnde.Branchenbuch.Entry;
 import ilarkesto.io.IO;
-import ilarkesto.net.httpclient.AHttpGet;
+import ilarkesto.net.httpclientx.AHttpGet;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

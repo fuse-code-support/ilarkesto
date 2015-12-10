@@ -12,12 +12,12 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package ilarkesto.net.httpclient;
+package ilarkesto.net.httpclientx;
 
+public class HttpException extends RuntimeException {
 
-public abstract class AHttpGet extends AHttpRequest {
-
-	@Override
-	protected void writeRequest() {}
+	public HttpException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
 }
