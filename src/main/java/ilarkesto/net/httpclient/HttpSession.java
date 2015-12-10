@@ -32,4 +32,18 @@ public class HttpSession {
 		return cookies.values();
 	}
 
+	public HttpRequest request(String url) {
+		return new HttpRequest(url).setSession(this);
+	}
+
+	public String getCookieValue(String name) {
+		HttpCookie cookie = getCookie(name);
+		if (cookie == null) return null;
+		return cookie.getValue();
+	}
+
+	public HttpCookie getCookie(String name) {
+		return cookies.get(name);
+	}
+
 }

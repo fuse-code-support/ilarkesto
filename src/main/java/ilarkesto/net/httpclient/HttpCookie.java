@@ -22,7 +22,12 @@ public class HttpCookie {
 	private String value;
 
 	public HttpCookie(String s) {
-		Log.TEST("Cookie: " + s);
+		int idx = s.indexOf(';');
+		if (idx > 0) s = s.substring(0, idx);
+		idx = s.indexOf('=');
+		name = s.substring(0, idx).trim();
+		value = s.substring(idx + 1).trim();
+		Log.TEST(">>>>>>> cookie >>>", name, ">>>", value);
 	}
 
 	public String getName() {

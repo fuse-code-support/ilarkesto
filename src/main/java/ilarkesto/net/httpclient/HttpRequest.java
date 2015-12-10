@@ -15,9 +15,9 @@
 package ilarkesto.net.httpclient;
 
 import ilarkesto.core.base.OperationObserver;
+import ilarkesto.core.logging.Log;
 import ilarkesto.io.IO;
 import ilarkesto.net.Http;
-import ilarkesto.net.httpclientx.HttpException;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -29,6 +29,8 @@ import java.util.Map;
 
 // http://stackoverflow.com/questions/2793150/using-java-net-urlconnection-to-fire-and-handle-http-requests
 public class HttpRequest {
+
+	private static final Log log = Log.get(HttpRequest.class);
 
 	public static enum Method {
 		GET, POST
@@ -49,7 +51,8 @@ public class HttpRequest {
 		this.url = url;
 	}
 
-	public HttpResponse execute() throws IOException {
+	public HttpResponse execute() {
+		log.debug(this);
 		if (operationObserver != null) operationObserver.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
 
 		URL javaUrl;
@@ -59,15 +62,26 @@ public class HttpRequest {
 			throw new RuntimeException("Malformed URL: " + url, ex);
 		}
 
-		HttpURLConnection connection = (HttpURLConnection) javaUrl.openConnection();
+		HttpURLConnection connection;
+		try {
+			connection = (HttpURLConnection) javaUrl.openConnection();
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
 
 		try {
 			writeRequest(connection);
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
 		} finally {
 			if (connection != null) connection.disconnect();
 		}
 
-		return new HttpResponse(session, connection);
+		try {
+			return new HttpResponse(session, connection);
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 	private void writeRequest(HttpURLConnection connection) throws IOException {
@@ -75,7 +89,7 @@ public class HttpRequest {
 		try {
 			connection.setRequestMethod(method.name());
 		} catch (ProtocolException ex) {
-			throw new HttpException("Setting request method to " + method.name() + " failed.", ex);
+			throw new RuntimeException("Setting request method to " + method.name() + " failed.", ex);
 		}
 
 		switch (method) {
@@ -129,8 +143,21 @@ public class HttpRequest {
 		return this;
 	}
 
+	public HttpRequest setPostParameters(Map<String, String> parameters) {
+		if (parameters == null || parameters.isEmpty()) return this;
+		for (Map.Entry<String, String> entry : parameters.entrySet()) {
+			setPostParameter(entry.getKey(), entry.getValue());
+		}
+		return this;
+	}
+
 	public HttpRequest setMethod(Method method) {
 		this.method = method;
+		return this;
+	}
+
+	public HttpRequest setSession(HttpSession session) {
+		this.session = session;
 		return this;
 	}
 

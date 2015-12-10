@@ -28,7 +28,8 @@ public class Http {
 	public static final String RESPONSE_HEADER_SET_COOKIE = "Set-Cookie";
 	public static final String RESPONSE_HEADER_CONTENT_TYPE = "Content-Type";
 
-	public static final int RESPONSE_CODE_OK = 100;
+	public static final int RESPONSE_CODE_CONTINUE = 100;
+	public static final int RESPONSE_CODE_OK = 200;
 	public static final int RESPONSE_CODE_NOT_FOUND = 404;
 
 	public static String encodePostParametersToString(Map<String, String> parameters, String encoding) {
