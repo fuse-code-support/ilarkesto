@@ -12,32 +12,26 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package ilarkesto.templating;
+package ilarkesto.html.dom;
 
-import ilarkesto.core.parsing.sax.ASaxParserState;
-import ilarkesto.core.parsing.sax.ParseException;
-import ilarkesto.core.parsing.sax.SaxParserWithStates;
-import ilarkesto.io.IO;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.io.File;
+public class HtmlPage implements HtmlDataContainer {
 
-public abstract class ATemplateParser extends ASaxParserState {
+	private List<AHtmlData> contents = new ArrayList<AHtmlData>();
 
-	protected TemplateBuilder builder = new TemplateBuilder();
-
-	public final Template getTemplate() {
-		return builder.getTemplate();
+	public void add(AHtmlData data) {
+		contents.add(data);
 	}
 
 	@Override
-	public ATemplateParser parse(String text) throws ParseException {
-		super.parse(text);
-		return this;
-	}
-
-	public ATemplateParser parse(File file) throws ParseException {
-		new SaxParserWithStates(this).parse(IO.readFile(file));
-		return this;
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (AHtmlData data : contents) {
+			sb.append(data.toString());
+		}
+		return sb.toString();
 	}
 
 }

@@ -12,33 +12,14 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package ilarkesto.core.parsing;
+package ilarkesto.core.parsing.sax;
 
-public abstract class ASaxParserState {
+import ilarkesto.core.base.Str;
 
-	private SaxParserWithStates parser;
+public class ParseException extends Exception {
 
-	protected abstract void text(String text);
-
-	protected abstract String[] getTokens();
-
-	protected abstract void token(String token);
-
-	void setParser(SaxParserWithStates parser) {
-		this.parser = parser;
-	}
-
-	protected final void pushState(ASaxParserState state) {
-		parser.pushState(state);
-	}
-
-	protected final void popState() {
-		parser.popState();
-	}
-
-	public ASaxParserState parse(String text) throws ParseException {
-		new SaxParserWithStates(this).parse(text);
-		return this;
+	public ParseException(Object... message) {
+		super(Str.formatMessage(message));
 	}
 
 }

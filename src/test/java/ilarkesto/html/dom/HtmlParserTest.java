@@ -12,14 +12,29 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package ilarkesto.core.parsing;
+package ilarkesto.html.dom;
 
-import ilarkesto.core.base.Str;
+import ilarkesto.core.base.Parser.ParseException;
+import ilarkesto.testng.ATest;
 
-public class ParseException extends Exception {
+import org.testng.annotations.Test;
 
-	public ParseException(Object... message) {
-		super(Str.formatMessage(message));
+public class HtmlParserTest extends ATest {
+
+	@Test
+	public void parseSimplest() throws ParseException {
+		assertParseToString("<!doctype html><html></html>");
+		assertParseToString("<!doctype html><html>content</html>");
+	}
+
+	@Test
+	public void parseNested() throws ParseException {
+		assertParseToString("<!doctype html><html><title>hello world</title></html>");
+		assertParseToString("<!doctype html><html><p>hello</p> <p>world</p></html>");
+	}
+
+	private void assertParseToString(String html) throws ParseException {
+		assertEquals(new HtmlParser().parse(html).toString(), html);
 	}
 
 }

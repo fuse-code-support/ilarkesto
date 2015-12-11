@@ -12,31 +12,32 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package ilarkesto.templating;
+package ilarkesto.core.parsing.sax;
 
-import ilarkesto.core.parsing.sax.ASaxParserState;
-import ilarkesto.core.parsing.sax.ParseException;
-import ilarkesto.core.parsing.sax.SaxParserWithStates;
-import ilarkesto.io.IO;
+public abstract class ASaxParserState {
 
-import java.io.File;
+	private SaxParserWithStates parser;
 
-public abstract class ATemplateParser extends ASaxParserState {
+	protected abstract void text(String text);
 
-	protected TemplateBuilder builder = new TemplateBuilder();
+	protected abstract String[] getTokens();
 
-	public final Template getTemplate() {
-		return builder.getTemplate();
+	protected abstract void token(String token);
+
+	void setParser(SaxParserWithStates parser) {
+		this.parser = parser;
 	}
 
-	@Override
-	public ATemplateParser parse(String text) throws ParseException {
-		super.parse(text);
-		return this;
+	protected final void pushState(ASaxParserState state) {
+		parser.pushState(state);
 	}
 
-	public ATemplateParser parse(File file) throws ParseException {
-		new SaxParserWithStates(this).parse(IO.readFile(file));
+	protected final void popState() {
+		parser.popState();
+	}
+
+	public ASaxParserState parse(String text) throws ParseException {
+		new SaxParserWithStates(this).parse(text);
 		return this;
 	}
 

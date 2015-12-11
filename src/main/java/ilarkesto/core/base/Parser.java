@@ -119,10 +119,10 @@ public class Parser {
 		return data.substring(pos, idx);
 	}
 
-	public boolean gotoAfterIf(String... ss) {
+	public boolean gotoToIf(String... ss) {
 		try {
-			gotoAfter(ss);
-		} catch (ParseException e) {
+			gotoTo(ss);
+		} catch (ParseException ex) {
 			return false;
 		}
 		return true;
@@ -138,6 +138,28 @@ public class Parser {
 		}
 		if (idx < 0) throw new ParseException("gotoTo <" + format(ss) + "> failed", pos, getRemaining());
 		pos = idx;
+	}
+
+	public void gobackTo(String... ss) throws ParseException {
+		String subdata = data.substring(0, pos);
+		int idx = -1;
+		for (String sub : ss) {
+			int i = subdata.lastIndexOf(sub, pos);
+			if (idx == -1 || i > idx) {
+				idx = i;
+			}
+		}
+		if (idx < 0) throw new ParseException("gobackTo <" + format(ss) + "> failed", pos, data);
+		pos = idx;
+	}
+
+	public boolean gotoAfterIf(String... ss) {
+		try {
+			gotoAfter(ss);
+		} catch (ParseException e) {
+			return false;
+		}
+		return true;
 	}
 
 	public void gotoAfter(String... ss) throws ParseException {

@@ -14,7 +14,7 @@
  */
 package ilarkesto.integration.jura;
 
-import ilarkesto.core.parsing.ParseException;
+import ilarkesto.core.parsing.sax.ParseException;
 import ilarkesto.testng.ATest;
 
 import org.testng.annotations.Test;

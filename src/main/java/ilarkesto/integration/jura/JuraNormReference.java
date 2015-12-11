@@ -15,7 +15,7 @@
 package ilarkesto.integration.jura;
 
 import ilarkesto.core.base.Str;
-import ilarkesto.core.parsing.ParseException;
+import ilarkesto.core.parsing.sax.ParseException;
 
 public class JuraNormReference {
 
