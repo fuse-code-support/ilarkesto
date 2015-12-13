@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -18,6 +18,7 @@ import ilarkesto.core.base.Str;
 import ilarkesto.gwt.client.desktop.Widgets;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
 
 public class OutputField extends AField {
 
@@ -26,6 +27,7 @@ public class OutputField extends AField {
 	private String suffix;
 	private String href;
 	private boolean mandatory = false;
+	private String color;
 
 	public OutputField(String label, Object value) {
 		super();
@@ -58,7 +60,9 @@ public class OutputField extends AField {
 
 		String text = Str.format(value);
 		if (suffix != null) text += " " + suffix;
-		return Widgets.widget(text);
+		Label ret = Widgets.text(text);
+		if (color != null) ret.getElement().getStyle().setColor(color);
+		return ret;
 	}
 
 	@Override
@@ -76,6 +80,11 @@ public class OutputField extends AField {
 
 	public OutputField setHref(String href) {
 		this.href = href;
+		return this;
+	}
+
+	public OutputField setColor(String color) {
+		this.color = color;
 		return this;
 	}
 
