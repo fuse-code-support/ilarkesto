@@ -12,12 +12,41 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package ilarkesto.net.httpclientx;
+package ilarkesto.net.httpclient;
 
-@Deprecated
-public abstract class AHttpGet extends AHttpRequest {
+import ilarkesto.io.IO;
+
+import java.io.File;
+import java.io.OutputStream;
+import java.net.URLConnection;
+
+public class FileHttpPostAttachment extends ABinaryHttpPostAttachment {
+
+	private File file;
+	private String filename;
+	private String contentType;
+
+	public FileHttpPostAttachment(String name, File file) {
+		super(name);
+		this.file = file;
+
+		filename = file.getName();
+		contentType = URLConnection.guessContentTypeFromName(file.getName());
+	}
 
 	@Override
-	protected void writeRequest() {}
+	protected void writeData(OutputStream out) {
+		IO.copyData(file, out);
+	}
+
+	@Override
+	protected String getContentType() {
+		return contentType;
+	}
+
+	@Override
+	protected String getFilename() {
+		return filename;
+	}
 
 }

@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -27,7 +27,7 @@ import ilarkesto.integration.rintelnde.BissIndex.Lebenslage.Anliegen;
 import ilarkesto.integration.rintelnde.Branchenbuch.Category;
 import ilarkesto.integration.rintelnde.Branchenbuch.Entry;
 import ilarkesto.io.IO;
-import ilarkesto.net.httpclientx.AHttpGet;
+import ilarkesto.net.httpclient.HttpSession;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -55,6 +55,8 @@ public class RintelnDe {
 	public static final String PAGE_BRANCHENBUCH = "branchenbuch";
 	public static final String PAGE_CALENDAR = "veranstaltungskalender";
 	public static final String PAGE_PRESSEMITTEILUNGEN = "pressemitteilungen-der-stadt-rinteln";
+
+	public static HttpSession httpSession = new HttpSession();
 
 	public static List<String> extractPageContentBoxes(String html) {
 		if (html == null) return null;
@@ -118,9 +120,7 @@ public class RintelnDe {
 		log.info("Downloading", url);
 		observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
 
-		PageGet request = new PageGet();
-		request.execute();
-		return request.html;
+		return httpSession.downloadText(url);
 	}
 
 	private static String getDataPageUrl(String path, int offset) {
@@ -402,22 +402,6 @@ public class RintelnDe {
 		BissIndex index = new BissIndex();
 		index.setLebenslages(lebenslages);
 		return index;
-	}
-
-	static class PageGet extends AHttpGet {
-
-		private String html;
-
-		@Override
-		protected String createUri() {
-			return null;
-		}
-
-		@Override
-		protected void handleResponse() {
-			html = readResponseText(charset);
-		}
-
 	}
 
 }
