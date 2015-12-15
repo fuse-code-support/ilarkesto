@@ -14,6 +14,8 @@
  */
 package ilarkesto.html.dom;
 
+import ilarkesto.core.base.Utl;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +26,7 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 	private String name;
 	private Map<String, String> attributes;
 	private boolean closed;
-	private List<AHtmlData> contents;
+	protected List<AHtmlData> contents;
 
 	public HtmlTag(HtmlTag parent, String name, Map<String, String> attributes, boolean closed) {
 		super();
@@ -32,6 +34,10 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 		this.name = name.toLowerCase();
 		this.attributes = attributes;
 		this.closed = closed;
+	}
+
+	public boolean isRoot() {
+		return parent == null;
 	}
 
 	@Override
@@ -51,6 +57,11 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 		if (name.equals("br")) return true;
 		if (name.equals("hr")) return true;
 		if (name.equals("meta")) return true;
+		return false;
+	}
+
+	public boolean isContentTextOnly() {
+		if (name.equals("script")) return true;
 		return false;
 	}
 
@@ -74,6 +85,16 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<").append(name);
+
+		if (attributes != null) {
+			for (Map.Entry<String, String> entry : attributes.entrySet()) {
+				String name = entry.getKey();
+				String value = entry.getValue();
+				sb.append(" ").append(name);
+				if (value != null) sb.append("=\"").append(value).append("\"");
+			}
+		}
+
 		if (closed) {
 			sb.append("/>");
 			return sb.toString();
@@ -89,6 +110,71 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 		sb.append("</" + name + ">");
 
 		return sb.toString();
+	}
+
+	public boolean isStyleClass(String classToCheck) {
+		String styleClass = getStyleClass();
+		if (styleClass == null) return false;
+		return styleClass.contains(classToCheck);
+	}
+
+	public String getStyleClass() {
+		return getAttribute("class");
+	}
+
+	public boolean isAttribute(String name, String valueToCheck) {
+		return Utl.equals(valueToCheck, getAttribute(name));
+	}
+
+	public String getAttribute(String name) {
+		if (attributes == null) return null;
+		return attributes.get(name);
+	}
+
+	public HtmlTag getTagByName(String name) {
+		if (contents == null) return null;
+		for (AHtmlData data : contents) {
+			if (!(data instanceof HtmlTag)) continue;
+			HtmlTag tag = (HtmlTag) data;
+			if (tag.getName().equals(name)) return tag;
+			HtmlTag ret = tag.getTagByName(name);
+			if (ret != null) return ret;
+		}
+		return null;
+	}
+
+	public HtmlTag getTagById(String id) {
+		if (contents == null) return null;
+		for (AHtmlData data : contents) {
+			if (!(data instanceof HtmlTag)) continue;
+			HtmlTag tag = (HtmlTag) data;
+			if (tag.isAttribute("id", id)) return tag;
+			HtmlTag ret = tag.getTagById(id);
+			if (ret != null) return ret;
+		}
+		return null;
+	}
+
+	public HtmlTag getTagByStyleClass(String styleClass) {
+		if (contents == null) return null;
+		for (AHtmlData data : contents) {
+			if (!(data instanceof HtmlTag)) continue;
+			HtmlTag tag = (HtmlTag) data;
+			if (tag.isStyleClass(styleClass)) return tag;
+			HtmlTag ret = tag.getTagByStyleClass(styleClass);
+			if (ret != null) return ret;
+		}
+		return null;
+	}
+
+	public void removeTagsByStyleClass(String styleClass, boolean recurse) {
+		if (contents == null) return;
+		for (AHtmlData data : new ArrayList<AHtmlData>(contents)) {
+			if (!(data instanceof HtmlTag)) continue;
+			HtmlTag tag = (HtmlTag) data;
+			if (tag.isStyleClass(styleClass)) contents.remove(tag);
+			if (recurse) tag.removeTagsByStyleClass(styleClass, recurse);
+		}
 	}
 
 }

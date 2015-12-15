@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -22,6 +22,9 @@ import ilarkesto.core.base.Str;
 import ilarkesto.core.html.Html;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.Date;
+import ilarkesto.html.dom.HtmlPage;
+import ilarkesto.html.dom.HtmlParser;
+import ilarkesto.html.dom.HtmlTag;
 import ilarkesto.net.httpclient.HttpRequest;
 import ilarkesto.net.httpclient.HttpSession;
 
@@ -116,40 +119,26 @@ public class TestDe {
 	}
 
 	public static String removeSpamFromPageHtml(String html) {
-		if (Str.isBlank(html)) return null;
-
-		String beginIndicator = "<h2";
-		String endIndicator = "<div class=\"page__body__secondary\" id=\"secondary\"";
-
-		if (html.contains("<div class=\"ct-products\">")) {
-			beginIndicator = "<div class=\"ct-products\">";
-		} else if (html.contains("<div class=\"ct-wrapper\"")) {
-			beginIndicator = "<div class=\"ct-wrapper\">";
-		} else if (html.contains("<div class=\"page__body__primary\" id=\"primary\">")) {
-			beginIndicator = "<div class=\"page__body__primary\" id=\"primary\">";
+		HtmlPage page;
+		try {
+			page = new HtmlParser().parse(html);
+		} catch (ParseException ex) {
+			throw new RuntimeException("Parsing error", ex);
 		}
 
-		if (html.contains("<!--CT ProductComparisonPromoControl")) {
-			endIndicator = "<!--CT ProductComparisonPromoControl";
-		} else if (html.contains("<div class=\"articlepage-next\"")) {
-			endIndicator = "<div class=\"articlepage-next\">";
-		} else if (html.contains("<div class=\"paymentbox\" id=\"payment\"")) {
-			endIndicator = "<div class=\"paymentbox\" id=\"payment\"";
-		} else if (html.contains("<div id=\"ugc\">")) {
-			endIndicator = "<div id=\"ugc\">";
-		}
+		HtmlTag tProducts = page.getTagByStyleClass("ct-products");
+		if (tProducts != null) return removeContentSpam(tProducts).toString();
 
-		html = beginIndicator + Str.cutFromTo(html, beginIndicator, endIndicator);
+		HtmlTag tPrimary = page.getTagById("primary");
+		if (tPrimary != null) return removeContentSpam(tPrimary).toString();
 
-		html = Str.removeCenter(html, "<div class=\"paymentbox\"", "</div></div></div>");
-		html = Str.removeCenter(html, "<div class=\"articlepage-next\"", "</div>");
-		html = Str.removeCenter(html, "<div class=\"productlist-header\"", "</div>");
-		html = Str.removeCenter(html, "<div class=\"productlist-footer\"", "</div>");
-		html = Str.removeCenter(html, "<div id=\"mp3content", "</div>");
-		html = Str.removeCenter(html, "<p class=\"back\"", "</p>");
-		html = Str.removeCenters(html, "<div class=\"product-compare\">", "</div></div></div>");
-		html = Str.removeCenters(html, "<div class=\"product-comparison ", "</div>");
-		return html;
+		return removeContentSpam(page.getBodyOrRoot()).toString();
+	}
+
+	private static HtmlTag removeContentSpam(HtmlTag tag) {
+		tag.removeTagsByStyleClass("product-compare", true);
+		tag.removeTagsByStyleClass("product-comparison", true);
+		return tag;
 	}
 
 	public static Article downloadArticle(ArticleRef ref, OperationObserver observer) throws ParseException {

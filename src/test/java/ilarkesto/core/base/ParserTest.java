@@ -12,36 +12,19 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package ilarkesto.html.dom;
+package ilarkesto.core.base;
 
-import java.util.ArrayList;
+import ilarkesto.core.base.Parser.ParseException;
+import ilarkesto.testng.ATest;
 
-public class HtmlPage extends HtmlTag {
+import org.testng.annotations.Test;
 
-	public HtmlPage() {
-		super(null, "doctype", null, false);
-		contents = new ArrayList<AHtmlData>(1);
+public class ParserTest extends ATest {
+
+	@Test
+	public void getUntil() throws ParseException {
+		Parser p = new Parser("<tag id='a'>");
+		assertEquals(p.getUntil(" ", "/>", ">"), "<tag");
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		for (AHtmlData data : contents) {
-			sb.append(data.toString());
-		}
-		return sb.toString();
-	}
-
-	public HtmlTag getBody() {
-		return getTagByName("body");
-	}
-
-	public HtmlTag getBodyOrRoot() {
-		HtmlTag body = getBody();
-		if (body != null) return body;
-		for (AHtmlData data : contents) {
-			if (data instanceof HtmlTag) return (HtmlTag) data;
-		}
-		return null;
-	}
 }

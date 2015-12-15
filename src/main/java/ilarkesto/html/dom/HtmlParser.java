@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -16,6 +16,7 @@ package ilarkesto.html.dom;
 
 import ilarkesto.core.base.Parser;
 import ilarkesto.core.base.Parser.ParseException;
+import ilarkesto.core.base.Str;
 import ilarkesto.core.logging.Log;
 
 import java.util.LinkedHashMap;
@@ -50,7 +51,7 @@ public class HtmlParser {
 	}
 
 	private void parseNext() throws ParseException {
-		String text = parser.getUntil("<");
+		String text = parser.getUntilIf("<");
 		if (text == null) {
 			text = parser.getRemaining();
 			onText(text);
@@ -63,9 +64,17 @@ public class HtmlParser {
 
 		if (parser.isNext("</")) {
 			parseClosingTag();
+		} else if (parser.isNext("<!--")) {
+			parseComment();
 		} else {
 			parseOpeningTag();
 		}
+	}
+
+	private void parseComment() throws ParseException {
+		parser.gotoAfter("<!--");
+		String text = parser.getUntilAndGotoAfter("-->");
+		onComment(text);
 	}
 
 	private void parseOpeningTag() throws ParseException {
@@ -90,6 +99,12 @@ public class HtmlParser {
 
 		HtmlTag tag = new HtmlTag(currentTag, tagName, attributes, closed);
 		onTagStarted(tag);
+
+		if (tag.isContentTextOnly()) {
+			String text = parser.getUntil("</" + tag.getName() + ">");
+			parser.gotoAfter(text);
+			onText(text);
+		}
 	}
 
 	private void parseClosingTag() throws ParseException {
@@ -99,9 +114,36 @@ public class HtmlParser {
 	}
 
 	private Map<String, String> parseAttributes() throws ParseException {
-		String s = parser.getUntil(">");
+		String s = parser.getUntil("/>", ">");
 		parser.gotoAfter(s);
-		return new LinkedHashMap<String, String>();
+		if (Str.isBlank(s)) return null;
+
+		return parseAttributes(s);
+	}
+
+	private LinkedHashMap<String, String> parseAttributes(String s) throws ParseException {
+		Parser p = new Parser(s.trim());
+		LinkedHashMap<String, String> ret = new LinkedHashMap<String, String>();
+
+		while (!p.isEnd()) {
+			p.skipWhitespace();
+			String name = p.getUntilAndGotoAfter("=");
+			String quoting = "\"";
+			if (p.isNext("'")) {
+				quoting = "'";
+			}
+			p.gotoAfter(quoting);
+			String value = p.getUntilAndGotoAfter(quoting);
+			ret.put(name.trim(), value.trim());
+			p.skipWhitespace();
+		}
+
+		return ret;
+	}
+
+	private void onComment(String text) {
+		if (debug) log.debug("Comment:", text);
+		currentContainer.add(new HtmlComment(text));
 	}
 
 	private void onTagStarted(HtmlTag tag) {

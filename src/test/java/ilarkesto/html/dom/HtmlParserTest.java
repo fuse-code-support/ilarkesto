@@ -33,7 +33,22 @@ public class HtmlParserTest extends ATest {
 		assertParseToString("<!doctype html><html><p>hello</p> <p>world</p></html>");
 	}
 
-	private void assertParseToString(String html) throws ParseException {
+	@Test
+	public void parseWithParameters() throws ParseException {
+		assertParseToString("<!doctype html><html><div id=\"a\">test</div></html>");
+	}
+
+	@Test
+	public void parseWithComments() throws ParseException {
+		assertParseToString("<!doctype html><html><!--comment-->hello world</html>");
+	}
+
+	@Test
+	public void parseWithScript() throws ParseException {
+		assertParseToString("<!doctype html><html><script> script <code> here</script></html>");
+	}
+
+	private static void assertParseToString(String html) throws ParseException {
 		assertEquals(new HtmlParser().parse(html).toString(), html);
 	}
 

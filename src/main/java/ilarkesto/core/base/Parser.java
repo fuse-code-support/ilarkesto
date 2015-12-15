@@ -45,7 +45,7 @@ public class Parser {
 
 	public String getUntil(String... ss) throws ParseException {
 		int idx = indexOf(data, pos, ss);
-		if (idx < 0) throw new ParseException("getUntil <" + ss + "> failed.", pos, data);
+		if (idx < 0) throw new ParseException("getUntil " + Str.format(ss) + " failed.", pos, data);
 		return data.substring(pos, idx);
 	}
 
@@ -81,6 +81,7 @@ public class Parser {
 		int lowest = -1;
 		for (String sub : subs) {
 			int i = s.indexOf(sub, start);
+			if (i < 0) continue;
 			if (lowest == -1 || i < lowest) lowest = i;
 		}
 		return lowest;

@@ -14,34 +14,18 @@
  */
 package ilarkesto.html.dom;
 
-import java.util.ArrayList;
+public class HtmlComment extends AHtmlData {
 
-public class HtmlPage extends HtmlTag {
+	private String text;
 
-	public HtmlPage() {
-		super(null, "doctype", null, false);
-		contents = new ArrayList<AHtmlData>(1);
+	public HtmlComment(String text) {
+		super();
+		this.text = text;
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		for (AHtmlData data : contents) {
-			sb.append(data.toString());
-		}
-		return sb.toString();
+		return "<!--" + (text == null ? "" : text) + "-->";
 	}
 
-	public HtmlTag getBody() {
-		return getTagByName("body");
-	}
-
-	public HtmlTag getBodyOrRoot() {
-		HtmlTag body = getBody();
-		if (body != null) return body;
-		for (AHtmlData data : contents) {
-			if (data instanceof HtmlTag) return (HtmlTag) data;
-		}
-		return null;
-	}
 }

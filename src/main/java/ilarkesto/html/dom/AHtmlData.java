@@ -14,6 +14,7 @@
  */
 package ilarkesto.html.dom;
 
+
 public abstract class AHtmlData {
 
 }

@@ -62,7 +62,7 @@ public class TestDeTest extends ATest {
 		try {
 			TestDe.login(loginData, observer);
 		} finally {
-			// TestDe.logout(observer);
+			TestDe.logout(observer);
 		}
 	}
 
@@ -74,8 +74,10 @@ public class TestDeTest extends ATest {
 					.downloadPageHtml("Druckertinten-Bis-zu-90-Prozent-Ersparnis-4673398-4673669", observer);
 			html = TestDe.removeSpamFromPageHtml(html);
 			log.info(html);
+
 			assertContains(html, "Druckerpatronen 03/2014");
 			assertContains(html, "gut (1,8)");
+
 			assertContainsNot(html, "Zurück zum Artikel");
 			assertContainsNot(html, "Aktivierte Filter");
 			assertContainsNot(html, "Bewertung im Detail");
@@ -90,6 +92,8 @@ public class TestDeTest extends ATest {
 	public void removeSpamSpritpreisApps() throws ParseException {
 		String html = TestDe.downloadPageHtml("Spritpreis-Apps-im-Datenschutz-Test-Vier-sind-kritisch-4663692-4663694",
 			observer);
+		assertContains(html, "Bezieht die Daten");
+		assertContains(html, "zum Artikel");
 		html = TestDe.removeSpamFromPageHtml(html);
 		assertContains(html, "Bezieht die Daten");
 		assertContains(html, "wurde keine als sehr kritisch");
@@ -235,7 +239,7 @@ public class TestDeTest extends ATest {
 		for (SubArticleRef sub : subArticles) {
 			log.info("  ", sub);
 		}
-		assertSize(subArticles, 8);
+		assertSize(subArticles, 9);
 	}
 
 	@Test
