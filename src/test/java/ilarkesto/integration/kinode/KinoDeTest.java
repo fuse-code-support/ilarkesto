@@ -14,14 +14,41 @@
  */
 package ilarkesto.integration.kinode;
 
+import ilarkesto.core.time.DateAndTime;
+import ilarkesto.integration.kinode.KinoDe.Movie;
 import ilarkesto.testng.ATest;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.testng.annotations.Test;
 
 public class KinoDeTest extends ATest {
 
 	@Test
+	public void loadMovie() {
+		Movie movie = KinoDe.loadMovie("star-wars-das-erwachen-der-macht-2015", observer);
+		assertEquals(movie.title, "Star Wars: Das Erwachen der Macht");
+		assertEquals(movie.posterUrl,
+			"http://media1.kino.de/2015/12/star-wars-das-erwachen-der-macht-2015-filmplakat-rcm236x336u.jpg");
+	}
+
+	@Test
 	public void loadShows() {
-		// KinoDe.loadShows(KinoDe.CINEMA_ID_RINTELN, new MovieShowConsumer() {}, Date.today(), observer);
+		Consumer consumer = new Consumer();
+		KinoDe.loadShows(KinoDe.CINEMA_ID_RINTELN, consumer, observer);
+		assertNotEmpty(consumer.movieIds);
+	}
+
+	class Consumer implements MovieShowConsumer {
+
+		private Set<String> movieIds = new HashSet<String>();
+
+		@Override
+		public void onMovieShow(String cinemaId, DateAndTime time, String movieId, String movieTitle,
+				String movieDescription, String movieCoverUrl) {
+			movieIds.add(movieId);
+		}
+
 	}
 }

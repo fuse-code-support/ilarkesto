@@ -84,6 +84,22 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		appendTagStart(sb);
+
+		if (closed) return sb.toString();
+
+		if (contents != null) {
+			for (AHtmlData data : contents) {
+				sb.append(data.toString());
+			}
+		}
+
+		sb.append("</" + name + ">");
+
+		return sb.toString();
+	}
+
+	private void appendTagStart(StringBuilder sb) {
 		sb.append("<").append(name);
 
 		if (attributes != null) {
@@ -97,16 +113,34 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 
 		if (closed) {
 			sb.append("/>");
-			return sb.toString();
+		} else {
+			sb.append(">");
 		}
-		sb.append(">");
+	}
+
+	public String toFormatedString() {
+		return toFormatedString("\n").trim();
+	}
+
+	private String toFormatedString(String prefix) {
+		StringBuilder sb = new StringBuilder();
+		if (prefix != null) sb.append(prefix);
+		appendTagStart(sb);
+
+		if (closed) return sb.toString();
 
 		if (contents != null) {
 			for (AHtmlData data : contents) {
-				sb.append(data.toString());
+				if (data instanceof HtmlTag) {
+					sb.append(((HtmlTag) data).toFormatedString(prefix + "  "));
+				} else {
+					sb.append(prefix);
+					sb.append(data.toString());
+				}
 			}
 		}
 
+		sb.append(prefix);
 		sb.append("</" + name + ">");
 
 		return sb.toString();
@@ -131,13 +165,51 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 		return attributes.get(name);
 	}
 
+	public List<HtmlTag> getTagsByName(String name, boolean recurse) {
+		ArrayList<HtmlTag> ret = new ArrayList<HtmlTag>();
+		if (contents == null) return ret;
+		for (AHtmlData data : contents) {
+			if (!(data instanceof HtmlTag)) continue;
+			HtmlTag tag = (HtmlTag) data;
+			if (tag.getName().equals(name)) {
+				ret.add(tag);
+				continue;
+			}
+			if (!recurse) continue;
+			ret.addAll(tag.getTagsByName(name, recurse));
+		}
+		return ret;
+	}
+
 	public HtmlTag getTagByName(String name) {
+		return getTagByName(name, true);
+	}
+
+	public HtmlTag getTagByName(String name, boolean recurse) {
 		if (contents == null) return null;
 		for (AHtmlData data : contents) {
 			if (!(data instanceof HtmlTag)) continue;
 			HtmlTag tag = (HtmlTag) data;
 			if (tag.getName().equals(name)) return tag;
-			HtmlTag ret = tag.getTagByName(name);
+			if (!recurse) continue;
+			HtmlTag ret = tag.getTagByName(name, recurse);
+			if (ret != null) return ret;
+		}
+		return null;
+	}
+
+	public HtmlTag getTagByNameAndStyleClass(String name, String classToCheck) {
+		return getTagByNameAndStyleClass(name, classToCheck, true);
+	}
+
+	public HtmlTag getTagByNameAndStyleClass(String name, String classToCheck, boolean recurse) {
+		if (contents == null) return null;
+		for (AHtmlData data : contents) {
+			if (!(data instanceof HtmlTag)) continue;
+			HtmlTag tag = (HtmlTag) data;
+			if (tag.getName().equals(name) && tag.isStyleClass(classToCheck)) return tag;
+			if (!recurse) continue;
+			HtmlTag ret = tag.getTagByNameAndStyleClass(name, classToCheck, recurse);
 			if (ret != null) return ret;
 		}
 		return null;
@@ -156,12 +228,17 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 	}
 
 	public HtmlTag getTagByStyleClass(String styleClass) {
+		return getTagByStyleClass(styleClass, true);
+	}
+
+	public HtmlTag getTagByStyleClass(String styleClass, boolean recurse) {
 		if (contents == null) return null;
 		for (AHtmlData data : contents) {
 			if (!(data instanceof HtmlTag)) continue;
 			HtmlTag tag = (HtmlTag) data;
 			if (tag.isStyleClass(styleClass)) return tag;
-			HtmlTag ret = tag.getTagByStyleClass(styleClass);
+			if (!recurse) continue;
+			HtmlTag ret = tag.getTagByStyleClass(styleClass, recurse);
 			if (ret != null) return ret;
 		}
 		return null;
@@ -175,6 +252,15 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 			if (tag.isStyleClass(styleClass)) contents.remove(tag);
 			if (recurse) tag.removeTagsByStyleClass(styleClass, recurse);
 		}
+	}
+
+	public String getContentAsText() {
+		if (contents == null) return null;
+		StringBuilder sb = new StringBuilder();
+		for (AHtmlData data : contents) {
+			sb.append(data.toString());
+		}
+		return sb.toString();
 	}
 
 }

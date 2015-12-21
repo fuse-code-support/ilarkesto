@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class HtmlParser {
 
-	private static final boolean debug = true;
+	private static final boolean debug = false;
 	private static final Log log = Log.get(HtmlParser.class);
 
 	private HtmlPage page;
@@ -163,7 +163,8 @@ public class HtmlParser {
 		if (debug) log.debug("End tag:", tagName);
 
 		// TODO auto correction here
-		currentTag = currentTag.getParent();
+		currentTag = currentTag == null ? null : currentTag.getParent();
+
 		currentContainer = currentTag == null ? page : currentTag;
 	}
 
