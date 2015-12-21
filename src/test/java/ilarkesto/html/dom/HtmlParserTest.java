@@ -39,6 +39,20 @@ public class HtmlParserTest extends ATest {
 	}
 
 	@Test
+	public void parseWithParametersWithoutQuotas() throws ParseException {
+		HtmlPage page = new HtmlParser().parse("<!doctype html><html><div width=2>test</div></html>");
+		HtmlTag div = page.getTagByName("div");
+		assertEquals(div.getAttribute("width"), "2");
+	}
+
+	@Test
+	public void parseWithParametersWithGt() throws ParseException {
+		HtmlPage page = new HtmlParser().parse("<!doctype html><html><div attr=\"a>b\">test</div></html>");
+		HtmlTag div = page.getTagByName("div");
+		assertEquals(div.getAttribute("attr"), "a>b");
+	}
+
+	@Test
 	public void parseWithComments() throws ParseException {
 		assertParseToString("<!doctype html><html><!--comment-->hello world</html>");
 	}

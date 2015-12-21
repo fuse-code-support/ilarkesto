@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -16,7 +16,6 @@ package ilarkesto.html.dom;
 
 import ilarkesto.core.base.Parser;
 import ilarkesto.core.base.Parser.ParseException;
-import ilarkesto.core.base.Str;
 import ilarkesto.core.logging.Log;
 
 import java.util.LinkedHashMap;
@@ -113,29 +112,32 @@ public class HtmlParser {
 		onTagClosed(tagName);
 	}
 
-	private Map<String, String> parseAttributes() throws ParseException {
-		String s = parser.getUntil("/>", ">");
-		parser.gotoAfter(s);
-		if (Str.isBlank(s)) return null;
-
-		return parseAttributes(s);
-	}
-
-	private LinkedHashMap<String, String> parseAttributes(String s) throws ParseException {
-		Parser p = new Parser(s.trim());
+	private LinkedHashMap<String, String> parseAttributes() throws ParseException {
+		Parser p = parser;
 		LinkedHashMap<String, String> ret = new LinkedHashMap<String, String>();
 
-		while (!p.isEnd()) {
+		while (true) {
 			p.skipWhitespace();
-			String name = p.getUntilAndGotoAfter("=");
-			String quoting = "\"";
-			if (p.isNext("'")) {
+			String name = p.getUntilAndGotoAfter("=").trim();
+			p.skipWhitespace();
+			String quoting = null;
+			if (p.isNext("\"")) {
+				quoting = "\"";
+			} else if (p.isNext("'")) {
 				quoting = "'";
 			}
-			p.gotoAfter(quoting);
-			String value = p.getUntilAndGotoAfter(quoting);
+			String value;
+			if (quoting == null) {
+				value = p.getUntilIf(" ", "/>", ">");
+				if (value == null) value = p.getRemaining();
+				p.gotoAfter(value);
+			} else {
+				p.gotoAfter(quoting);
+				value = p.getUntilAndGotoAfter(quoting);
+			}
 			ret.put(name.trim(), value.trim());
 			p.skipWhitespace();
+			if (p.isNext(">") || p.isNext("/>")) break;
 		}
 
 		return ret;

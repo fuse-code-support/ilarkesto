@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -18,9 +18,11 @@ import ilarkesto.base.Str;
 import ilarkesto.core.base.Parser;
 import ilarkesto.core.base.Parser.ParseException;
 import ilarkesto.core.logging.Log;
+import ilarkesto.html.dom.HtmlPage;
+import ilarkesto.html.dom.HtmlParser;
+import ilarkesto.html.dom.HtmlTag;
 import ilarkesto.integration.httpunit.HttpUnit;
-import ilarkesto.io.IO;
-import ilarkesto.net.HttpDownloader;
+import ilarkesto.net.httpclient.HttpSession;
 
 import java.io.File;
 
@@ -88,7 +90,7 @@ public class Imdb {
 		if (imdbId == null) return null;
 		String url = getPageUrl(imdbId);
 		log.info("Loading IMDB record:", imdbId);
-		String html = HttpDownloader.create().downloadText(url, IO.UTF_8);
+		String html = new HttpSession().downloadText(url);
 		// System.out.println("-----\n\n" + akasHtml + "\n\n-----------");
 		String title;
 		Integer year;
@@ -122,7 +124,10 @@ public class Imdb {
 	}
 
 	private static String parseTrailerId(String html) {
-		return Str.cutFromTo(html, "href=\"" + PATH_TRAILER + "", "/");
+		String id = Str.cutFromTo(html, "href=\"" + PATH_TRAILER + "", "/");
+		if (id == null) return null;
+		if (id.contains("?")) return Str.cutTo(id, "?");
+		return id;
 	}
 
 	private static Integer parseYear(String html) throws ParseException {
@@ -171,11 +176,23 @@ public class Imdb {
 	}
 
 	private static String parseCoverId(String html) throws ParseException {
-		Parser parser = new Parser(html);
-		parser.gotoAfter("id=\"img_primary\"");
-		parser.gotoAfter("<img");
-		parser.gotoAfter("src=\"");
-		String url = parser.getUntil("\"");
+		HtmlPage page = new HtmlParser().parse(html);
+
+		HtmlTag container = page.getTagByStyleClass("poster");
+		if (container == null) container = page.getTagById("img_primary");
+
+		if (container == null) return null;
+
+		HtmlTag img = container.getTagByName("img");
+		if (img == null) return null;
+
+		String url = img.getAttribute("src");
+
+		// Parser parser = new Parser(html);
+		// parser.gotoAfter("id=\"img_primary\"");
+		// parser.gotoAfter("<img");
+		// parser.gotoAfter("src=\"");
+		// String url = parser.getUntil("\"");
 
 		// HTMLElement img;
 		// try {
@@ -220,7 +237,7 @@ public class Imdb {
 	public static void downloadCover(String coverId, File destinationFile) {
 		String url = getCoverUrl(coverId);
 		log.info("Downloading IMDB cover:", url);
-		IO.downloadUrlToFile(url, destinationFile.getPath());
+		new HttpSession().downloadToFile(url, destinationFile);
 	}
 
 	public static String getCoverUrl(String coverId) {
