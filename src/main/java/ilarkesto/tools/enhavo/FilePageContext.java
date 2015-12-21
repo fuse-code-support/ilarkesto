@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -17,6 +17,7 @@ package ilarkesto.tools.enhavo;
 import ilarkesto.base.Str;
 import ilarkesto.core.base.Filename;
 import ilarkesto.core.base.Filepath;
+import ilarkesto.core.logging.Log;
 import ilarkesto.json.JsonObject;
 import ilarkesto.templating.Context;
 import ilarkesto.templating.Template;
@@ -28,7 +29,7 @@ import java.util.List;
 public class FilePageContext extends APageContext implements TemplateResolver {
 
 	private File contentFile;
-	private JsonObject page;
+	private JsonObject jPage;
 	private JsonObject content;
 	private String templatePath;
 	private Template template;
@@ -40,9 +41,9 @@ public class FilePageContext extends APageContext implements TemplateResolver {
 
 	@Override
 	protected void onBuild() {
-		page = JsonObject.loadFile(contentFile, false);
+		jPage = JsonObject.loadFile(contentFile, false);
 
-		templatePath = page.getString("template");
+		templatePath = jPage.getString("template");
 		template = site.getTemplate(templatePath);
 		if (template == null) {
 			error("ABORTED");
@@ -50,17 +51,18 @@ public class FilePageContext extends APageContext implements TemplateResolver {
 		}
 		String templateFilename = new File(templatePath).getName();
 
-		JsonObject multipage = page.getObject("multipage-content");
+		JsonObject jMultipage = jPage.getObject("multipage-content");
 		String relativeOutputPath = site.getRelativePath(contentFile.getParentFile());
-		if (multipage == null) {
+		if (jMultipage == null) {
 			// single page
-			content = page.getObject("content");
+			content = jPage.getObject("content");
 			if (content != null) processContent(content);
 			processTemplate(computeOutputPath(relativeOutputPath, templateFilename, contentFile.getName()));
 		} else {
 			// multiple pages
-			processContent(multipage);
-			List<JsonObject> contents = multipage.getArrayOfObjects("list");
+			processContent(jMultipage);
+			List<JsonObject> contents = jMultipage.getArrayOfObjects("list");
+			Log.TEST("******** multipage:", jMultipage.toFormatedString());
 			if (contents == null || contents.isEmpty()) {
 				info("Empty multipage list");
 				return;
@@ -69,11 +71,16 @@ public class FilePageContext extends APageContext implements TemplateResolver {
 			for (JsonObject content : contents) {
 				this.content = content;
 				String pageName = null;
-				String pagenameProperty = multipage.getString("pagename-property");
+				String pagenameProperty = jMultipage.getString("pagename-property");
 				if (pagenameProperty != null)
 					pageName = content.getDeepString(Str.tokenizeToArray(pagenameProperty, "/"));
 				if (pageName == null) pageName = new Filename(contentFile.getName()).getPrefix() + "-" + i;
-				processTemplate(computeOutputPath(relativeOutputPath, templateFilename, pageName));
+				cms.getProt().pushContext(pageName);
+				try {
+					processTemplate(computeOutputPath(relativeOutputPath, templateFilename, pageName));
+				} finally {
+					cms.getProt().popContext();
+				}
 				i++;
 			}
 		}
