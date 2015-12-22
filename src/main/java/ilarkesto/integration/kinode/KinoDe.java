@@ -18,7 +18,9 @@ import ilarkesto.core.base.OperationObserver;
 import ilarkesto.core.base.Parser.ParseException;
 import ilarkesto.core.base.Str;
 import ilarkesto.core.logging.Log;
+import ilarkesto.core.time.Date;
 import ilarkesto.core.time.DateAndTime;
+import ilarkesto.core.time.Time;
 import ilarkesto.html.dom.HtmlPage;
 import ilarkesto.html.dom.HtmlParser;
 import ilarkesto.html.dom.HtmlTag;
@@ -26,6 +28,7 @@ import ilarkesto.net.httpclient.HttpSession;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,7 @@ public class KinoDe {
 	private static final String URL_BASE_FILM = URL_BASE + "/film/";
 
 	public static final String CINEMA_ID_RINTELN = "rinteln/kinocenter-rinteln-k13450";
+	public static final String CINEMA_ID_BUECKEBURG = "bueckeburg/residenz-kino-center-k13531";
 
 	private static HttpSession http = new HttpSession();
 
@@ -46,12 +50,16 @@ public class KinoDe {
 
 	private static final Map<String, Movie> movies = new HashMap<String, Movie>();
 
+	public static String getMovieUrl(String movieId) {
+		return URL_BASE_FILM + movieId;
+	}
+
 	static Movie loadMovie(String movieId, OperationObserver observer) {
 		Movie movie = movies.get(movieId);
 		if (movie != null) return movie;
 
-		String url = URL_BASE_FILM + movieId;
-		observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
+		String url = getMovieUrl(movieId);
+		if (observer != null) observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
 		String html = http.downloadText(url);
 		HtmlPage page;
 		try {
@@ -84,7 +92,7 @@ public class KinoDe {
 
 	public static void loadShows(String cinemaId, MovieShowConsumer callback, OperationObserver observer) {
 		String url = URL_BASE_PROGRAMM + cinemaId;
-		observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
+		if (observer != null) observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
 		String html = http.downloadText(url);
 		HtmlPage page;
 		try {
@@ -93,6 +101,10 @@ public class KinoDe {
 			throw new RuntimeException(ex);
 		}
 		HtmlTag outer = page.getTagByStyleClass("programScheduleOuter");
+		if (outer == null) {
+			log.info("Missing tag with class 'programScheduleOuter' for " + cinemaId);
+			return;
+		}
 		processShows(outer.getTagByNameAndStyleClass("div", "programSchedule"), cinemaId, callback, observer);
 
 		HtmlTag tScript = outer.getTagByName("script");
@@ -131,19 +143,24 @@ public class KinoDe {
 		for (HtmlTag tLi : tag.getTagsByName("li", true)) {
 			List<HtmlTag> tTimes = tLi.getTagsByName("time", true);
 			if (!tTimes.isEmpty()) {
+				Date date = null;
+				List<Time> times = new ArrayList<Time>();
 				for (HtmlTag tTime : tTimes) {
 					String sTime = tTime.getAttribute("datetime");
-					DateAndTime time;
+					DateAndTime dateAndTime;
 					try {
-						time = new DateAndTime(dateFormat.parse(sTime));
+						dateAndTime = new DateAndTime(dateFormat.parse(sTime));
 					} catch (java.text.ParseException ex) {
 						throw new RuntimeException(ex);
 					}
-					log.info("  -", time);
-
-					Movie movie = loadMovie(id, observer);
-					callback.onMovieShow(cinemaId, time, movie.id, movie.title, movie.description, movie.posterUrl);
+					log.info("  -", dateAndTime);
+					date = dateAndTime.getDate();
+					times.add(dateAndTime.getTime());
 				}
+				if (id == null) continue;
+				log.info("*", title, "->", id);
+				Movie movie = loadMovie(id, observer);
+				callback.onMovieShow(cinemaId, date, times, movie.id, movie.title, movie.description, movie.posterUrl);
 				continue;
 			}
 
@@ -157,8 +174,6 @@ public class KinoDe {
 				title = tA.getContentAsText();
 			}
 			title = title.replace("\\'", "'");
-			log.info("*", title, "->", id);
-
 		}
 
 	}
