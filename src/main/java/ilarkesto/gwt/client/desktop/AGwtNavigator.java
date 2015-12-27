@@ -37,8 +37,9 @@ public abstract class AGwtNavigator implements ValueChangeHandler<String> {
 	}
 
 	public void handleToken(String token) {
+		log.debug("handleToken()", token);
 		if (isDisabled()) return;
-		if (Str.isBlank(token)) token = "Home";
+		if (Str.isBlank(token)) token = getApplicationStartToken();
 		int activityNameEndIdx = token.indexOf(Gwt.HISTORY_TOKEN_SEPARATOR);
 		String activityParamsToken = null;
 		String activityName;
@@ -49,6 +50,10 @@ public abstract class AGwtNavigator implements ValueChangeHandler<String> {
 			activityParamsToken = token.substring(activityNameEndIdx + 1);
 		}
 		startActivity(activityName, activityParamsToken);
+	}
+
+	protected String getApplicationStartToken() {
+		return "Home";
 	}
 
 	private void startActivity(String activityName, String activityParamsToken) {
