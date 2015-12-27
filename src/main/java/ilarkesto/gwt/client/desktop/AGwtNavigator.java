@@ -14,8 +14,10 @@
  */
 package ilarkesto.gwt.client.desktop;
 
+import ilarkesto.core.base.Args;
 import ilarkesto.core.base.Str;
 import ilarkesto.core.logging.Log;
+import ilarkesto.core.persistance.Entity;
 import ilarkesto.gwt.client.AGwtApplication;
 import ilarkesto.gwt.client.Gwt;
 
@@ -24,7 +26,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
 public abstract class AGwtNavigator implements ValueChangeHandler<String> {
 
-	protected final Log log = Log.get(getClass());
+	private static final Log log = Log.get(AGwtNavigator.class);
 
 	private boolean disabled;
 
@@ -63,6 +65,31 @@ public abstract class AGwtNavigator implements ValueChangeHandler<String> {
 		AActivity activity = AGwtApplication.get().getActivityCatalog().instantiateActivity(activityName);
 
 		activity.startAsRoot(parameters);
+	}
+
+	protected Entity switchUiEntity(Entity entity) {
+		return entity;
+	}
+
+	public String getTokenForEntityActivity(Entity entity) {
+		Args.assertNotNull(entity, "entity");
+		entity = getUiEntity(entity);
+		return getActivityNameForEntity(entity) + new ActivityParameters(entity).createToken();
+	}
+
+	public Entity getUiEntity(Entity entity) {
+		if (entity == null) return null;
+		Entity uiEntity = switchUiEntity(entity);
+		if (uiEntity == null) {
+			log.error("Switching UI entity provided null:", AGwtApplication.get().getNavigator()
+					.getActivityNameForEntity(entity), entity.getId(), entity);
+			return entity;
+		}
+		return uiEntity;
+	}
+
+	public String getActivityNameForEntity(Entity entity) {
+		return Str.getSimpleName(entity.getClass());
 	}
 
 	public void disable() {
