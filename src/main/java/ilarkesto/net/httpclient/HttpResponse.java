@@ -143,4 +143,9 @@ public class HttpResponse {
 		return this;
 	}
 
+	public HttpResponse setCharset(String charset) {
+		this.charset = charset;
+		return this;
+	}
+
 }

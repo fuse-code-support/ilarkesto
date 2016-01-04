@@ -1,11 +1,13 @@
 package ilarkesto.integration.awsschaumburg;
 
+import ilarkesto.core.base.MapBuilder;
 import ilarkesto.core.base.OperationObserver;
 import ilarkesto.core.base.Parser;
 import ilarkesto.core.base.Parser.ParseException;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.Date;
-import ilarkesto.io.IO;
+import ilarkesto.core.time.Tm;
+import ilarkesto.net.httpclient.HttpSession;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,15 +20,22 @@ public class AwsSchaumburgDe {
 
 	private static Log log = Log.get(AwsSchaumburgDe.class);
 	private static final String CHARSET = "ISO-8859-1";
-	public static final String BASE_URL = "http://www.aws-schaumburg.de/db/";
-	private static final String LISTE_URL = BASE_URL + "getListe.php?ortid=17";
+	public static final String BASE_URL = "http://aws-shg.de/";
+	private static final String LISTE_URL = BASE_URL + "abfuhr/Liste.php?ortid=17";
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
 	private static final Date minDate = Date.beforeDays(14);
 
 	public static List<WastePickupArea> loadPickupAreas() throws ParseException {
 		GregorianCalendar calendar = new GregorianCalendar(Locale.GERMANY);
 		int year = calendar.get(Calendar.YEAR);
-		String data = IO.downloadUrlToString(LISTE_URL + "&curJahr=" + year, CHARSET);
+		String url = LISTE_URL + "&curJahr=" + year;
+		log.debug(url);
+
+		HttpSession session = new HttpSession().setCharset(CHARSET);
+		session.postAndDownloadText("http://aws-shg.de/abfuhr/getListe.php?ortid=17",
+			new MapBuilder().put("ortid", "17").put("curJahr", String.valueOf(Tm.getCurrentYear())).getMap());
+		String data = session.downloadText("http://aws-shg.de/abfuhr/getListe.php");
+
 		Parser parser = new Parser(data);
 		List<WastePickupArea> ret = new ArrayList<WastePickupArea>();
 		parser.gotoAfter("<SELECT name=\"strassenid\"");
@@ -52,13 +61,13 @@ public class AwsSchaumburgDe {
 			throws ParseException {
 		String url = getListeUrl(year, areaId);
 		observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
-		String data = IO.downloadUrlToString(url, CHARSET);
+		String data = new HttpSession().setCharset(CHARSET).downloadText(url);
 		ScheduleParser parser = new ScheduleParser(data, schedule);
 		parser.parsePickups();
 	}
 
 	public static String getListeUrl(int year, int areaId) {
-		return LISTE_URL + "&curJahr=" + year + "&strassenid=" + areaId;
+		return LISTE_URL + "&curJahr=" + year + "&SID=" + areaId;
 	}
 
 	static class ScheduleParser extends Parser {

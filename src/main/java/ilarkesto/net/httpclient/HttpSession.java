@@ -31,6 +31,8 @@ public class HttpSession {
 	private final Map<String, HttpCookie> cookies = new HashMap<String, HttpCookie>();
 	private final int redirectCount = 3;
 
+	private String charset;
+
 	public void addCookie(HttpCookie cookie) {
 		String name = cookie.getName();
 		boolean replace = cookies.containsKey(name);
@@ -43,7 +45,10 @@ public class HttpSession {
 	}
 
 	public HttpRequest request(String url) {
-		return new HttpRequest(url).setSession(this);
+		HttpRequest request = new HttpRequest(url);
+		request.setSession(this);
+		if (charset != null) request.setCharset(charset);
+		return request;
 	}
 
 	public String getCookieValue(String name) {
@@ -74,6 +79,11 @@ public class HttpSession {
 	public String postAndDownloadText(String url, Map<String, String> params, File file) {
 		return request(url).setPostParameters(params).addPostAttachment("file", file).execute()
 				.followRedirects(redirectCount).checkIfStatusCodeOk().readToString();
+	}
+
+	public HttpSession setCharset(String charset) {
+		this.charset = charset;
+		return this;
 	}
 
 }
