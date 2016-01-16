@@ -215,4 +215,8 @@ public abstract class AStream<A> {
 		return result;
 	}
 
+	public boolean isEmpty() {
+		return !hasNext();
+	}
+
 }
