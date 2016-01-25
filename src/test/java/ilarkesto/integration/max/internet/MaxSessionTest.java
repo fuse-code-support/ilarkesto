@@ -1,5 +1,8 @@
 package ilarkesto.integration.max.internet;
 
+import ilarkesto.core.time.Date;
+import ilarkesto.core.time.DateAndTime;
+import ilarkesto.core.time.Time;
 import ilarkesto.core.time.Weekday;
 import ilarkesto.integration.max.state.MaxCubeState;
 import ilarkesto.integration.max.state.MaxDevice;
@@ -21,15 +24,15 @@ import org.testng.annotations.Test;
 
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -47,6 +50,17 @@ public class MaxSessionTest extends ATest {
 		properties.load(new BufferedReader(new FileReader(file)));
 		username = properties.getProperty("username");
 		password = properties.getProperty("password");
+	}
+
+	@Test
+	public void changeTemp() {
+		MaxSession session = MaxSession.createElvInstance();
+		session.login(username, password);
+		MaxCubeState state = session.getMaxCubeState();
+		System.out.println(state.toString());
+
+		MaxRoom room = state.getRoomById(3);
+		session.executeSetRoomTemporaryMode(room, 16f, new DateAndTime(Date.today(), new Time(17, 00)).toJavaDate());
 	}
 
 	// @Test

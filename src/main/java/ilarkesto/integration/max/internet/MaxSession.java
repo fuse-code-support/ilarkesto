@@ -1,19 +1,20 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
 package ilarkesto.integration.max.internet;
 
+import ilarkesto.core.base.Str;
 import ilarkesto.core.logging.Log;
 import ilarkesto.integration.max.state.MaxCubeState;
 import ilarkesto.integration.max.state.MaxRoom;
@@ -65,7 +66,7 @@ public class MaxSession {
 
 	public void executeSetRoomAutoMode(MaxRoom room) {
 		Map<String, String> extra = new LinkedHashMap<String, String>();
-		extra.put("c0-e2", "string:" + room.getId());
+		extra.put("c0-e2", "number:" + room.getId());
 		extra.put("c0-e1", "Object_MaxSetRoomAutoMode:{roomId:reference:c0-e2}");
 		executeApiMethod(true, "setClientCommands", extra, "Array:[reference:c0-e1]");
 		log.info("Command transmitted:", "SetRoomAutoMode", room.getName());
@@ -81,8 +82,8 @@ public class MaxSession {
 
 	public void executeSetRoomPermanentMode(MaxRoom room, float temperature) {
 		Map<String, String> extra = new LinkedHashMap<String, String>();
-		extra.put("c0-e2", "string:" + room.getId());
-		extra.put("c0-e3", "number:" + temperature);
+		extra.put("c0-e2", "number:" + room.getId());
+		extra.put("c0-e3", "number:" + formatTemp(temperature));
 		extra.put("c0-e1", "Object_MaxSetRoomPermanentMode:{roomId:reference:c0-e2, temperature:reference:c0-e3}");
 		executeApiMethod(true, "setClientCommands", extra, "Array:[reference:c0-e1]");
 		log.info("Command transmitted:", "SetRoomPermanentMode", temperature, room.getName());
@@ -110,11 +111,17 @@ public class MaxSession {
 		Map<String, String> extra = new LinkedHashMap<String, String>();
 		extra.put("c0-e2", "string:" + room.getId());
 		extra.put("c0-e3", "Date:" + until.getTime());
-		extra.put("c0-e4", "number:" + temperature);
+		extra.put("c0-e4", "number:" + formatTemp(temperature));
 		extra.put("c0-e1",
 			"Object_MaxSetRoomTemporaryMode:{roomId:reference:c0-e2, date:reference:c0-e3, temperature:reference:c0-e4}");
 		executeApiMethod(true, "setClientCommands", extra, "Array:[reference:c0-e1]");
 		log.info("Command transmitted:", "SetRoomTemporaryMode", temperature, until, room.getName());
+	}
+
+	private String formatTemp(float temperature) {
+		String ret = String.valueOf(temperature);
+		ret = Str.removeSuffix(ret, ".0");
+		return ret;
 	}
 
 	public MaxCubeState getMaxCubeState() {
@@ -156,7 +163,7 @@ public class MaxSession {
 
 		Map<String, String> parameters = new LinkedHashMap<String, String>();
 		parameters.put("callCount", "1");
-		parameters.put("page", "/dwr/test/MaxRemoteApi");
+		parameters.put("page", "/index.html");
 		parameters.put("httpSessionId", httpSessionId);
 		parameters.put("scriptSessionId", scriptSessionId);
 		parameters.put("c0-scriptName", "MaxRemoteApi");
@@ -168,6 +175,11 @@ public class MaxSession {
 		}
 		parameters.put("batchId", String.valueOf(batchId));
 
+		StringBuilder sb = new StringBuilder("\n");
+		for (Map.Entry<String, String> entry : parameters.entrySet()) {
+			sb.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");
+		}
+		log.debug("POST parameters", sb);
 		String result = requestExecutor.postAndGetContent(baseUrl + "dwr/call/plaincall/MaxRemoteApi.login.dwr",
 			parameters);
 
