@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
@@ -177,7 +178,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			rowIndex++;
 			for (AColumn column : columns) {
 				TextBox filterTextbox = column.getFilterWidget();
-				SimplePanel frame = Widgets.frame(filterTextbox, Widgets.defaultSpacing);
+				SimplePanel frame = Widgets.frame(filterTextbox, 4);
 				table.setWidget(rowIndex, column.index, frame);
 			}
 		}
@@ -666,8 +667,15 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		public TextBox getFilterWidget() {
 			if (filterTextbox == null) {
 				filterTextbox = new TextBox();
-				// filterTextbox.getElement().setPropertyString("placeholder", "Filter");
-				filterTextbox.setStyleName("goon-TableFilterTextbox");
+				filterTextbox.getElement().setPropertyString("placeholder", "*");
+				Style style = filterTextbox.getElement().getStyle();
+				style.setWidth(100, Unit.PCT);
+				style.setMargin(0, Unit.PX);
+				// style.setPadding(Widgets.defaultSpacing, Unit.PX);
+				style.setColor(Colors.warning);
+				// style.setBackgroundColor("#FAFAFA");
+				style.setBorderWidth(0, Unit.PX);
+				style.setBorderStyle(BorderStyle.NONE);
 				filterTextbox.addKeyUpHandler(new KeyUpHandler() {
 
 					@Override

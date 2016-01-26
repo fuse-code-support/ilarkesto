@@ -89,8 +89,6 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 		style(".centered").marginLeftRightAuto();
 
 		style("#goon .gwt-Label").whiteSpacePreWrap();
-
-		style(".goon-TableFilterTextbox").width100().margin(0).padding(0).color(Colors.googleOrange).borderNone();
 	}
 
 	private void goonButton() {
