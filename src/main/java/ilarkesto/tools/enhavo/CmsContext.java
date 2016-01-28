@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -52,17 +52,12 @@ public class CmsContext {
 		this.dir = dir;
 
 		outputDir = new File(dir.getPath() + "/output");
-		IO.createDirectory(outputDir);
 		sitesOutputDir = new File(outputDir.getPath() + "/sites");
-		IO.createDirectory(sitesOutputDir);
 
 		inputDir = new File(dir.getPath() + "/input");
 		sitesDir = new File(inputDir.getPath() + "/sites");
-		IO.createDirectory(sitesDir);
 		templatesDir = new File(inputDir.getPath() + "/templates");
-		IO.createDirectory(templatesDir);
 		dataDir = new File(inputDir.getPath() + "/data");
-		IO.createDirectory(dataDir);
 
 		FilesContentProvider filesContentProvider = new FilesContentProvider(dataDir, additionalContentProvider)
 				.setBeanshellExecutor(beanshellExecutor);
@@ -87,6 +82,7 @@ public class CmsContext {
 		prot.info(DateAndTime.now().format());
 		RuntimeTracker rt = new RuntimeTracker();
 		try {
+			createDirs();
 			buildSites();
 		} finally {
 			prot.popContext();
@@ -94,6 +90,14 @@ public class CmsContext {
 			htmlProtocolBuilder.close();
 		}
 		if (buildObserver != null) buildObserver.onBuildEnd(rt.getRuntime());
+	}
+
+	private void createDirs() {
+		IO.createDirectory(outputDir);
+		IO.createDirectory(sitesOutputDir);
+		IO.createDirectory(sitesDir);
+		IO.createDirectory(templatesDir);
+		IO.createDirectory(dataDir);
 	}
 
 	private void buildSites() {
