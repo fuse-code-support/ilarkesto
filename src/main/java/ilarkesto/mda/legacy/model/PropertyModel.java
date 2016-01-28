@@ -51,6 +51,17 @@ public abstract class PropertyModel {
 
 	private String suffix;
 
+	private String selectableEntitiesListAllMethodName = "listAll";
+
+	public String getSelectableEntitiesListAllMethodName() {
+		return selectableEntitiesListAllMethodName;
+	}
+
+	public PropertyModel setSelectableEntitiesListAllMethodName(String selectableEntitiesListAllMethodName) {
+		this.selectableEntitiesListAllMethodName = selectableEntitiesListAllMethodName;
+		return this;
+	}
+
 	private List<WarningModel> warnings = new ArrayList<WarningModel>();
 
 	public List<WarningModel> getWarnings() {
