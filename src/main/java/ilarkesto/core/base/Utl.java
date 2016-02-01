@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -511,6 +511,17 @@ public class Utl {
 		if (value == null) return true;
 		if (value instanceof Collection) return ((Collection) value).isEmpty();
 		return false;
+	}
+
+	public static <T> List<T> getFirstElements(Collection<T> elements, int count) {
+		ArrayList<T> ret = new ArrayList<T>(count);
+		int i = 0;
+		for (T element : elements) {
+			if (i >= count) return ret;
+			ret.add(element);
+			i++;
+		}
+		return ret;
 	}
 
 }
