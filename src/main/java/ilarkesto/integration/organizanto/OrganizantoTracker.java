@@ -18,8 +18,7 @@ import ilarkesto.base.Sys;
 import ilarkesto.concurrent.ATask;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.DateAndTime;
-import ilarkesto.io.IO;
-import ilarkesto.net.HttpDownloader;
+import ilarkesto.net.httpclient.HttpSession;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +31,7 @@ public class OrganizantoTracker extends ATask {
 
 	private String propertyKey;
 
-	private HttpDownloader http = HttpDownloader.create();
+	private HttpSession http = new HttpSession();
 	private List<Event> events = new ArrayList<Event>();
 
 	public OrganizantoTracker(String propertyKey) {
@@ -73,7 +72,7 @@ public class OrganizantoTracker extends ATask {
 		params.put("message", event.message);
 		params.put("info", event.info);
 		params.put("alert", String.valueOf(event.alert));
-		http.post(url, params, IO.UTF_8);
+		http.postAndDownloadText(url, params);
 		events.remove(event);
 		log.info("Event transmitted:", event);
 	}
