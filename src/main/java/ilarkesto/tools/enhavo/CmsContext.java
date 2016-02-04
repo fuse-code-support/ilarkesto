@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -19,6 +19,7 @@ import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.DateAndTime;
 import ilarkesto.integration.BeanshellExecutor;
 import ilarkesto.io.IO;
+import ilarkesto.protocol.AProtocolConsumer;
 import ilarkesto.protocol.HtmlProtocolConsumer;
 import ilarkesto.protocol.ProtocolWriter;
 import ilarkesto.protocol.SysoutProtocolConsumer;
@@ -43,6 +44,7 @@ public class CmsContext {
 	private File sitesOutputDir;
 
 	private BuildObserver buildObserver;
+	private List<AProtocolConsumer> protocolConsumers = new ArrayList<AProtocolConsumer>();
 	private ContentProvider contentProvider;
 	private BeanshellExecutor beanshellExecutor;
 
@@ -78,6 +80,9 @@ public class CmsContext {
 		HtmlProtocolConsumer htmlProtocolConsumer = new HtmlProtocolConsumer(htmlProtocolBuilder);
 
 		prot = new ProtocolWriter(new SysoutProtocolConsumer(), htmlProtocolConsumer);
+		for (AProtocolConsumer consumer : protocolConsumers) {
+			prot.addConsumers(consumer);
+		}
 		prot.pushContext(dir.getAbsolutePath());
 		prot.info(DateAndTime.now().format());
 		RuntimeTracker rt = new RuntimeTracker();
@@ -158,5 +163,9 @@ public class CmsContext {
 
 	public void setBuildObserver(BuildObserver buildObserver) {
 		this.buildObserver = buildObserver;
+	}
+
+	public void addProtocolConsumers(AProtocolConsumer consumer) {
+		protocolConsumers.add(consumer);
 	}
 }
