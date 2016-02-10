@@ -23,5 +23,7 @@ DESTINATION_FILE=${DESTINATION_DIR}/${BACKUP_FILENAME}
 echo "Creating backup: $DESTINATION_FILE"
 tar -cjpf ${DESTINATION_FILE} $4 $5 $6 $7 $8 $9 ${10} ${11} ${12} ${13} ${14} ${15} ${16} ${17}
 
-echo "Deleting backups older then $CLEANOLDERTHENMINUTES minutes"
+echo "  Deleting backups older then $CLEANOLDERTHENMINUTES minutes"
 /opt/ilarkesto/bin/deleteoldfilesexceptone $DESTINATION_DIR "bak_${BACKUP_NAME}_*.tbz" $CLEANOLDERTHENMINUTES
+
+echo "  done"
