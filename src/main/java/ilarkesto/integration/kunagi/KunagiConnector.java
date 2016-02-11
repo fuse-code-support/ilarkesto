@@ -16,19 +16,22 @@ package ilarkesto.integration.kunagi;
 
 import ilarkesto.core.base.OperationObserver;
 import ilarkesto.core.logging.Log;
-import ilarkesto.io.IO;
-import ilarkesto.net.HttpDownloader;
+import ilarkesto.net.httpclient.HttpSession;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class KunagiConnector {
 
+	public static final String PARAM_SPAM_PREVENTION_CODE = "spamPreventionCode";
+	public static final String SPAM_PREVENTION_CODE = "no-spam";
+	public static final String SPAM_PREVENTION_TEXT = "\n\nthis-is-not-spam";
+
 	private static Log log = Log.get(KunagiConnector.class);
 
 	private String kunagiUrl;
 	private String projectId;
-	private HttpDownloader httpDownloader = HttpDownloader.create();
+	private HttpSession http = new HttpSession();
 
 	public KunagiConnector(String kunagiUrl, String projectId) {
 		super();
@@ -44,17 +47,17 @@ public class KunagiConnector {
 			String additionalInfo, boolean wiki, boolean publish) {
 		String url = kunagiUrl + "submitIssue";
 		observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
-		Map<String, String> data = new HashMap<String, String>();
-		data.put("projectId", projectId);
-		data.put("name", name);
-		data.put("email", email);
-		data.put("publish", String.valueOf(publish));
-		data.put("wiki", String.valueOf(wiki));
-		data.put("subject", subject);
-		data.put("text", text);
-		data.put("additionalInfo", additionalInfo);
-		data.put("spamPreventionCode", "no-spam");
-		String ret = httpDownloader.post(url, data, IO.UTF_8);
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("projectId", projectId);
+		params.put("name", name);
+		params.put("email", email);
+		params.put("publish", String.valueOf(publish));
+		params.put("wiki", String.valueOf(wiki));
+		params.put("subject", subject);
+		params.put("text", text + SPAM_PREVENTION_TEXT);
+		params.put("additionalInfo", additionalInfo);
+		params.put(PARAM_SPAM_PREVENTION_CODE, SPAM_PREVENTION_CODE);
+		String ret = http.postAndDownloadText(url, params);
 		if (ret.contains("Submitting issue failed") || ret.contains("Submitting your feedback failed")) {
 			log.error("Submitting issue failed:", ret, "\n", name, email, subject, text);
 			throw new RuntimeException(ret);
@@ -71,11 +74,6 @@ public class KunagiConnector {
 		int idx = responnse.indexOf("href='iss");
 		if (idx < 0) return null;
 		return responnse.substring(idx + 6, responnse.indexOf(".html"));
-	}
-
-	public KunagiConnector setHttpDownloader(HttpDownloader httpDownloader) {
-		this.httpDownloader = httpDownloader;
-		return this;
 	}
 
 }
