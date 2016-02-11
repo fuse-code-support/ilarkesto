@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -18,6 +18,7 @@ import ilarkesto.base.Str;
 import ilarkesto.core.base.Parser;
 import ilarkesto.core.base.Parser.ParseException;
 import ilarkesto.core.logging.Log;
+import ilarkesto.core.time.Tm;
 import ilarkesto.html.dom.HtmlPage;
 import ilarkesto.html.dom.HtmlParser;
 import ilarkesto.html.dom.HtmlTag;
@@ -224,6 +225,13 @@ public class Imdb {
 	}
 
 	public static String getTitleSearchUrl(String title) {
+		for (int year = 1960; year <= Tm.getCurrentYear(); year++) {
+			String sYear = String.valueOf(year);
+			if (title.contains(sYear)) {
+				title = title.substring(title.indexOf(sYear) + 4);
+				break;
+			}
+		}
 		return URL_AKAS + "/find?s=tt&q=" + Str.encodeUrlParameter(title);
 	}
 
