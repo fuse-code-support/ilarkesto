@@ -484,6 +484,10 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		return null;
 	}
 
+	protected boolean isHrefTargetBlank(int index) {
+		return false;
+	}
+
 	protected String getRowColor(O o) {
 		return null;
 	}
@@ -743,6 +747,10 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			return AObjectTableWithGroups.this.getHref(o, index);
 		}
 
+		protected boolean isHrefTargetBlank() {
+			return AObjectTableWithGroups.this.isHrefTargetBlank(index);
+		}
+
 		protected String getWidth() {
 			if (isTrimmed()) return "1px";
 			return null;
@@ -783,7 +791,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			}
 			if (href == null) return ret;
 
-			return Widgets.anchor(ret, href, null);
+			return Widgets.anchor(ret, href, isHrefTargetBlank() ? "_blank" : null);
 		}
 
 		public Widget getFootCellWidget(int index) {

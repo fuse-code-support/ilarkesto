@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -18,6 +18,7 @@ import ilarkesto.core.base.RuntimeTracker;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.DateAndTime;
 import ilarkesto.integration.BeanshellExecutor;
+import ilarkesto.io.DirChangeState;
 import ilarkesto.io.IO;
 import ilarkesto.protocol.AProtocolConsumer;
 import ilarkesto.protocol.HtmlProtocolConsumer;
@@ -28,9 +29,13 @@ import ilarkesto.ui.web.HtmlBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CmsContext {
+
+	public static final String SITE_BUILDREQUEST_FILENAME = "buildrequest.txt";
 
 	protected final Log log = Log.get(getClass());
 
@@ -50,6 +55,10 @@ public class CmsContext {
 
 	private ProtocolWriter prot;
 
+	private Map<String, DirChangeState> dirChangeStatesBySiteName = new HashMap<String, DirChangeState>();
+	private DirChangeState templatesDirChangeState;
+	private DirChangeState dataDirChangeState;
+
 	public CmsContext(File dir, ContentProvider additionalContentProvider) {
 		this.dir = dir;
 
@@ -59,14 +68,20 @@ public class CmsContext {
 		inputDir = new File(dir.getPath() + "/input");
 		sitesDir = new File(inputDir.getPath() + "/sites");
 		templatesDir = new File(inputDir.getPath() + "/templates");
+		templatesDirChangeState = new DirChangeState(templatesDir);
 		dataDir = new File(inputDir.getPath() + "/data");
+		dataDirChangeState = new DirChangeState(dataDir);
 
 		FilesContentProvider filesContentProvider = new FilesContentProvider(dataDir, additionalContentProvider)
 				.setBeanshellExecutor(beanshellExecutor);
 		contentProvider = new CmsStatusContentProvider(filesContentProvider);
 	}
 
-	public void build() {
+	public void requestSiteBuild(String siteName) {
+		IO.touch(getSiteBuildRequestFile(siteName));
+	}
+
+	public synchronized void build() {
 		if (buildObserver != null) buildObserver.onBuildStart();
 		HtmlBuilder htmlProtocolBuilder;
 		try {
@@ -84,7 +99,7 @@ public class CmsContext {
 			prot.addConsumers(consumer);
 		}
 		prot.pushContext(dir.getAbsolutePath());
-		prot.info(DateAndTime.now().format());
+		prot.info("Build", DateAndTime.now().format());
 		RuntimeTracker rt = new RuntimeTracker();
 		try {
 			createDirs();
@@ -106,11 +121,42 @@ public class CmsContext {
 	}
 
 	private void buildSites() {
+		boolean forceAll = templatesDirChangeState.checkAndReset() | dataDirChangeState.checkAndReset();
 		for (File siteDir : IO.listFiles(sitesDir)) {
-			if (!siteDir.isDirectory()) continue;
-			SiteContext siteContext = new SiteContext(this, siteDir);
-			siteContext.build();
+			String siteName = siteDir.getName();
+			File buildRequestFile = getSiteBuildRequestFile(siteName);
+			boolean force = forceAll || buildRequestFile.exists();
+			buildRequestFile.delete();
+			buildSite(siteDir, force);
 		}
+	}
+
+	private File getSiteBuildRequestFile(String siteName) {
+		return new File(sitesDir.getPath() + "/" + siteName + "/" + SITE_BUILDREQUEST_FILENAME);
+	}
+
+	private void buildSite(File siteDir, boolean force) {
+		if (!siteDir.isDirectory()) return;
+		String siteName = siteDir.getName();
+
+		boolean changed = checkAndUpdateDirChangeStateForSite(siteDir);
+		if (!changed && !force) {
+			prot.info("Skipping unchanged site:", siteName);
+			return;
+		}
+
+		new SiteContext(this, siteDir).build();
+	}
+
+	private boolean checkAndUpdateDirChangeStateForSite(File siteDir) {
+		String siteName = siteDir.getName();
+		DirChangeState dirChangeState = dirChangeStatesBySiteName.get(siteName);
+		if (dirChangeState == null) {
+			dirChangeState = new DirChangeState(siteDir);
+			dirChangeStatesBySiteName.put(siteName, dirChangeState);
+			return true;
+		}
+		return dirChangeState.checkAndReset();
 	}
 
 	public File getDir() {

@@ -14,7 +14,6 @@
  */
 package ilarkesto.tools.enhavo;
 
-import ilarkesto.base.CommandLineArgs;
 import ilarkesto.base.Utl;
 import ilarkesto.concurrent.TaskManager;
 import ilarkesto.core.persistance.EntitiesBackend;
@@ -33,55 +32,37 @@ public class EnhavoApplication extends AApplication {
 		ApplicationStarter.startApplication(EnhavoApplication.class, args);
 	}
 
-	private CmsContext cmsContext;
-	private boolean watch;
-
 	@Override
 	protected void onStart() {
-		CommandLineArgs cla = new CommandLineArgs(getArguments());
-		String path = cla.popParameter();
-		boolean loop = cla.popFlag("loop");
-		watch = cla.popFlag("watch");
 
-		if (path == null) {
+		EnhavoCommandLineArgs args = getCommandLineArgs();
+
+		if (args.getPath() == null) {
 			exitWithError("Missing <cms-path> parameter");
 			return;
 		}
-		if (cla.containsAny()) {
+		if (args.isToMany()) {
 			exitWithError("Too many arguments");
 			return;
 		}
 
-		File dir;
-		try {
-			dir = new File(path).getCanonicalFile().getAbsoluteFile();
-		} catch (IOException ex) {
-			throw new RuntimeException(ex);
-		}
-		if (!dir.exists()) {
-			System.out.println("Creating new CMS: " + dir.getPath());
-			IO.createDirectory(dir);
-		}
-
-		cmsContext = new CmsContext(dir, null);
-
-		if (loop) {
-			loop(cmsContext);
+		if (args.isLoop()) {
+			loop();
 			return;
 		}
 
-		cmsContext.build();
+		if (!args.isWatch()) getCmsContext().build();
 	}
 
 	@Override
 	protected boolean isPreventProcessEnd() {
-		if (watch) return true;
+		if (getCommandLineArgs().isWatch()) return true;
 		return super.isPreventProcessEnd();
 	}
 
 	@Override
 	protected void scheduleTasks(TaskManager tm) {
-		if (watch) tm.start(new WatchTask(cmsContext));
+		if (getCommandLineArgs().isWatch()) tm.start(new WatchTask(getCmsContext()));
 	}
 
 	@Override
@@ -92,9 +73,9 @@ public class EnhavoApplication extends AApplication {
 		System.exit(1);
 	}
 
-	private static void loop(CmsContext cmsContext) {
+	private void loop() {
 		while (true) {
-			cmsContext.build();
+			getCmsContext().build();
 			Utl.sleep(5000);
 		}
 	}
@@ -115,9 +96,46 @@ public class EnhavoApplication extends AApplication {
 
 	}
 
+	private File applicationDataDir;
+
+	@Override
+	public String getApplicationDataDir() {
+		if (applicationDataDir == null) {
+			try {
+				applicationDataDir = new File(getCommandLineArgs().getPath()).getCanonicalFile().getAbsoluteFile();
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
+			}
+			if (!applicationDataDir.exists()) {
+				System.out.println("Creating new CMS: " + applicationDataDir.getPath());
+				IO.createDirectory(applicationDataDir);
+			}
+		}
+		return applicationDataDir.getPath();
+	}
+
 	@Override
 	protected EntitiesBackend createEntitiesBackend() {
 		return new InMemoryEntitiesBackend();
+	}
+
+	@Override
+	protected boolean isSingleton() {
+		return true;
+	}
+
+	private CmsContext cmsContext;
+
+	public CmsContext getCmsContext() {
+		if (cmsContext == null) cmsContext = new CmsContext(new File(getApplicationDataDir()), null);
+		return cmsContext;
+	}
+
+	private EnhavoCommandLineArgs commandLineArgs;
+
+	public EnhavoCommandLineArgs getCommandLineArgs() {
+		if (commandLineArgs == null) commandLineArgs = new EnhavoCommandLineArgs(getArguments());
+		return commandLineArgs;
 	}
 
 }

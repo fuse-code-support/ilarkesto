@@ -20,6 +20,7 @@ import java.util.Map;
 public class DirChangeState {
 
 	private File dir;
+	private int directoryDepthLimit = Integer.MAX_VALUE;
 	private Map<String, Long> modificationTimes;
 
 	public DirChangeState(File dir) {
@@ -29,11 +30,17 @@ public class DirChangeState {
 		reset();
 	}
 
-	public boolean isChanged() {
-		return isChanged(dir);
+	public boolean checkAndReset() {
+		boolean changed = isChanged();
+		if (changed) reset();
+		return changed;
 	}
 
-	public boolean isChanged(File file) {
+	public boolean isChanged() {
+		return isChanged(dir, directoryDepthLimit);
+	}
+
+	private boolean isChanged(File file, int depth) {
 		long modificationTime = file.lastModified();
 		if (modificationTime <= 0) return false; // does not exist
 
@@ -41,11 +48,13 @@ public class DirChangeState {
 		if (previousModificationTime == null) return true; // did not exist before
 		if (previousModificationTime != modificationTime) return true;
 
-		if (file.isDirectory()) {
-			File[] files = file.listFiles();
-			if (files != null) {
-				for (File f : files) {
-					if (isChanged(f)) return true;
+		if (depth > 0) {
+			if (file.isDirectory()) {
+				File[] files = file.listFiles();
+				if (files != null) {
+					for (File f : files) {
+						if (isChanged(f, depth - 1)) return true;
+					}
 				}
 			}
 		}
@@ -55,6 +64,11 @@ public class DirChangeState {
 
 	public void reset() {
 		modificationTimes = IO.getModificationTimes(dir);
+	}
+
+	public DirChangeState setDirectoryDepthLimit(int limitDirectoryDepth) {
+		this.directoryDepthLimit = limitDirectoryDepth;
+		return this;
 	}
 
 }

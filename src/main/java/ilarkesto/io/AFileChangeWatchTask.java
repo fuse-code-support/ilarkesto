@@ -17,7 +17,6 @@ package ilarkesto.io;
 import ilarkesto.concurrent.ALoopTask;
 
 import java.io.File;
-import java.util.Map;
 
 public abstract class AFileChangeWatchTask extends ALoopTask {
 
@@ -25,6 +24,8 @@ public abstract class AFileChangeWatchTask extends ALoopTask {
 	private long minSleep;
 	private long maxSleep;
 	private float sleepIncrementFactor = 1.02f;
+
+	private int directoryDepthLimit = -1;
 
 	private DirChangeState changeState;
 	private long sleep;
@@ -47,6 +48,7 @@ public abstract class AFileChangeWatchTask extends ALoopTask {
 	@Override
 	protected void beforeLoop() throws InterruptedException {
 		changeState = new DirChangeState(root);
+		if (directoryDepthLimit >= 0) changeState.setDirectoryDepthLimit(directoryDepthLimit);
 		onFirstChange();
 	}
 
@@ -65,6 +67,11 @@ public abstract class AFileChangeWatchTask extends ALoopTask {
 	@Override
 	protected long getSleepTimeBetweenIterations() {
 		return sleep;
+	}
+
+	public AFileChangeWatchTask setDirectoryDepthLimit(int directoryDepthLimit) {
+		this.directoryDepthLimit = directoryDepthLimit;
+		return this;
 	}
 
 }
