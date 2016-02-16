@@ -113,6 +113,14 @@ public class RequestWrapper<S extends AWebSession> {
 		setContentType("text/css");
 	}
 
+	public void setContentTypeText() {
+		setContentType("text/plain");
+	}
+
+	public void setContentTypeJson() {
+		setContentType("application/json");
+	}
+
 	public void setContentTypeHtml() {
 		setContentType("text/html");
 	}
