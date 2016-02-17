@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -76,8 +76,7 @@ public class Swing {
 		Log.setDebugEnabled(true);
 		UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		JOptionPane.showMessageDialog(null, createMessageComponent("Nachricht"));
-		showMessageDialog(
-			null,
+		showMessageDialog(null,
 			" Geschafft, obwohl der Text so scheiss lang ist.\n Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheissGeschafft, obwohl der Text so scheiss lang ist.\\n Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheissGeschafft, obwohl der Text so scheiss lang ist.\\n Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheissGeschafft, obwohl der Text so scheiss lang ist.\\n Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss lang ist. Geschafft, obwohl der Text so scheiss");
 	}
 
@@ -265,7 +264,7 @@ public class Swing {
 
 	/**
 	 * Takes a screenshot of the default graphics device.
-	 * 
+	 *
 	 * @param windowToHide If this parameter is provided, the window will be hidden before the screen is
 	 *            captured and then showed again. This causes that the window does not appear on the
 	 *            screenshot.
@@ -276,7 +275,7 @@ public class Swing {
 
 	/**
 	 * Takes a screenshot of a given device.
-	 * 
+	 *
 	 * @param screen The graphics device to capture.
 	 * @param windowToHide If this parameter is provided, the window will be hidden before the screen is
 	 *            captured and then showed again. This causes that the window does not appear on the
@@ -296,7 +295,7 @@ public class Swing {
 
 	/**
 	 * Shows a component in a JFrame. The frame will be packed and centered on the screen.
-	 * 
+	 *
 	 * @param component The Component to show.
 	 * @param title The title of the frame.
 	 * @param icon TODO
@@ -332,7 +331,7 @@ public class Swing {
 
 	/**
 	 * Creates a default modal dialog for a component.
-	 * 
+	 *
 	 * @param component The component, to show in a dialog.
 	 * @param parent The component, whichs frame to be the parent of the modal dialog.
 	 * @return The created dialog.
@@ -363,7 +362,7 @@ public class Swing {
 	/**
 	 * Determines and loads a 16x16 icon. The icon hast to be placed in the classpath as the following file:
 	 * <code>img/16/{name}.png</code> The icon will be cached.
-	 * 
+	 *
 	 * @param name The name of the icon (Filename without extension).
 	 */
 	public static ImageIcon getIcon16(String name) {
