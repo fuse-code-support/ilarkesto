@@ -7,11 +7,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public abstract class AStream<A> {
+public abstract class AStream<A> implements Iterator<A>, Iterable<A> {
 
-	protected abstract A next();
+	@Override
+	public void remove() {
+		throw new RuntimeException("remove() not supported");
+	}
 
-	protected abstract boolean hasNext();
+	@Override
+	public Iterator<A> iterator() {
+		return this;
+	}
 
 	private static class InitialStream<A> extends AStream<A> {
 
@@ -22,12 +28,12 @@ public abstract class AStream<A> {
 		}
 
 		@Override
-		protected A next() {
+		public A next() {
 			return source.next();
 		}
 
 		@Override
-		protected boolean hasNext() {
+		public boolean hasNext() {
 			return source.hasNext();
 		}
 	}
@@ -43,12 +49,12 @@ public abstract class AStream<A> {
 		}
 
 		@Override
-		protected B next() {
+		public B next() {
 			return mapping.eval(upstream.next());
 		}
 
 		@Override
-		protected boolean hasNext() {
+		public boolean hasNext() {
 			return upstream.hasNext();
 		}
 
@@ -68,7 +74,7 @@ public abstract class AStream<A> {
 		private boolean nextPeeked;
 
 		@Override
-		protected A next() {
+		public A next() {
 			if (!nextPeeked) {
 				if (!hasNext()) throw new NoSuchElementException();
 			}
@@ -77,7 +83,7 @@ public abstract class AStream<A> {
 		}
 
 		@Override
-		protected boolean hasNext() {
+		public boolean hasNext() {
 			while (upstream.hasNext()) {
 				nextElement = upstream.next();
 				if (survivesFilter.test(nextElement)) {
@@ -104,7 +110,7 @@ public abstract class AStream<A> {
 		}
 
 		@Override
-		protected A next() {
+		public A next() {
 			if (sortedIterator == null) {
 				sorted = new ArrayList<A>();
 				while (upstream.hasNext()) {
@@ -117,7 +123,7 @@ public abstract class AStream<A> {
 		}
 
 		@Override
-		protected boolean hasNext() {
+		public boolean hasNext() {
 			if (sortedIterator == null) return upstream.hasNext();
 			return sortedIterator.hasNext();
 		}
@@ -139,7 +145,7 @@ public abstract class AStream<A> {
 		}
 
 		@Override
-		protected A next() {
+		public A next() {
 			if (toBeMerged == null) {
 				toBeMerged = new ArrayList<A>();
 				while (upstream.hasNext()) {
@@ -172,7 +178,7 @@ public abstract class AStream<A> {
 		}
 
 		@Override
-		protected boolean hasNext() {
+		public boolean hasNext() {
 			if (toBeMerged == null) return upstream.hasNext();
 			return !toBeMerged.isEmpty();
 		}
