@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -77,12 +77,13 @@ public class KinoDe {
 			}
 		}
 
-		String title = movieId;
-		for (HtmlTag tMeta : page.getTagsByName("meta", true)) {
-			if (tMeta.isAttribute("property", "og:title")) {
-				title = tMeta.getAttribute("content");
-				break;
-			}
+		String title = page.getHeadTitle();
+		if (Str.isBlank(title)) {
+			title = movieId;
+		} else {
+			title = Str.cutToIfContains(title, " Film (");
+			title = Str.cutToIfContains(title, "(");
+			title = Str.cutToIfContains(title, "·");
 		}
 
 		movie = new Movie(movieId, title, posterUrl);
@@ -108,7 +109,7 @@ public class KinoDe {
 		processShows(outer.getTagByNameAndStyleClass("div", "programSchedule"), cinemaId, callback, observer);
 
 		HtmlTag tScript = outer.getTagByName("script");
-		String script = tScript.getContentAsText();
+		String script = tScript.getText();
 
 		processScript(script, cinemaId, callback, observer);
 	}
@@ -166,12 +167,12 @@ public class KinoDe {
 
 			HtmlTag tA = tLi.getTagByName("a");
 			if (tA == null) {
-				id = Str.cutFromTo(tLi.getContentAsText(), "film/", "/");
-				title = tLi.getContentAsText();
+				id = Str.cutFromTo(tLi.getText(), "film/", "/");
+				title = tLi.getText();
 				title = title.substring(title.indexOf(">") + 1);
 			} else {
 				id = Str.cutFromTo(tA.getAttribute("href"), "film/", "/");
-				title = tA.getContentAsText();
+				title = tA.getText();
 			}
 			title = title.replace("\\'", "'");
 		}
