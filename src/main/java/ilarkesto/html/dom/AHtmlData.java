@@ -20,4 +20,8 @@ public abstract class AHtmlData {
 		return toString();
 	}
 
+	public String toHtml() {
+		return toString();
+	}
+
 }

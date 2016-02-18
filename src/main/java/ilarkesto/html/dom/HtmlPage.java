@@ -34,6 +34,15 @@ public class HtmlPage extends HtmlTag {
 		return sb.toString();
 	}
 
+	@Override
+	public String toHtml() {
+		StringBuilder sb = new StringBuilder();
+		for (AHtmlData data : contents) {
+			sb.append(data.toHtml());
+		}
+		return sb.toString();
+	}
+
 	public HtmlTag getBody() {
 		return getTagByName("body");
 	}

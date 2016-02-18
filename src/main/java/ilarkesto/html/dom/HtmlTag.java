@@ -98,7 +98,7 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 
 		if (contents != null) {
 			for (AHtmlData data : contents) {
-				sb.append(data.toString());
+				sb.append(data.toHtml());
 			}
 		}
 
