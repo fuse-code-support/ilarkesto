@@ -127,12 +127,12 @@ public class TestDe {
 		}
 
 		HtmlTag tProducts = page.getTagByStyleClass("ct-products");
-		if (tProducts != null) return removeContentSpam(tProducts).toString();
+		if (tProducts != null) return removeContentSpam(tProducts).toHtml();
 
 		HtmlTag tPrimary = page.getTagById("primary");
-		if (tPrimary != null) return removeContentSpam(tPrimary).toString();
+		if (tPrimary != null) return removeContentSpam(tPrimary).toHtml();
 
-		return removeContentSpam(page.getBodyOrRoot()).toString();
+		return removeContentSpam(page.getBodyOrRoot()).toHtml();
 	}
 
 	private static HtmlTag removeContentSpam(HtmlTag tag) {
