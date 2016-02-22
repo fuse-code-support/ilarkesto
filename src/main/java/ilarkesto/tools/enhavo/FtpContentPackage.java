@@ -34,7 +34,7 @@ public class FtpContentPackage implements ContentPackage {
 		if (object == null) return;
 
 		if (object.equals(DIRECTORY)) {
-			ftp.createDir(path);
+			ftp.createDir(getPath(path));
 			return;
 		}
 
