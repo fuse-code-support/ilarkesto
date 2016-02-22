@@ -40,6 +40,7 @@ public class KinoDeTest extends ATest {
 		Consumer consumer = new Consumer();
 		KinoDe.loadShows(KinoDe.CINEMA_ID_RINTELN, consumer, observer);
 		assertNotEmpty(consumer.movieIds);
+		assertTrue(consumer.dates.size() > 1);
 	}
 
 	@Test
@@ -52,11 +53,13 @@ public class KinoDeTest extends ATest {
 	class Consumer implements MovieShowConsumer {
 
 		private Set<String> movieIds = new HashSet<String>();
+		private Set<Date> dates = new HashSet<Date>();
 
 		@Override
 		public void onMovieShow(String cinemaId, Date date, List<Time> times, String movieId, String movieTitle,
 				String movieDescription, String movieCoverUrl) {
 			movieIds.add(movieId);
+			dates.add(date);
 		}
 
 	}

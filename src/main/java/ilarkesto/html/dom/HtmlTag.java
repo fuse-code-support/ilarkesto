@@ -90,6 +90,7 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 		return toTreeString();
 	}
 
+	@Override
 	public String toHtml() {
 		StringBuilder sb = new StringBuilder();
 		appendTagStart(sb);
@@ -161,7 +162,13 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 	}
 
 	private void appendToTree(StringBuilder sb, String prefix) {
-		sb.append(prefix).append(name).append("\n");
+		sb.append(prefix).append(name);
+		if (attributes != null && !attributes.isEmpty()) {
+			for (Map.Entry<String, String> attr : attributes.entrySet()) {
+				sb.append(" ").append(attr.getKey()).append("=").append(attr.getValue());
+			}
+		}
+		sb.append("\n");
 		if (closed) return;
 		if (contents != null) {
 			prefix += "  ";
@@ -243,6 +250,26 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 			if (ret != null) return ret;
 		}
 		return null;
+	}
+
+	public List<HtmlTag> getTagsByNameAndStyleClass(String name, String classToCheck) {
+		return getTagsByNameAndStyleClass(name, classToCheck, true);
+	}
+
+	public List<HtmlTag> getTagsByNameAndStyleClass(String name, String classToCheck, boolean recurse) {
+		ArrayList<HtmlTag> ret = new ArrayList<HtmlTag>();
+		if (contents == null) return ret;
+		for (AHtmlData data : contents) {
+			if (!(data instanceof HtmlTag)) continue;
+			HtmlTag tag = (HtmlTag) data;
+			if (tag.getName().equals(name) && tag.isStyleClass(classToCheck)) {
+				ret.add(tag);
+				continue;
+			}
+			if (!recurse) continue;
+			ret.addAll(tag.getTagsByNameAndStyleClass(name, classToCheck, recurse));
+		}
+		return ret;
 	}
 
 	public HtmlTag getTagById(String id) {

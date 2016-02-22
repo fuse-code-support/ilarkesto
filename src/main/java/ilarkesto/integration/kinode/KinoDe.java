@@ -106,12 +106,16 @@ public class KinoDe {
 			log.info("Missing tag with class 'programScheduleOuter' for " + cinemaId);
 			return;
 		}
-		processShows(outer.getTagByNameAndStyleClass("div", "programSchedule"), cinemaId, callback, observer);
+		List<HtmlTag> divProgramSchedules = outer.getTagsByNameAndStyleClass("div", "programSchedule");
+		for (HtmlTag divProgramSchedule : divProgramSchedules) {
+			processShows(divProgramSchedule, cinemaId, callback, observer);
+		}
 
 		HtmlTag tScript = outer.getTagByName("script");
-		String script = tScript.getText();
-
-		processScript(script, cinemaId, callback, observer);
+		if (tScript != null) {
+			String script = tScript.getText();
+			processScript(script, cinemaId, callback, observer);
+		}
 	}
 
 	private static void processScript(String script, String cinemaId, MovieShowConsumer callback,
@@ -171,7 +175,9 @@ public class KinoDe {
 				title = tLi.getText();
 				title = title.substring(title.indexOf(">") + 1);
 			} else {
-				id = Str.cutFromTo(tA.getAttribute("href"), "film/", "/");
+				String href = tA.getAttribute("href");
+				if (href == null) href = tA.getAttribute("data-ferh");
+				id = Str.cutFromTo(href, "film/", "/");
 				title = tA.getText();
 			}
 			title = title.replace("\\'", "'");
