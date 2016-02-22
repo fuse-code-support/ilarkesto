@@ -14,12 +14,13 @@
  */
 package ilarkesto.tools.enhavo;
 
-public interface ContentPackage {
+import ilarkesto.core.base.Str;
 
-	public static final Object DIRECTORY = new Object();
+public abstract class AContentPackage implements ContentPackage {
 
-	void put(String path, Object object);
-
-	void put(String basePath, String path, Object object);
+	@Override
+	public final void put(String basePath, String path, Object object) {
+		put(Str.isBlank(basePath) ? path : basePath + "/" + path, object);
+	}
 
 }

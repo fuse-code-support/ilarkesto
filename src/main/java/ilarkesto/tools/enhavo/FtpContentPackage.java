@@ -18,7 +18,7 @@ import ilarkesto.integration.ftp.FtpClient;
 
 import java.io.File;
 
-public class FtpContentPackage implements ContentPackage {
+public class FtpContentPackage extends AContentPackage {
 
 	private FtpClient ftp;
 	private String remotePath;

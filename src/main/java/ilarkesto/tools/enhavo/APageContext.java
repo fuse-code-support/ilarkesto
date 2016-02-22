@@ -16,6 +16,7 @@ package ilarkesto.tools.enhavo;
 
 import ilarkesto.json.JsonObject;
 
+import java.io.File;
 import java.util.HashSet;
 
 public abstract class APageContext extends ABuilder {
@@ -45,12 +46,51 @@ public abstract class APageContext extends ABuilder {
 				Object value = contentProvider.get(dataKey);
 
 				String name = property.substring(1);
+
+				if (value instanceof ContentPackageBuilder) {
+					ContentPackageBuilder contentPackageBuilder = (ContentPackageBuilder) value;
+					PageContentPackage contentPackage = new PageContentPackage(dataKey);
+					contentPackageBuilder.provideContent(contentPackage);
+					value = contentPackage.dataForKey;
+				}
+
 				json.put(name, value);
 
 				continue;
 			}
 
 		}
+	}
+
+	class PageContentPackage extends AContentPackage {
+
+		private String dataKey;
+		private Object dataForKey;
+
+		public PageContentPackage(String dataKey) {
+			super();
+			this.dataKey = dataKey;
+		}
+
+		@Override
+		public void put(String path, Object object) {
+			if (object == null) return;
+
+			if (dataKey.equals(path)) {
+				dataForKey = object;
+				return;
+			}
+
+			if (object instanceof File) {
+				File file = (File) object;
+				if (!file.exists()) { return; }
+				site.writeOutputFile(path, file);
+				return;
+			}
+
+			site.writeOutputFile(path, object.toString());
+		}
+
 	}
 
 }
