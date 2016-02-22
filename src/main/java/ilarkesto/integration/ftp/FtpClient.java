@@ -198,7 +198,7 @@ public class FtpClient {
 		boolean success;
 		try {
 			success = client.storeFile(path, new StringInputStream(text));
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			throw new RuntimeException("Uploading failed: " + path, ex);
 		}
 		if (!success) throw new RuntimeException("Uploading failed: " + path + " -> " + client.getReplyString());
