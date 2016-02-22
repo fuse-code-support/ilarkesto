@@ -47,8 +47,8 @@ import org.apache.commons.net.ftp.FTPReply;
 public class FtpClient {
 
 	public static void main(String[] args) {
-		LoginData login = LoginPanel.showDialog(null, "FTP to localhost", new File(Sys.getUsersHomePath()
-				+ "/.ilarkesto/ftp.localhost.properties"));
+		LoginData login = LoginPanel.showDialog(null, "FTP to localhost",
+			new File(Sys.getUsersHomePath() + "/.ilarkesto/ftp.localhost.properties"));
 
 		FtpClient ftp = new FtpClient("localhost", login);
 		ftp.connect();
@@ -171,8 +171,8 @@ public class FtpClient {
 		try {
 			out = new BufferedOutputStream(new FileOutputStream(tmpFile));
 		} catch (FileNotFoundException ex) {
-			throw new RuntimeException("Downloading file failed. Writing local file failed: "
-					+ tmpFile.getAbsolutePath(), ex);
+			throw new RuntimeException(
+					"Downloading file failed. Writing local file failed: " + tmpFile.getAbsolutePath(), ex);
 		}
 
 		try {
@@ -242,8 +242,15 @@ public class FtpClient {
 		log.info("Upload:", path);
 		if (file == null || !file.exists()) return;
 
-		if (file.isDirectory()) { throw new IllegalStateException("Uploading file failed. File is a directory: "
-				+ file.getAbsolutePath()); }
+		if (file.isDirectory()) {
+			try {
+				client.makeDirectory(path);
+			} catch (IOException ex) {
+				throw new RuntimeException("Creating directory failed: " + path + " | " + client.getReplyString(), ex);
+			}
+			return;
+		}
+
 		upload(path, file);
 	}
 
@@ -251,8 +258,9 @@ public class FtpClient {
 		try {
 			client.storeFile(path, new BufferedInputStream(new FileInputStream(file)));
 		} catch (IOException ex) {
-			throw new RuntimeException("Uploading failed: " + path + " <- " + file.getAbsolutePath() + " | "
-					+ client.getReplyString(), ex);
+			throw new RuntimeException(
+					"Uploading failed: " + path + " <- " + file.getAbsolutePath() + " | " + client.getReplyString(),
+					ex);
 
 		}
 
