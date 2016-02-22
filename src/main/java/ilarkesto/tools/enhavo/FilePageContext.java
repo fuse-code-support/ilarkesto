@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -17,7 +17,6 @@ package ilarkesto.tools.enhavo;
 import ilarkesto.base.Str;
 import ilarkesto.core.base.Filename;
 import ilarkesto.core.base.Filepath;
-import ilarkesto.core.logging.Log;
 import ilarkesto.json.JsonObject;
 import ilarkesto.templating.Context;
 import ilarkesto.templating.Template;
@@ -62,7 +61,6 @@ public class FilePageContext extends APageContext implements TemplateResolver {
 			// multiple pages
 			processContent(jMultipage);
 			List<JsonObject> contents = jMultipage.getArrayOfObjects("list");
-			Log.TEST("******** multipage:", jMultipage.toFormatedString());
 			if (contents == null || contents.isEmpty()) {
 				info("Empty multipage list");
 				return;
@@ -87,7 +85,8 @@ public class FilePageContext extends APageContext implements TemplateResolver {
 
 	}
 
-	private static String computeOutputPath(String relativeOutputPath, String templateFilename, String contentFilename) {
+	private static String computeOutputPath(String relativeOutputPath, String templateFilename,
+			String contentFilename) {
 		String filename = new Filename(new Filename(contentFilename).getPrefix(),
 				new Filename(templateFilename).getSuffix()).toString();
 		return new Filepath(relativeOutputPath).append(filename).toString();
