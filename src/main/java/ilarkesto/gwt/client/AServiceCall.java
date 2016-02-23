@@ -61,9 +61,17 @@ public abstract class AServiceCall<D extends ADataTransferObject> {
 		execute(null);
 	}
 
+	@Deprecated
 	public final void execute(Runnable returnHandler) {
 		if (queue.contains(this)) throw new IllegalStateException(getName() + " already executed");
 		this.returnHandler = returnHandler;
+		queue();
+		runNext();
+	}
+
+	public final void execute(AServiceCallResultHandler resultHandler) {
+		if (queue.contains(this)) throw new IllegalStateException(getName() + " already executed");
+		this.returnHandler = resultHandler;
 		queue();
 		runNext();
 	}
