@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -22,6 +22,7 @@ import ilarkesto.core.time.Date;
 import ilarkesto.core.time.DateAndTime;
 import ilarkesto.core.time.DateRange;
 import ilarkesto.core.time.DayAndMonth;
+import ilarkesto.core.time.Time;
 import ilarkesto.gwt.client.desktop.AEditableReferenceField;
 import ilarkesto.gwt.client.desktop.AEditableSetReferenceField;
 import ilarkesto.gwt.client.desktop.ActivityParameters;
@@ -32,12 +33,14 @@ import ilarkesto.gwt.client.desktop.fields.AEditableDateField;
 import ilarkesto.gwt.client.desktop.fields.AEditableDateRangeField;
 import ilarkesto.gwt.client.desktop.fields.AEditableDayAndMonthField;
 import ilarkesto.gwt.client.desktop.fields.AEditableDecimalField;
+import ilarkesto.gwt.client.desktop.fields.AEditableFloatField;
 import ilarkesto.gwt.client.desktop.fields.AEditableIntegerField;
 import ilarkesto.gwt.client.desktop.fields.AEditableLongField;
 import ilarkesto.gwt.client.desktop.fields.AEditableMoneyField;
 import ilarkesto.gwt.client.desktop.fields.AEditableMultiLineTextField;
 import ilarkesto.gwt.client.desktop.fields.AEditableRichTextField;
 import ilarkesto.gwt.client.desktop.fields.AEditableTextField;
+import ilarkesto.gwt.client.desktop.fields.AEditableTimeField;
 import ilarkesto.gwt.client.desktop.fields.AField;
 import ilarkesto.mda.legacy.model.ACollectionPropertyModel;
 import ilarkesto.mda.legacy.model.EntityModel;
@@ -60,11 +63,13 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 	protected EntityModel entity;
 	protected boolean readonly;
 	protected boolean typeDate;
+	protected boolean typeTime;
 	protected boolean typeDateAndTime;
 	protected boolean typeDayAndMonth;
 	protected boolean typeDateRange;
 	protected boolean typeInteger;
 	protected boolean typeLong;
+	protected boolean typeFloat;
 	protected boolean typeDecimal;
 	protected boolean typeMoney;
 	protected boolean typeSetReference;
@@ -77,11 +82,14 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 
 		entity = property.getEntity();
 		typeDate = property.getType().equals(Date.class.getName());
+		typeTime = property.getType().equals(Time.class.getName());
 		typeDateAndTime = property.getType().equals(DateAndTime.class.getName());
 		typeDateRange = property.getType().equals(DateRange.class.getName());
 		typeDayAndMonth = property.getType().equals(DayAndMonth.class.getName());
-		typeInteger = property.getType().equals(Integer.class.getName());
+		typeInteger = property.getType().equals(Integer.class.getName())
+				|| property.getType().equals(int.class.getName());
 		typeLong = property.getType().equals(Long.class.getName());
+		typeFloat = property.getType().equals(Float.class.getName());
 		typeDecimal = property.getType().equals(BigDecimal.class.getName());
 		typeMoney = property.getType().equals(Money.class.getName());
 		typeSetReference = property instanceof ReferenceSetPropertyModel;
@@ -236,6 +244,7 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 		} else {
 			referencedType = getBeanClass(((ReferencePropertyModel) property));
 		}
+		referencedType = replaceServerWithClient(referencedType);
 		ln();
 		annotationOverride();
 		ln("    protected Collection<" + referencedType + "> getSelectedEntities() {");
@@ -251,6 +260,7 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 		} else {
 			referencedType = getBeanClass(((ReferencePropertyModel) property));
 		}
+		referencedType = replaceServerWithClient(referencedType);
 		ln();
 		annotationOverride();
 		ln("    protected List<" + referencedType + "> getSelectableEntities() {");
@@ -264,7 +274,9 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 	private void writeGetSelectedEntity() {
 		ln();
 		annotationOverride();
-		ln("    public", getBeanClass(((ReferencePropertyModel) property)), "getSelectedEntity()  {");
+		String type = getBeanClass(((ReferencePropertyModel) property));
+		type = replaceServerWithClient(type);
+		ln("    public", type, "getSelectedEntity()  {");
 		ln("        return entity.get" + Str.uppercaseFirstLetter(property.getName()) + "();");
 		ln("    }");
 	}
@@ -309,6 +321,7 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 		type = type.replace("Set<", "Collection<");
 		type = type.replace("List<", "Collection<");
 		type = replaceServerWithClient(type);
+		if (type.equals(int.class.getName())) type = Integer.class.getName();
 		ln("    public void applyValue(" + type + " value) {");
 		ln("        entity.set" + Str.uppercaseFirstLetter(property.getName()) + "(value);");
 		ln("    }");
@@ -365,25 +378,24 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 		if (typeMoney) return AEditableMoneyField.class.getName();
 		if (typeInteger) return AEditableIntegerField.class.getName();
 		if (typeLong) return AEditableLongField.class.getName();
+		if (typeFloat) return AEditableFloatField.class.getName();
 		if (typeDecimal) return AEditableDecimalField.class.getName();
 		if (typeDate) return AEditableDateField.class.getName();
+		if (typeTime) return AEditableTimeField.class.getName();
 		if (typeDateAndTime) return AEditableDateAndTimeField.class.getName();
 		if (typeDateRange) return AEditableDateRangeField.class.getName();
 		if (typeDayAndMonth) return AEditableDayAndMonthField.class.getName();
-		if (property.isCollection())
-			return AEditableSetReferenceField.class.getName() + "<"
-					+ ((ACollectionPropertyModel) property).getContentType().replace(".server.", ".client.") + ">";
-		if (typeSetReference)
-			return AEditableSetReferenceField.class.getName() + "<"
-					+ getBeanClass(((ReferenceSetPropertyModel) property)) + ">";
+		if (property.isCollection()) return AEditableSetReferenceField.class.getName() + "<"
+				+ ((ACollectionPropertyModel) property).getContentType().replace(".server.", ".client.") + ">";
+		if (typeSetReference) return AEditableSetReferenceField.class.getName() + "<"
+				+ getBeanClass(((ReferenceSetPropertyModel) property)) + ">";
 		if (property.isString()) {
 			if (((StringPropertyModel) property).isRichtext()) return AEditableRichTextField.class.getName();
 			if (((StringPropertyModel) property).isMultiline()) return AEditableMultiLineTextField.class.getName();
 			return AEditableTextField.class.getName();
 		}
-		if (property instanceof ReferencePropertyModel)
-			return AEditableReferenceField.class.getName() + "<" + getBeanClass((ReferencePropertyModel) property)
-					+ ">";
+		if (property instanceof ReferencePropertyModel) return AEditableReferenceField.class.getName() + "<"
+				+ getBeanClass((ReferencePropertyModel) property) + ">";
 		return AField.class.getName();
 	}
 
