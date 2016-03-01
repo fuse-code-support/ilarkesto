@@ -255,14 +255,15 @@ public class FtpClient {
 	}
 
 	private void upload(String path, File file) {
+		boolean uploaded;
 		try {
-			client.storeFile(path, new BufferedInputStream(new FileInputStream(file)));
+			uploaded = client.storeFile(path, new BufferedInputStream(new FileInputStream(file)));
 		} catch (IOException ex) {
 			throw new RuntimeException(
 					"Uploading failed: " + path + " <- " + file.getAbsolutePath() + " | " + client.getReplyString(),
 					ex);
-
 		}
+		if (!uploaded) throw new RuntimeException("Uploading failed: " + path + " | " + client.getReplyString());
 
 		chmodAfterUpload(path);
 	}
