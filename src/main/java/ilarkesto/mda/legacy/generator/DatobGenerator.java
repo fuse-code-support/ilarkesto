@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -147,8 +147,8 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 				}
 			}
 			ln("            if (property.equals(\"" + propertyName + "\")) update"
-					+ Str.uppercaseFirstLetter(propertyName) + "(" + persistenceUtilClass + ".parseProperty"
-					+ parseType + "(value));");
+					+ Str.uppercaseFirstLetter(propertyName) + "(" + persistenceUtilClass + ".parseProperty" + parseType
+					+ "(value));");
 		}
 		ln("        }");
 		ln("    }");
@@ -239,7 +239,8 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 				}
 				if (p.isValueObject()) {
 					if (p.isCollection()) {
-						// ln("        for(ADatob adatob : "+getFieldName(p)+") adatob.repairDeadReferences(entityId);");
+						// ln(" for(ADatob adatob : "+getFieldName(p)+")
+						// adatob.repairDeadReferences(entityId);");
 						s("        repairDeadReferencesOfValueObjects(").s(getFieldName(p)).s(",entityId);").ln();
 					} else {
 						s("        if (").s(getFieldName(p)).s(" != null) ").s(getFieldName(p))
@@ -256,7 +257,7 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 
 	private void writeSearchable() {
 		Set<PropertyModel> searchableProperties = bean.getSearchableProperties();
-		if (searchableProperties.isEmpty()) return;
+		// if (searchableProperties.isEmpty()) return;
 
 		ln();
 		section("Searchable");
@@ -264,14 +265,9 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 		ln();
 		annotationOverride();
 		ln("    public boolean matches(" + SearchText.class.getName() + " search) {");
-		s("         return search.matches(");
-		boolean first = true;
+		s("         return search.matches(getId()");
 		for (PropertyModel p : searchableProperties) {
-			if (first) {
-				first = false;
-			} else {
-				s(", ");
-			}
+			s(", ");
 			s("get" + Str.uppercaseFirstLetter(p.getName()) + "()");
 		}
 		ln(");");
@@ -321,9 +317,8 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 		String type2 = p.getType();
 		if (p instanceof ReferencePropertyModel)
 			type2 = getBeanClass(((ReferencePropertyModel) p).getReferencedEntity());
-		if (p instanceof ReferenceSetPropertyModel)
-			type2 = ((ReferenceSetPropertyModel) p).getCollectionType() + "<"
-					+ getBeanClass(((ReferenceSetPropertyModel) p).getReferencedEntity()) + ">";
+		if (p instanceof ReferenceSetPropertyModel) type2 = ((ReferenceSetPropertyModel) p).getCollectionType() + "<"
+				+ getBeanClass(((ReferenceSetPropertyModel) p).getReferencedEntity()) + ">";
 		// if (!isLegacyBean(bean) && p.isCollection()) type2 = "List<" + p.getContentType() + ">";
 		ln("    public final " + type2 + " " + getterMethodPrefix + pNameUpper + "() {");
 		writeGetXxxContent(p);
@@ -895,11 +890,13 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 				} else if (type.equals(Time.class.getName())) {
 					ln("        value = value == null ? null : new " + Time.class.getName() + "((String)value);");
 				} else if (type.equals(DateAndTime.class.getName())) {
-					ln("        value = value == null ? null : new " + DateAndTime.class.getName() + "((String)value);");
+					ln("        value = value == null ? null : new " + DateAndTime.class.getName()
+							+ "((String)value);");
 				} else if (type.equals(DateRange.class.getName())) {
 					ln("        value = value == null ? null : new " + DateRange.class.getName() + "((String)value);");
 				} else if (type.equals(DayAndMonth.class.getName())) {
-					ln("        value = value == null ? null : new " + DayAndMonth.class.getName() + "((String)value);");
+					ln("        value = value == null ? null : new " + DayAndMonth.class.getName()
+							+ "((String)value);");
 				} else if (type.equals(Money.class.getName())) {
 					ln("        value = value == null ? null : new " + Money.class.getName() + "((String)value);");
 				}

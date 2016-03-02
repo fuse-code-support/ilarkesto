@@ -36,19 +36,20 @@ public class FtpContentPackage extends AContentPackage {
 	@Override
 	public void put(String path, Object object) {
 		if (object == null) return;
+		path = getPath(path);
 
 		if (object.equals(DIRECTORY)) {
-			ftp.createDir(getPath(path));
+			ftp.createDir(path);
 			return;
 		}
 
 		if (object instanceof File) {
 			createDirForFile(path);
-			ftp.uploadFile(getPath(path), (File) object);
+			ftp.uploadFile(path, (File) object);
 			return;
 		}
 
-		ftp.uploadText(getPath(path), object.toString());
+		ftp.uploadText(path, object.toString());
 	}
 
 	private void createDirForFile(String path) {

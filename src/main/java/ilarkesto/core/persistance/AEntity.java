@@ -48,7 +48,7 @@ public abstract class AEntity extends ABaseEntity implements Entity, Searchable,
 
 	@Override
 	public boolean matches(SearchText search) {
-		return search.matches(toString());
+		return search.matches(toString(), getId());
 	}
 
 	public static boolean exists(String id) {
