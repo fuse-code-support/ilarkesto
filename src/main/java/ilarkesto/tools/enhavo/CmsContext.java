@@ -121,7 +121,7 @@ public class CmsContext {
 	}
 
 	private void buildSites() {
-		boolean forceAll = templatesDirChangeState.checkAndReset() | dataDirChangeState.checkAndReset();
+		boolean forceAll = templatesDirChangeState.isChanged() | dataDirChangeState.isChanged();
 		for (File siteDir : IO.listFiles(sitesDir)) {
 			String siteName = siteDir.getName();
 			File buildRequestFile = getSiteBuildRequestFile(siteName);
@@ -156,7 +156,7 @@ public class CmsContext {
 			dirChangeStatesBySiteName.put(siteName, dirChangeState);
 			return true;
 		}
-		return dirChangeState.checkAndReset();
+		return dirChangeState.isChanged();
 	}
 
 	public File getDir() {

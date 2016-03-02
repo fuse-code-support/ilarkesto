@@ -56,15 +56,16 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 		AEntityJsonFileUpgrades upgrader = createUpgrader();
 		int softwareVersion = upgrader.getSoftwareVersion();
 
-		if (dataVersion > softwareVersion)
-			throw new IllegalStateException("Data version " + dataVersion + " is bigger then softwareVersion "
-					+ softwareVersion);
+		if (dataVersion > softwareVersion) throw new IllegalStateException(
+				"Data version " + dataVersion + " is bigger then softwareVersion " + softwareVersion);
 
-		log.info("Loading entities from", storage, "| data-version", dataVersion, "| software-version", softwareVersion);
+		log.info("Loading entities from", storage, "| data-version", dataVersion, "| software-version",
+			softwareVersion);
 		RuntimeTracker rt = new RuntimeTracker();
 		upgrader.upgradeEntitiesDir(storage.getFile(null), dataVersion);
 		TypeResolver typeResolver = createTypeResolver();
 		for (Class<? extends AEntity> type : getEntityTypes()) {
+			RuntimeTracker rt2 = new RuntimeTracker();
 			int count = 0;
 			File dir = storage.getFile(type.getSimpleName());
 			File[] files = dir.listFiles();
@@ -84,7 +85,7 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 					count++;
 				}
 			}
-			log.info("   ", type.getSimpleName(), count);
+			log.info("   ", type.getSimpleName(), count, rt2.getRuntimeFormated());
 		}
 
 		saveVersion(softwareVersion);

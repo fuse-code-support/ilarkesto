@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -38,9 +38,10 @@ public class EntityIntegrityEnsurer {
 			new EntitiesByTypeGroupFunctionn());
 
 		for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : entitiesByType.entrySet()) {
+			RuntimeTracker rt2 = new RuntimeTracker();
 			Class<? extends Entity> type = entry.getKey();
 			Collection<Entity> entitiesOfType = entry.getValue();
-			log.info("   ", type.getSimpleName(), entitiesOfType.size());
+			log.info("   ", type.getSimpleName(), entitiesOfType.size(), rt2.getRuntimeFormated());
 			ensureIntegrity(entitiesOfType);
 		}
 
@@ -52,8 +53,8 @@ public class EntityIntegrityEnsurer {
 			try {
 				entity.ensureIntegrity();
 			} catch (Exception ex) {
-				throw new RuntimeException("Ensuring integrity failed for entity: "
-						+ Persistence.toStringWithTypeAndId(entity), ex);
+				throw new RuntimeException(
+						"Ensuring integrity failed for entity: " + Persistence.toStringWithTypeAndId(entity), ex);
 			}
 		}
 	}

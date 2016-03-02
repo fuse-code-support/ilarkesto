@@ -17,28 +17,30 @@ package ilarkesto.io;
 import ilarkesto.concurrent.ALoopTask;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 
 public abstract class AFileChangeWatchTask extends ALoopTask {
 
 	private File root;
-	private long minSleep;
-	private long maxSleep;
-	private float sleepIncrementFactor = 1.02f;
-
-	private int directoryDepthLimit = -1;
-
-	private DirChangeState changeState;
-	private long sleep;
+	private WatchService watcher;
+	private long sleepUntilChangeNotivication = 1000;
 
 	protected abstract void onChange();
 
-	public AFileChangeWatchTask(File root, long minSleep, long maxSleep) {
-		super();
+	public AFileChangeWatchTask(File root) {
 		this.root = root;
-		this.minSleep = minSleep;
-		this.maxSleep = maxSleep;
 
-		sleep = minSleep;
+		try {
+			watcher = FileSystems.getDefault().newWatchService();
+			NIO.registerDirectoryTreeForAllChanges(watcher, root);
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
+
+		log.info("Watching", root.getAbsolutePath());
 	}
 
 	protected void onFirstChange() {
@@ -47,31 +49,37 @@ public abstract class AFileChangeWatchTask extends ALoopTask {
 
 	@Override
 	protected void beforeLoop() throws InterruptedException {
-		changeState = new DirChangeState(root);
-		if (directoryDepthLimit >= 0) changeState.setDirectoryDepthLimit(directoryDepthLimit);
 		onFirstChange();
 	}
 
 	@Override
 	protected void iteration() throws InterruptedException {
-		if (!changeState.isChanged()) {
-			sleep = Math.min(maxSleep, (long) (sleep * sleepIncrementFactor));
-			return;
+		WatchKey key = watcher.take();
+		reset(key);
+
+		log.info("CHANGE");
+
+		if (sleepUntilChangeNotivication > 0) {
+			sleep(sleepUntilChangeNotivication);
+			key = watcher.poll();
+			if (key != null) {
+				reset(key);
+			}
 		}
 
-		sleep = minSleep;
+		if (isAbortRequested()) return;
+
 		onChange();
-		changeState.reset();
 	}
 
-	@Override
-	protected long getSleepTimeBetweenIterations() {
-		return sleep;
-	}
-
-	public AFileChangeWatchTask setDirectoryDepthLimit(int directoryDepthLimit) {
-		this.directoryDepthLimit = directoryDepthLimit;
-		return this;
+	private void reset(WatchKey key) {
+		key.pollEvents();
+		if (!key.reset()) log.warn("key.reset() returned false for watcher on", root.getAbsolutePath());
+		try {
+			NIO.registerDirectoryTreeForAllChanges(watcher, root);
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 }
