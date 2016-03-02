@@ -68,9 +68,7 @@ public class CmsContext {
 		inputDir = new File(dir.getPath() + "/input");
 		sitesDir = new File(inputDir.getPath() + "/sites");
 		templatesDir = new File(inputDir.getPath() + "/templates");
-		templatesDirChangeState = new DirChangeState(templatesDir);
 		dataDir = new File(inputDir.getPath() + "/data");
-		dataDirChangeState = new DirChangeState(dataDir);
 
 		FilesContentProvider filesContentProvider = new FilesContentProvider(dataDir, additionalContentProvider)
 				.setBeanshellExecutor(beanshellExecutor);
@@ -117,7 +115,9 @@ public class CmsContext {
 		IO.createDirectory(sitesOutputDir);
 		IO.createDirectory(sitesDir);
 		IO.createDirectory(templatesDir);
+		if (templatesDirChangeState == null) templatesDirChangeState = new DirChangeState(templatesDir);
 		IO.createDirectory(dataDir);
+		if (dataDirChangeState == null) dataDirChangeState = new DirChangeState(dataDir);
 	}
 
 	private void buildSites() {
