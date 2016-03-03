@@ -32,15 +32,6 @@ public abstract class AFileChangeWatchTask extends ALoopTask {
 
 	public AFileChangeWatchTask(File root) {
 		this.root = root;
-
-		try {
-			watcher = FileSystems.getDefault().newWatchService();
-			NIO.registerDirectoryTreeForAllChanges(watcher, root);
-		} catch (IOException ex) {
-			throw new RuntimeException(ex);
-		}
-
-		log.info("Watching", root.getAbsolutePath());
 	}
 
 	protected void onFirstChange() {
@@ -49,6 +40,15 @@ public abstract class AFileChangeWatchTask extends ALoopTask {
 
 	@Override
 	protected void beforeLoop() throws InterruptedException {
+		try {
+			watcher = FileSystems.getDefault().newWatchService();
+			NIO.registerDirectoryTreeForAllChanges(watcher, root);
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
+
+		log.info("Watching", root.getAbsolutePath());
+
 		onFirstChange();
 	}
 
