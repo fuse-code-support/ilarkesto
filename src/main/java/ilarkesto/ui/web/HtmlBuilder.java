@@ -122,8 +122,8 @@ public class HtmlBuilder {
 	}
 
 	public void IFRAMEhidden(String src, String id) {
-		startTag(IFRAME).set("src", src).setId(id).set("tabIndex", -1)
-				.setStyle("position:absolute", "width:0", "height:0", "border:0");
+		startTag(IFRAME).set("src", src).setId(id).set("tabIndex", -1).setStyle("position:absolute", "width:0",
+			"height:0", "border:0");
 		endTag(IFRAME);
 	}
 
@@ -342,8 +342,8 @@ public class HtmlBuilder {
 
 	public Tag startFORM(Url actionUrl, String method, String name, boolean multipart) {
 		String action = actionUrl == null ? null : actionUrl.toString();
-		Tag tag = startTag(FORM, true).set("action", action).set("method", method).setName(name)
-				.set("accept-charset", encoding);
+		Tag tag = startTag(FORM, true).set("action", action).set("method", method).setName(name).set("accept-charset",
+			encoding);
 		if (multipart) {
 			tag.set("enctype", "multipart/form-data");
 		}

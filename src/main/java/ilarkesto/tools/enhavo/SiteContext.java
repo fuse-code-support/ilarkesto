@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -62,8 +62,8 @@ public class SiteContext extends ABuilder implements TemplateResolver {
 
 		config = new SiteConfig(this);
 
-		contentProvider = new FilesContentProvider(contentDir, cms.getContentProvider()).setBeanshellExecutor(cms
-				.getBeanshellExecutor());
+		contentProvider = new FilesContentProvider(contentDir, cms.getContentProvider())
+				.setBeanshellExecutor(cms.getBeanshellExecutor());
 
 		siteBuildlog = new SiteBuildlog(this);
 
@@ -86,7 +86,7 @@ public class SiteContext extends ABuilder implements TemplateResolver {
 	}
 
 	private void copyRessources() {
-		IO.copyFilesIfDifferInTimeAndLength(resourcesDir.listFiles(), outputDir, new FileFilter() {
+		IO.copyFilesIfDifferInTimeOrLength(resourcesDir.listFiles(), outputDir, new FileFilter() {
 
 			@Override
 			public boolean accept(File file) {
@@ -165,8 +165,8 @@ public class SiteContext extends ABuilder implements TemplateResolver {
 
 	public void writeOutputFile(String path, File source) {
 		File file = getOutputFile(path);
-		info("output>", file.getPath());
-		IO.copyFile(source, file);
+		boolean copied = IO.copyFileIfDiffersInTimeOrLength(source, file);
+		info("output>", file.getPath(), copied ? "" : "[unchanged]");
 	}
 
 	File getOutputFile(String path) {
@@ -191,8 +191,8 @@ public class SiteContext extends ABuilder implements TemplateResolver {
 		if (!config.isProductionMode()) {
 			if ("CMS_BUILD_INFO".equals(templatePath) || "cmsinfo.incl.mustache.html".equals(templatePath)) {
 				try {
-					return MustacheLikeTemplateParser.parseTemplate(IO.readResource("cmsinfo.incl.mustache.html",
-						SiteContext.class));
+					return MustacheLikeTemplateParser
+							.parseTemplate(IO.readResource("cmsinfo.incl.mustache.html", SiteContext.class));
 				} catch (ParseException ex) {
 					throw new RuntimeException(ex);
 				}

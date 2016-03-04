@@ -375,12 +375,13 @@ public abstract class IO {
 		createDirectory(new File(path));
 	}
 
-	public static synchronized void createDirectory(File dir) {
+	public static synchronized boolean createDirectory(File dir) {
 		if (dir.exists()) {
-			if (dir.isDirectory()) return;
+			if (dir.isDirectory()) return false;
 			throw new RuntimeException("A file already exists: " + dir.getPath());
 		}
 		if (!dir.mkdirs()) throw new RuntimeException("Failed to create directory: " + dir.getPath());
+		return true;
 	}
 
 	public static String getFileExtension(String filename) {
@@ -424,8 +425,8 @@ public abstract class IO {
 	private static void moveFiles(File[] files, File destination, boolean overwrite) {
 		if (files == null || files.length == 0) return;
 		if (destination.exists()) {
-			if (!destination.isDirectory())
-				throw new RuntimeException("Moving files to " + destination + " failed. Destination is not a directory");
+			if (!destination.isDirectory()) throw new RuntimeException(
+					"Moving files to " + destination + " failed. Destination is not a directory");
 		} else {
 			createDirectory(destination);
 		}
@@ -455,8 +456,7 @@ public abstract class IO {
 	}
 
 	public static Set<String> getLocalHostNames(boolean includeIps, boolean includeNames) {
-		if (!includeIps && !includeNames)
-			throw new IllegalArgumentException("includeIps=false && includeNames==false");
+		if (!includeIps && !includeNames) throw new IllegalArgumentException("includeIps=false && includeNames==false");
 		Set<String> ret = new HashSet<String>();
 		if (includeIps) ret.add("127.0.0.1");
 		if (includeNames) ret.add("localhost");
@@ -540,9 +540,8 @@ public abstract class IO {
 		HttpURLConnection connection = post(url, parameters, encoding, username, password);
 		if (connection.getContentEncoding() != null) encoding = connection.getContentEncoding();
 		int responseCode = connection.getResponseCode();
-		if (responseCode != HttpURLConnection.HTTP_OK)
-			throw new RuntimeException("HTTP response code not OK: " + responseCode + " "
-					+ connection.getResponseMessage());
+		if (responseCode != HttpURLConnection.HTTP_OK) throw new RuntimeException(
+				"HTTP response code not OK: " + responseCode + " " + connection.getResponseMessage());
 		return readToString(connection.getInputStream(), encoding);
 	}
 
@@ -948,15 +947,13 @@ public abstract class IO {
 		}
 	}
 
-	public static void copyFileIfDiffersInTimeAndLength(File source, File destination) {
-		if (source.getAbsolutePath().equals(destination.getAbsolutePath())) return;
-		if (source.isDirectory()) {
-			copyFilesIfDifferInTimeAndLength(source.listFiles(), destination, null);
-			return;
-		}
+	public static boolean copyFileIfDiffersInTimeOrLength(File source, File destination) {
+		if (source.getAbsolutePath().equals(destination.getAbsolutePath())) return false;
+		if (source.isDirectory()) return copyFilesIfDifferInTimeOrLength(source.listFiles(), destination, null);
 
 		if (destination.exists() && destination.lastModified() == source.lastModified()
-				&& destination.length() == source.length()) return;
+				&& destination.length() == source.length())
+			return false;
 
 		FileInputStream in;
 		try {
@@ -969,6 +966,8 @@ public abstract class IO {
 		} finally {
 			close(in);
 		}
+
+		return true;
 	}
 
 	public static void copyFile(File sourceFile, OutputStream dst) {
@@ -1009,16 +1008,19 @@ public abstract class IO {
 		}
 	}
 
-	public static void copyFilesIfDifferInTimeAndLength(File[] files, File destinationDir, FileFilter filter) {
-		createDirectory(destinationDir);
+	public static boolean copyFilesIfDifferInTimeOrLength(File[] files, File destinationDir, FileFilter filter) {
+		boolean filesWritten = false;
+		filesWritten |= createDirectory(destinationDir);
 		for (File f : files) {
 			if (filter != null && !filter.accept(f)) continue;
 			if (f.isDirectory()) {
-				copyFilesIfDifferInTimeAndLength(f.listFiles(), new File(destinationDir + "/" + f.getName()), filter);
+				filesWritten |= copyFilesIfDifferInTimeOrLength(f.listFiles(),
+					new File(destinationDir + "/" + f.getName()), filter);
 			} else {
-				copyFileIfDiffersInTimeAndLength(f, new File(destinationDir + "/" + f.getName()));
+				filesWritten |= copyFileIfDiffersInTimeOrLength(f, new File(destinationDir + "/" + f.getName()));
 			}
 		}
+		return filesWritten;
 	}
 
 	public static void copyFiles(Collection<File> files, File destinationDir) {
@@ -1135,9 +1137,8 @@ public abstract class IO {
 
 	public static String readResource(String name, Class relativePath) {
 		URL url = relativePath.getResource(name);
-		if (url == null)
-			throw new RuntimeException("Resource '" + name + "' does not exist in "
-					+ relativePath.getPackage().getName());
+		if (url == null) throw new RuntimeException(
+				"Resource '" + name + "' does not exist in " + relativePath.getPackage().getName());
 		URLConnection connection;
 		try {
 			connection = url.openConnection();
@@ -1166,8 +1167,8 @@ public abstract class IO {
 			throw new RuntimeException("Directory does not exist: " + dstFile.getParent(), ex);
 		}
 		try {
-			URL url = relativePath == null ? IO.class.getClassLoader().getResource(name) : relativePath
-					.getResource(name);
+			URL url = relativePath == null ? IO.class.getClassLoader().getResource(name)
+					: relativePath.getResource(name);
 			if (url == null) throw new RuntimeException("Resource '" + name + "' does not exist.");
 			URLConnection connection;
 			try {
@@ -1575,7 +1576,8 @@ public abstract class IO {
 		}
 	}
 
-	public static InputStreamReader openUrlReader(String url, String defaultEncoding, String username, String password) {
+	public static InputStreamReader openUrlReader(String url, String defaultEncoding, String username,
+			String password) {
 		URLConnection connection = openUrlConnection(url, username, password);
 		String connectionEncoding = connection.getContentEncoding();
 		if (connectionEncoding != null) defaultEncoding = connectionEncoding;
