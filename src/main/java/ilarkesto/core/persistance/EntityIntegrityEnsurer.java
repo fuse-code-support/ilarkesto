@@ -41,8 +41,9 @@ public class EntityIntegrityEnsurer {
 			RuntimeTracker rt2 = new RuntimeTracker();
 			Class<? extends Entity> type = entry.getKey();
 			Collection<Entity> entitiesOfType = entry.getValue();
-			log.info("   ", type.getSimpleName(), entitiesOfType.size(), rt2.getRuntimeFormated());
+			log.info("   ", type.getSimpleName(), entitiesOfType.size());
 			ensureIntegrity(entitiesOfType);
+			if (rt2.getRuntime() > 1000) log.info("      ->", rt2.getRuntimeFormated());
 		}
 
 		log.info("Integrity for all", count, "entities ensured in", rt.getRuntimeFormated());

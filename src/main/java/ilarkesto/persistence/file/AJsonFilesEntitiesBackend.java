@@ -65,6 +65,7 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 		upgrader.upgradeEntitiesDir(storage.getFile(null), dataVersion);
 		TypeResolver typeResolver = createTypeResolver();
 		for (Class<? extends AEntity> type : getEntityTypes()) {
+			log.info("   ", type.getSimpleName());
 			RuntimeTracker rt2 = new RuntimeTracker();
 			int count = 0;
 			File dir = storage.getFile(type.getSimpleName());
@@ -85,7 +86,7 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 					count++;
 				}
 			}
-			log.info("   ", type.getSimpleName(), count, rt2.getRuntimeFormated());
+			log.info("      ->", count, rt2.getRuntime() > 1000 ? rt2.getRuntimeFormated() : "");
 		}
 
 		saveVersion(softwareVersion);
