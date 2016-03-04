@@ -963,6 +963,9 @@ public abstract class IO {
 		}
 		try {
 			copyDataToFile(in, destination);
+			try {
+				destination.setLastModified(source.lastModified());
+			} catch (Exception ex) {}
 		} finally {
 			close(in);
 		}
