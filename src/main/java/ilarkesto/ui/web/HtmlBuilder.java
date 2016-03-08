@@ -1143,6 +1143,10 @@ public class HtmlBuilder {
 			return setTarget(TARGET_BLANK);
 		}
 
+		public Tag setPlaceholder(String value) {
+			return set("placeholder", value);
+		}
+
 		public Tag setWidth(int value) {
 			return set("width", value);
 		}
