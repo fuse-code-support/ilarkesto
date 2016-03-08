@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -18,6 +18,7 @@ import ilarkesto.base.Net;
 import ilarkesto.base.Str;
 import ilarkesto.base.Sys;
 import ilarkesto.base.Tm;
+import ilarkesto.core.base.Filename;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.DateAndTime;
 import ilarkesto.io.IO;
@@ -195,7 +196,7 @@ public abstract class Servlet {
 			setEtag(httpResponse, eTag);
 		}
 
-		httpResponse.setContentType("application/octet-stream");
+		httpResponse.setContentType(getMimeType(file));
 		httpResponse.setContentLength((int) file.length());
 		if (setFilename) Servlet.setFilename(file.getName(), httpResponse);
 		try {
@@ -203,6 +204,20 @@ public abstract class Servlet {
 		} catch (IOException ex) {
 			throw new RuntimeException("Serving file failed: " + file, ex);
 		}
+	}
+
+	public static String getMimeType(File file) {
+		String filenameSuffix = new Filename(file.getName()).getSuffix();
+		return getMimeTypeFromFilenameSuffix(filenameSuffix);
+	}
+
+	private static String getMimeTypeFromFilenameSuffix(String s) {
+		if (Str.isBlank(s)) return "application/octet-stream";
+		s = s.trim().toLowerCase();
+		if (s.equals("js")) return "text/javascript";
+		if (s.equals("css")) return "text/css";
+		if (s.equals("txt")) return "text/plain";
+		return "application/octet-stream";
 	}
 
 	public static void setFilename(String fileName, HttpServletResponse httpResponse) {
