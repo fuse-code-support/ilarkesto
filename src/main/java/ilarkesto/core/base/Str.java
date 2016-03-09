@@ -228,6 +228,8 @@ public class Str {
 	}
 
 	public static String lowercaseFirstLetter(String s) {
+		if (s == null) return null;
+		if (s.length() == 0) return s;
 		StringBuilder sb = new StringBuilder();
 		sb.append(Character.toLowerCase(s.charAt(0)));
 		sb.append(s.substring(1));

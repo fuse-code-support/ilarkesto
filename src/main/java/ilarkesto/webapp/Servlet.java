@@ -207,6 +207,8 @@ public abstract class Servlet {
 	}
 
 	public static String getMimeType(File file) {
+		// String ret = Files.probeContentType(file);
+		// if (ret != null) return ret;
 		String filenameSuffix = new Filename(file.getName()).getSuffix();
 		return getMimeTypeFromFilenameSuffix(filenameSuffix);
 	}
@@ -214,9 +216,15 @@ public abstract class Servlet {
 	private static String getMimeTypeFromFilenameSuffix(String s) {
 		if (Str.isBlank(s)) return "application/octet-stream";
 		s = s.trim().toLowerCase();
+		if (s.equals("html") || s.equals("htm")) return "text/html";
 		if (s.equals("js")) return "text/javascript";
 		if (s.equals("css")) return "text/css";
 		if (s.equals("txt")) return "text/plain";
+		if (s.equals("ico")) return "image/x-icon";
+		if (s.equals("png")) return "image/png";
+		if (s.equals("jpg") || s.equals("jpeg")) return "image/jpeg";
+		if (s.equals("json")) return "application/json";
+		if (s.equals("xhtml")) return "application/xhtml+xml";
 		return "application/octet-stream";
 	}
 

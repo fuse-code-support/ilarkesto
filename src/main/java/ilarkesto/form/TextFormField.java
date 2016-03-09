@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public
- * License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
- * 
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
+ * General Public License as published by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
- * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
- * for more details.
- * 
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
+ * License for more details.
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -27,17 +27,18 @@ public class TextFormField extends AFormField {
 	private boolean trim = true;
 	private boolean emptyIsNull = true;
 	private Validator validator;
-	private int width = 40;
+	private Integer width;
 	private String suffix;
 	private InputAssistant inputAssistant;
 	private InputAssistantButton inputAssistantButton;
 
 	public TextFormField(String name) {
 		super(name);
-		inputAssistantButton = (InputAssistantButton) new InputAssistantButton(Form.BUTTON_PREFIX
-				+ Form.INPUTASSISTANT_BUTTON_NAME_PREFIX + name).setValidateForm(false).setLabel("Auswahl...").setIcon(
+		inputAssistantButton = (InputAssistantButton) new InputAssistantButton(
+				Form.BUTTON_PREFIX + Form.INPUTASSISTANT_BUTTON_NAME_PREFIX + name).setValidateForm(false)
+						.setLabel("Auswahl...").setIcon(
 
-		"inputAssistant");
+							"inputAssistant");
 	}
 
 	public InputAssistantButton getInputAssistantButton() {
@@ -86,10 +87,11 @@ public class TextFormField extends AFormField {
 		return this;
 	}
 
-	public int getWidth() {
+	public Integer getWidth() {
 		return width;
 	}
 
+	@Override
 	public void update(Map<String, String> data, Collection<FileItem> uploadedFiles) {
 		value = preProcessValue(data.get(getName()));
 	}
@@ -103,6 +105,7 @@ public class TextFormField extends AFormField {
 		return s;
 	}
 
+	@Override
 	public void validate() throws ValidationException {
 		if (value == null) {
 			if (isRequired()) { throw new ValidationException("Eingabe erforderlich"); }
@@ -113,6 +116,7 @@ public class TextFormField extends AFormField {
 		}
 	}
 
+	@Override
 	public String getValueAsString() {
 		return value;
 	}

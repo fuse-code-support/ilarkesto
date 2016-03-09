@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -97,8 +97,8 @@ public abstract class AUi {
 	}
 
 	@Deprecated
-	public final void showDialog(String viewId, Object model, Object blocker) throws DialogTimeoutException,
-			InterruptedException {
+	public final void showDialog(String viewId, Object model, Object blocker)
+			throws DialogTimeoutException, InterruptedException {
 		showDialog(viewId, model, blocker, DEFAULT_DIALOG_TIMEOUT);
 	}
 
@@ -174,7 +174,7 @@ public abstract class AUi {
 	}
 
 	public static String getViewIcon(Class<? extends AView> viewClass) {
-		String icon = (String) Reflect.getFieldValue(viewClass, "ICON");
+		String icon = Str.lowercaseFirstLetter((String) Reflect.getFieldValue(viewClass, "ICON"));
 		if (icon != null) return icon;
 		return getViewId(viewClass);
 	}

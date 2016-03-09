@@ -141,10 +141,10 @@ public class HtmlBuilder {
 		endTag(TEXTAREA);
 	}
 
-	public void TEXTAREA(String name, String id, String text, Integer cols, int rows, boolean wysiwyg, String width) {
+	public void TEXTAREA(String name, String id, String text, Integer cols, int rows, String styleClass, String width) {
 		Tag tag = startTag(TEXTAREA).set("name", name).setId(id).set("rows", rows).set("cols", cols)
 				.set("wrap", "virtual").setWidth(width).setStyle("width: " + width + ";");
-		if (wysiwyg) tag.setClass("wysiwyg");
+		tag.setClass(styleClass);
 		html(text);
 		endTag(TEXTAREA);
 	}
@@ -358,8 +358,8 @@ public class HtmlBuilder {
 		return startTag(SELECT, true).setName(name);
 	}
 
-	public Tag startSELECT(String name, Integer size) {
-		return startSELECT(name).set("size", size);
+	public Tag startSELECT(String id, String name, Integer size) {
+		return startSELECT(name).setId(id).set("size", size);
 	}
 
 	public void endSELECT() {
@@ -387,13 +387,13 @@ public class HtmlBuilder {
 
 	private static final IdGenerator dateIdGenerator = new CountingIdGenerator("date");
 
-	public void INPUTdate(String name, String value) {
-		String id = dateIdGenerator.generateId();
+	public void INPUTdate(String id, String name, String value, String styleClass) {
+		if (id == null) id = dateIdGenerator.generateId();
 		// INPUTtext(id, name, value, 10);
 		// String buttonName = "b_" + name;
 		// INPUTreset("...", "return showCalendar('"+id+"', '%d.%m.%Y', '24', false, true);");
 
-		INPUTtext(id, name, value, 10);
+		INPUTtext(id, name, value, 10, styleClass);
 		String buttonId = "b_" + id;
 		BUTTON("button", buttonId, null, "Kalender", null, null, "/img/kde/16x16/apps/cal.png");
 		StringBuilder code = new StringBuilder();
@@ -422,38 +422,39 @@ public class HtmlBuilder {
 		tag.end();
 	}
 
-	public void INPUTtext(String name, String value, int width) {
+	public void INPUTtext(String name, String value, Integer width) {
 		INPUTtext(name, value, width, null);
 	}
 
-	public void INPUTtext(String name, String value, int width, String style) {
-		INPUTtext(null, name, value, width, style);
+	public void INPUTtext(String name, String value, Integer width, String styleClass) {
+		INPUTtext(null, name, value, width, styleClass);
 	}
 
-	public void INPUTtext(String id, String name, String value, int width) {
+	public void INPUTtext(String id, String name, String value, Integer width) {
 		INPUTtext(id, name, value, width, null);
 	}
 
-	public void INPUTtext(String id, String name, String value, int width, String style) {
-		Tag tag = INPUT("text", name, value).setId(id).set("size", width).setClass("inputText").setStyle(style);
+	public void INPUTtext(String id, String name, String value, Integer width, String styleClass) {
+		Tag tag = INPUT("text", name, value).setId(id).set("size", width).setClass(styleClass);
 		tag.setOnfocus("javascript:select();");
 		tag.end();
 	}
 
-	public void INPUTtextWithPlaceholder(String id, String name, String value, int width, String placeholder,
-			String style) {
-		Tag tag = INPUT("text", name, value).setId(id).set("size", width).setClass("inputText")
-				.set("placeholder", placeholder).setStyle(style);
+	public void INPUTtextWithPlaceholder(String id, String name, String value, Integer width, String placeholder,
+			String styleClass) {
+		Tag tag = INPUT("text", name, value).setId(id).set("size", width).setClass(styleClass).set("placeholder",
+			placeholder);
 		tag.setOnfocus("javascript:select();");
 		tag.end();
 	}
 
-	public void INPUTpassword(String name, int width, String value) {
+	public void INPUTpassword(String name, Integer width, String value) {
 		INPUT("password", name, value).set("size", width).setClass("inputText").end();
 	}
 
-	public void INPUTpassword(String id, String name, int width, String value) {
-		INPUT("password", name, value).set("id", id).set("size", width).setClass("inputText").end();
+	public void INPUTpassword(String id, String name, String styleClass, Integer width, String value) {
+		INPUT("password", name, value).set("id", id).setClass(styleClass).set("size", width).setClass("inputText")
+				.end();
 	}
 
 	public void INPUTpasswordWithPlaceholder(String id, String name, int width, String value, String placeholder) {
@@ -461,32 +462,32 @@ public class HtmlBuilder {
 				.setClass("inputText").end();
 	}
 
-	public void INPUTcheckbox(String id, String name, boolean checked) {
-		Tag tag = INPUT("checkbox", name, "true").setId(id).setClass("inputCheckbox");
+	public void INPUTcheckbox(String id, String name, boolean checked, String styleClass) {
+		Tag tag = INPUT("checkbox", name, "true").setId(id).setClass(styleClass);
 		if (checked) {
 			tag.set("checked", "checked");
 		}
 	}
 
-	public void INPUTcheckbox(String name, boolean checked) {
-		INPUTcheckbox(null, name, checked);
+	public void INPUTcheckbox(String name, boolean checked, String styleClass) {
+		INPUTcheckbox(null, name, checked, styleClass);
 	}
 
-	public void INPUTcheckbox(String name, boolean checked, String text) {
+	public void INPUTcheckbox(String name, boolean checked, String text, String styleClass) {
 		String id = "cb_" + name;
-		INPUTcheckbox(id, name, checked);
+		INPUTcheckbox(id, name, checked, styleClass);
 		LABEL(id, text);
 	}
 
-	public void INPUTradio(String name, String value, boolean checked) {
-		Tag tag = INPUT("radio", name, value).setClass("inputRadio");
+	public void INPUTradio(String name, String value, boolean checked, String styleClass) {
+		Tag tag = INPUT("radio", name, value).setClass(styleClass);
 		if (checked) {
 			tag.set("checked", "checked");
 		}
 	}
 
-	public void INPUTfile(String name, Integer maxlength) {
-		INPUT("file", name, null).set("maxlength", maxlength).setClass("inputText");
+	public void INPUTfile(String id, String name, Integer maxlength) {
+		INPUT("file", name, null).setId(id).set("maxlength", maxlength).setClass("inputText");
 	}
 
 	private Tag INPUT(String type, String name, String value) {
