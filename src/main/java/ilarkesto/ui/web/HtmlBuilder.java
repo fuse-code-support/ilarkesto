@@ -143,7 +143,8 @@ public class HtmlBuilder {
 
 	public void TEXTAREA(String name, String id, String text, Integer cols, int rows, String styleClass, String width) {
 		Tag tag = startTag(TEXTAREA).set("name", name).setId(id).set("rows", rows).set("cols", cols)
-				.set("wrap", "virtual").setWidth(width).setStyle("width: " + width + ";");
+				.set("wrap", "virtual").setWidth(width);
+		if (width != null) tag.setStyle("width: " + width + ";");
 		tag.setClass(styleClass);
 		html(text);
 		endTag(TEXTAREA);
@@ -275,7 +276,11 @@ public class HtmlBuilder {
 	}
 
 	public void LABEL(String for_, String text) {
-		startLABEL(for_);
+		LABEL(for_, text, null);
+	}
+
+	public void LABEL(String for_, String text, String styleClass) {
+		startLABEL(for_).setClass(styleClass);
 		text(text);
 		endLABEL();
 	}
@@ -385,26 +390,6 @@ public class HtmlBuilder {
 		startTag(INPUT).set("type", "reset").set("value", value).setOnclick(onclick).end();
 	}
 
-	private static final IdGenerator dateIdGenerator = new CountingIdGenerator("date");
-
-	public void INPUTdate(String id, String name, String value, String styleClass) {
-		if (id == null) id = dateIdGenerator.generateId();
-		// INPUTtext(id, name, value, 10);
-		// String buttonName = "b_" + name;
-		// INPUTreset("...", "return showCalendar('"+id+"', '%d.%m.%Y', '24', false, true);");
-
-		INPUTtext(id, name, value, 10, styleClass);
-		String buttonId = "b_" + id;
-		BUTTON("button", buttonId, null, "Kalender", null, null, "/img/kde/16x16/apps/cal.png");
-		StringBuilder code = new StringBuilder();
-		code.append("Calendar.setup({\n");
-		code.append("    inputField:  \"" + id + "\",\n");
-		code.append("    ifFormat:    \"%d.%m.%Y\",\n");
-		code.append("    button:      \"").append(buttonId).append("\",\n");
-		code.append("});\n");
-		SCRIPTjavascript(null, code.toString());
-	}
-
 	public void INPUThidden(String name, String value) {
 		INPUT("hidden", name, value).end();
 	}
@@ -506,9 +491,9 @@ public class HtmlBuilder {
 	}
 
 	public void BUTTON(String type, String id, String name, String text, String onclick, Character accessKey,
-			String icon) {
-		Tag tag = startTag(BUTTON, true).set("value", text).set("type", type).setId(id).setName(name)
-				.setClass("button");
+			String icon, String styleClass) {
+		Tag tag = startTag(BUTTON, true).set("value", text).set("type", type).setId(id).setName(name);
+		tag.setClass(styleClass);
 		tag.set("accesskey", accessKey);
 		if (onclick != null) {
 			tag.setOnclick(onclick);
@@ -520,7 +505,6 @@ public class HtmlBuilder {
 			nbsp();
 		}
 		text(text);
-		nbsp();
 		endTag(BUTTON);
 	}
 
