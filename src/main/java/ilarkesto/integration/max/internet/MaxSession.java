@@ -30,6 +30,15 @@ import java.util.Map;
  */
 public class MaxSession {
 
+	public static void main(String[] args) {
+		MaxSession session = MaxSession.createEweInstance();
+		// MaxSession session = MaxSession.createEq3Instance(new DefaultHttpClient());
+		// MaxSession session = MaxSession.createMdInstance(new DefaultHttpClient());
+		session.login("xxx", "yyy");
+		MaxCubeState state = session.getMaxCubeState();
+		System.out.println(state.getRooms());
+	}
+
 	private static Log log = Log.get(MaxSession.class);
 
 	private String baseUrl;
@@ -62,6 +71,10 @@ public class MaxSession {
 
 	public static MaxSession createEq3Instance() {
 		return new MaxSession("https://max.eq-3.de/");
+	}
+
+	public static MaxSession createEweInstance() {
+		return new MaxSession("https://www.sparpaket-heizung.ewe.de/");
 	}
 
 	public void executeSetRoomAutoMode(MaxRoom room) {
@@ -211,8 +224,8 @@ public class MaxSession {
 				relogin();
 				return executeApiMethod(false, name, extraParams, arguments);
 			} else {
-				throw new MaxCommandFailedException("Command execution failed: " + name + ". Unexpected result: "
-						+ result);
+				throw new MaxCommandFailedException(
+						"Command execution failed: " + name + ". Unexpected result: " + result);
 			}
 		}
 		return result;
