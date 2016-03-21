@@ -17,8 +17,6 @@ package ilarkesto.ui.web;
 import ilarkesto.base.Str;
 import ilarkesto.base.Url;
 import ilarkesto.base.Utl;
-import ilarkesto.id.CountingIdGenerator;
-import ilarkesto.id.IdGenerator;
 import ilarkesto.integration.links.MultiLinkConverter;
 import ilarkesto.io.IO;
 
@@ -234,20 +232,7 @@ public class HtmlBuilder {
 
 	// --- SPAN ---
 
-	private static final IdGenerator hintIdGenerator = new CountingIdGenerator("hint");
-
 	private static final String SPAN = "span";
-
-	public void startSPANwithHint(String clazz, String content) {
-		Tag tag = startSPAN(clazz);
-		if (content == null) return;
-
-		String hintDivId = hintIdGenerator.generateId();
-		tag.setOnmouseover("showHint('" + hintDivId + "')").setOnmouseout("hideHint()");
-		startDIV("hint").setId(hintDivId);
-		text(content);
-		endDIV();
-	}
 
 	public Tag startSPAN(String clazz) {
 		return startTag(SPAN).setClass(clazz);
