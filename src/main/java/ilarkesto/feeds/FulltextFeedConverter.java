@@ -142,9 +142,15 @@ public class FulltextFeedConverter {
 		}
 
 		if ((idx = text.indexOf("<div class=\"o-article_block")) > 0) {
-			log.debug("class=article-content"); // engadget.com 2016-03-21
+			log.debug("class=o-article_block"); // engadget.com 2016-03-21
 			text = text.substring(idx);
 			text = Str.removeSuffixStartingWith(text, "<footer");
+			return text;
+		}
+		if ((idx = text.indexOf("<div class=\"copy post-body\"")) > 0) {
+			log.debug("<div class=\"copy post-body\""); // engadget.com 2016-03-21
+			text = text.substring(idx);
+			text = Str.removeSuffixStartingWith(text, "<p class=\"read-more\">");
 			return text;
 		}
 		if ((idx = text.indexOf("<div class=\"article-content\"")) > 0) {
