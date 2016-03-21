@@ -33,7 +33,7 @@ public class FulltextFeedConverter {
 		// System.out.println(converter.feed);
 		// for (FeedItem item : converter.feed.getItems()) {
 		// System.out.println(" * " + item);
-		// System.out.println("    " + item.getDescription());
+		// System.out.println(" " + item.getDescription());
 		// }
 		// System.out.println(converter.feed.createRssText());
 
@@ -90,7 +90,7 @@ public class FulltextFeedConverter {
 		log.info("Downloading", url);
 		String text = downloader.downloadText(url, IO.UTF_8);
 		if (Str.isBlank(text)) return null;
-		text = extract(text);
+		text = extract(text, url);
 		text = optimize(text);
 		return text;
 	}
@@ -107,7 +107,7 @@ public class FulltextFeedConverter {
 		return text;
 	}
 
-	private static String extract(String text) {
+	private static String extract(String text, String url) {
 		if (text == null) return null;
 
 		int idx = -1;
@@ -129,7 +129,7 @@ public class FulltextFeedConverter {
 			if (nextPageUrl != null) {
 				String next = downloader.downloadText(nextPageUrl, IO.UTF_8);
 				if (!Str.isBlank(next)) return text;
-				text += extract(next);
+				text += extract(next, nextPageUrl);
 			}
 			return text;
 		}
@@ -141,6 +141,12 @@ public class FulltextFeedConverter {
 			return text;
 		}
 
+		if ((idx = text.indexOf("<div class=\"o-article_block")) > 0) {
+			log.debug("class=article-content"); // engadget.com 2016-03-21
+			text = text.substring(idx);
+			text = Str.removeSuffixStartingWith(text, "<footer");
+			return text;
+		}
 		if ((idx = text.indexOf("<div class=\"article-content\"")) > 0) {
 			log.debug("class=article-content"); // engadget.com
 			text = text.substring(idx);
@@ -169,7 +175,7 @@ public class FulltextFeedConverter {
 			return text;
 		}
 
-		log.warn("Identification failed:", text);
+		log.warn("Identification failed:", url, "\n-----\n" + text);
 
 		if ((idx = text.indexOf("<body>")) > 0) {
 			text = text.substring(idx + 6);
