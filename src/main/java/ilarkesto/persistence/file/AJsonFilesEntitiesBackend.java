@@ -15,6 +15,7 @@
 package ilarkesto.persistence.file;
 
 import ilarkesto.core.base.RuntimeTracker;
+import ilarkesto.core.base.Str;
 import ilarkesto.core.persistance.ACachingEntitiesBackend;
 import ilarkesto.core.persistance.AEntity;
 import ilarkesto.core.persistance.Entity;
@@ -102,7 +103,9 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 	private int loadVersion() {
 		File versionFile = getVersionFile();
 		if (!versionFile.exists()) return 0;
-		return Integer.parseInt(IO.readFile(versionFile, IO.UTF_8).trim());
+		String content = IO.readFile(versionFile, IO.UTF_8);
+		if (Str.isBlank(content)) return 0;
+		return Integer.parseInt(content.trim());
 	}
 
 	private File getVersionFile() {
