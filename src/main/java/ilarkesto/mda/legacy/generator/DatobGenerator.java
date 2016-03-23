@@ -265,9 +265,15 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 		ln();
 		annotationOverride();
 		ln("    public boolean matches(" + SearchText.class.getName() + " search) {");
-		s("         return search.matches(getId()");
+		String sGetId = bean.isEntity() ? "getId(), " : "";
+		s("         return search.matches(" + sGetId);
+		boolean first = true;
 		for (PropertyModel p : searchableProperties) {
-			s(", ");
+			if (first) {
+				first = false;
+			} else {
+				s(", ");
+			}
 			s("get" + Str.uppercaseFirstLetter(p.getName()) + "()");
 		}
 		ln(");");
