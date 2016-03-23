@@ -18,7 +18,7 @@ import ilarkesto.core.auth.LoginDataProvider;
 import ilarkesto.core.base.Str;
 import ilarkesto.core.logging.Log;
 import ilarkesto.json.JsonObject;
-import ilarkesto.net.HttpDownloader;
+import ilarkesto.net.httpclient.HttpSession;
 
 import java.util.HashMap;
 
@@ -40,8 +40,8 @@ public class OAuth2 {
 
 	public OAuth2(String authEndpoint, String tokenEndpoint, LoginDataProvider clientIdAndSecret, String redirectUri,
 			String refreshToken, String scope) {
-		this(authEndpoint, tokenEndpoint, clientIdAndSecret.getLoginData().getLogin(), clientIdAndSecret.getLoginData()
-				.getPassword(), redirectUri, refreshToken, scope);
+		this(authEndpoint, tokenEndpoint, clientIdAndSecret.getLoginData().getLogin(),
+				clientIdAndSecret.getLoginData().getPassword(), redirectUri, refreshToken, scope);
 	}
 
 	public OAuth2(String authEndpoint, String tokenEndpoint, String clientId, String clientSecret, String redirectUri,
@@ -78,15 +78,14 @@ public class OAuth2 {
 		params.put("client_id", clientId);
 		params.put("client_secret", clientSecret);
 		params.put("grant_type", "refresh_token");
-		HttpDownloader http = HttpDownloader.create();
-		String result = http.post(tokenEndpoint, params, null);
+
+		String result = new HttpSession().postAndDownloadText(tokenEndpoint, params);
 
 		JsonObject json = JsonObject.parse(result);
 
 		accessToken = json.getString("access_token");
-		if (Str.isBlank(accessToken))
-			throw new RuntimeException(
-					"OAuth: Exchanging refresh token for access token failed. Missing access_token: " + result);
+		if (Str.isBlank(accessToken)) throw new RuntimeException(
+				"OAuth: Exchanging refresh token for access token failed. Missing access_token: " + result);
 
 		log.info("Refresh token exchanged for access token");
 	}
@@ -101,22 +100,19 @@ public class OAuth2 {
 		params.put("grant_type", "authorization_code");
 		params.put("redirect_uri", redirectUri);
 		params.put("access_type", "offline");
-		HttpDownloader http = HttpDownloader.create();
-		String result = http.post(tokenEndpoint, params, null);
+		String result = new HttpSession().postAndDownloadText(tokenEndpoint, params);
 
 		JsonObject json = JsonObject.parse(result);
 
 		accessToken = json.getString("access_token");
-		if (Str.isBlank(accessToken))
-			throw new RuntimeException(
-					"OAuth: Exchanging authorization code for access+refresh token failed. Missing access_token: "
-							+ result);
+		if (Str.isBlank(accessToken)) throw new RuntimeException(
+				"OAuth: Exchanging authorization code for access+refresh token failed. Missing access_token: "
+						+ result);
 
 		refreshToken = json.getString("refresh_token");
-		if (Str.isBlank(refreshToken))
-			throw new RuntimeException(
-					"OAuth: Exchanging authorization code for access/refresh token failed. Missing refresh_token: "
-							+ result);
+		if (Str.isBlank(refreshToken)) throw new RuntimeException(
+				"OAuth: Exchanging authorization code for access/refresh token failed. Missing refresh_token: "
+						+ result);
 
 		log.info("Authorization code exchanged for access token and refresh token");
 	}

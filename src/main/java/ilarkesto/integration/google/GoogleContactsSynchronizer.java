@@ -36,20 +36,23 @@ public class GoogleContactsSynchronizer {
 	private static final Log log = Log.get(GoogleContactsSynchronizer.class);
 
 	public static void main(String[] args) {
-		LoginData clientIdLogin = LoginPanel.showDialog(null, "Client ID", new File(
-				"runtimedata/google-oauth2.properties"));
+		LoginData clientIdLogin = LoginPanel.showDialog(null, "Client ID",
+			new File("runtimedata/google-oauth2.properties"));
 		if (clientIdLogin == null) return;
 
-		LoginData refreshTokenLogin = LoginPanel.showDialog(null, "Refresh Token", new File(
-				"runtimedata/google-oauth2-refresh.properties"));
+		LoginData refreshTokenLogin = LoginPanel.showDialog(null, "Refresh Token",
+			new File("runtimedata/google-oauth2-refresh.properties"));
 
 		GoogleOAuth client = new GoogleOAuth(clientIdLogin.getLogin(), clientIdLogin.getPassword(),
 				GoogleOAuth.REDIRECT_OOB, refreshTokenLogin.getPassword(), GoogleOAuth.SCOPE_USERINFO_EMAIL,
 				GoogleOAuth.SCOPE_CONTACTS);
 
-		GoogleContactsSynchronizer synchronizer = new GoogleContactsSynchronizer(client.createContactsService(),
-				"ilarkestoId", "ilarkestoTimestammp", "ilarkestoVersion", String.valueOf(System.currentTimeMillis()),
-				"Ilarkesto-Test", false, new LocalContactManager<String>() {
+		// System.out.println(client.createUrlForAuthenticationRequest(false));
+
+		ContactsService contactsService = client.createContactsService();
+		GoogleContactsSynchronizer synchronizer = new GoogleContactsSynchronizer(contactsService, "ilarkestoId",
+				"ilarkestoTimestammp", "ilarkestoVersion", String.valueOf(System.currentTimeMillis()), "Ilarkesto-Test",
+				false, new LocalContactManager<String>() {
 
 					@Override
 					public void onUpdateGoogleContactFailed(String contact, ContactEntry gContact, Exception ex) {
@@ -65,7 +68,8 @@ public class GoogleContactsSynchronizer {
 					public void updateGoogleContactFields(String contact, ContactEntry gContact) {
 						Google.setEmail(gContact, "test@test.com", null, Google.EmailRel.HOME, true);
 						gContact.addOrganization(Google.createOrganization("Test GmbH", "Badass"));
-						gContact.addUserDefinedField(Google.createUserDefinedField("Ilarkesto Test", "Ein\nZweizeiler"));
+						gContact.addUserDefinedField(
+							Google.createUserDefinedField("Ilarkesto Test", "Ein\nZweizeiler"));
 						gContact.setBirthday(Google.createBirthday(new Date(1979, 8, 3)));
 						Google.setAddress(gContact, "Unter Franke 1", "31737", "Rinteln", "DE", "Deutschland", "",
 							AddressRel.WORK, false);
@@ -164,8 +168,8 @@ public class GoogleContactsSynchronizer {
 	private synchronized void updateGoogleContactInternal(Object oContact, ContactEntry gContact) {
 		log.info("Updating google contact:", oContact);
 		Google.setExtendedProperty(gContact, localIdentifierAttribute, localContactManager.getId(oContact));
-		Google.setExtendedProperty(gContact, localTimestampAttribute, localContactManager.getLastModified(oContact)
-				.toString());
+		Google.setExtendedProperty(gContact, localTimestampAttribute,
+			localContactManager.getLastModified(oContact).toString());
 		Google.setExtendedProperty(gContact, localVersionAttribute, localVersion);
 
 		Google.removeEmails(gContact);
