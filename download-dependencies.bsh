@@ -31,8 +31,10 @@ mavendownload org/beanshell bsh 2.0b5
 servistodownload codemirror_V-0.4-gwt16.jar
 
 servistodownload gdata-contacts-3.0.jar
+mavendownload com/google/apis google-api-services-calendar v3-rev172-1.21.0
 mavendownload com/google/gdata core 1.47.1
-mavendownload com/google/api-client google-api-client 1.19.1
+mavendownload com/google/api-client google-api-client 1.21.0
+
 mavendownload com/google/guava guava 18.0
 mavendownload com/google/inject guice 4.0
 
