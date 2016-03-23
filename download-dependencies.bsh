@@ -34,6 +34,11 @@ servistodownload gdata-contacts-3.0.jar
 mavendownload com/google/apis google-api-services-calendar v3-rev172-1.21.0
 mavendownload com/google/gdata core 1.47.1
 mavendownload com/google/api-client google-api-client 1.21.0
+mavendownload com/google/oauth-client google-oauth-client 1.21.0
+mavendownload com/google/http-client google-http-client 1.21.0
+mavendownload com/google/http-client google-http-client-jackson2 1.21.0
+mavendownload com/fasterxml/jackson/core jackson-core 2.7.3
+
 
 mavendownload com/google/guava guava 18.0
 mavendownload com/google/inject guice 4.0

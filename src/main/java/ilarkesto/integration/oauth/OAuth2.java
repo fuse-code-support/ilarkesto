@@ -33,19 +33,19 @@ public class OAuth2 {
 	private String clientId;
 	private String clientSecret;
 	private String redirectUri;
-	private String scope;
+	private String[] scopes;
 	private String refreshToken;
 
 	private String accessToken;
 
-	public OAuth2(String authEndpoint, String tokenEndpoint, LoginDataProvider clientIdAndSecret, String redirectUri,
-			String refreshToken, String scope) {
+	private OAuth2(String authEndpoint, String tokenEndpoint, LoginDataProvider clientIdAndSecret, String redirectUri,
+			String refreshToken, String... scopes) {
 		this(authEndpoint, tokenEndpoint, clientIdAndSecret.getLoginData().getLogin(),
-				clientIdAndSecret.getLoginData().getPassword(), redirectUri, refreshToken, scope);
+				clientIdAndSecret.getLoginData().getPassword(), redirectUri, refreshToken, scopes);
 	}
 
 	public OAuth2(String authEndpoint, String tokenEndpoint, String clientId, String clientSecret, String redirectUri,
-			String refreshToken, String scope) {
+			String refreshToken, String... scopes) {
 		super();
 		this.authEndpoint = authEndpoint;
 		this.tokenEndpoint = tokenEndpoint;
@@ -53,13 +53,13 @@ public class OAuth2 {
 		this.clientSecret = clientSecret;
 		this.redirectUri = redirectUri;
 		this.refreshToken = refreshToken;
-		this.scope = scope;
+		this.scopes = scopes;
 	}
 
 	public String createUrlForAuthenticationRequest(boolean forceApprovalPrompt) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(authEndpoint).append("?");
-		sb.append("scope=").append(Str.encodeUrlParameter(scope)).append("&");
+		sb.append("scope=").append(Str.encodeUrlParameter(concatScope(scopes))).append("&");
 		sb.append("redirect_uri=").append(Str.encodeUrlParameter(redirectUri)).append("&");
 		sb.append("client_id=").append(clientId).append("&");
 		sb.append("response_type=code&");
@@ -68,6 +68,10 @@ public class OAuth2 {
 		if (forceApprovalPrompt) sb.append("&approval_prompt=force");
 		String url = sb.toString();
 		return url;
+	}
+
+	private static String concatScope(String... scopes) {
+		return Str.concat(scopes, "+");
 	}
 
 	public void exchangeRefreshTokenForAccessToken() {
@@ -134,8 +138,12 @@ public class OAuth2 {
 		return clientSecret;
 	}
 
-	public String getScope() {
-		return scope;
+	public String[] getScopes() {
+		return scopes;
+	}
+
+	public String getScopeAsString() {
+		return concatScope(scopes);
 	}
 
 }

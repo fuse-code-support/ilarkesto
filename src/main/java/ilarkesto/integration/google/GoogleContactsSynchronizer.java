@@ -15,13 +15,11 @@
 package ilarkesto.integration.google;
 
 import ilarkesto.base.Utl;
-import ilarkesto.core.auth.LoginData;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.Date;
 import ilarkesto.core.time.DateAndTime;
 import ilarkesto.integration.google.Google.AddressRel;
 import ilarkesto.io.IO;
-import ilarkesto.swing.LoginPanel;
 
 import java.io.File;
 import java.util.Collection;
@@ -36,18 +34,7 @@ public class GoogleContactsSynchronizer {
 	private static final Log log = Log.get(GoogleContactsSynchronizer.class);
 
 	public static void main(String[] args) {
-		LoginData clientIdLogin = LoginPanel.showDialog(null, "Client ID",
-			new File("runtimedata/google-oauth2.properties"));
-		if (clientIdLogin == null) return;
-
-		LoginData refreshTokenLogin = LoginPanel.showDialog(null, "Refresh Token",
-			new File("runtimedata/google-oauth2-refresh.properties"));
-
-		GoogleOAuth client = new GoogleOAuth(clientIdLogin.getLogin(), clientIdLogin.getPassword(),
-				GoogleOAuth.REDIRECT_OOB, refreshTokenLogin.getPassword(), GoogleOAuth.SCOPE_USERINFO_EMAIL,
-				GoogleOAuth.SCOPE_CONTACTS);
-
-		// System.out.println(client.createUrlForAuthenticationRequest(false));
+		GoogleOAuth client = GoogleOAuth.createTestOAuthClient();
 
 		ContactsService contactsService = client.createContactsService();
 		GoogleContactsSynchronizer synchronizer = new GoogleContactsSynchronizer(contactsService, "ilarkestoId",

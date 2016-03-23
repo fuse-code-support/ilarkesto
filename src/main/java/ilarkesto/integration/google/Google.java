@@ -21,15 +21,16 @@ import ilarkesto.core.auth.LoginDataProvider;
 import ilarkesto.core.base.Utl;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.Date;
-import ilarkesto.swing.LoginPanel;
 
-import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.gdata.client.Service.GDataRequest;
 import com.google.gdata.client.contacts.ContactQuery;
 import com.google.gdata.client.contacts.ContactsService;
@@ -72,40 +73,9 @@ import com.google.gdata.util.ContentType;
 public class Google {
 
 	public static void main(String[] args) throws Throwable {
-		// List<BuzzActivity> activities = getBuzzActivitiesConsumption();
-		// System.out.println(Str.format(activities));
-
-		// for (BuzzActivity buzz : getBuzzActivitiesConsumption(login)) {
-		// System.out.println(buzz);
-		// }
-
-		// Sys.setHttpProxy("83.246.65.215", 80);
-
-		LoginData login = LoginPanel.showDialog(null, "Google login", new File("runtimedata/google-login.properties"));
-		if (login == null) return;
-		String email = login.getLogin();
-		ContactsService service = createContactsService(login, "Test");
-		ContactGroupEntry testgroup = getContactGroupByTitle("testgroup", service, email);
-		List<ContactEntry> contacts = getContacts(service, testgroup, email);
-		ContactEntry contact = contacts.get(0);
-
-		setEmail(contact, "olga@koczewski.de", "privat", EmailRel.HOME, false);
-		setPhone(contact, "12345", "Neue Nummer", null);
-		removeAddresses(contact);
-		setAddress(contact, "Teststrasse 122", "12345", "Teststadt", "DE", "Deutschland", "Testadresse xy",
-			AddressRel.OTHER, false);
-		setInstantMessaging(contact, "olga@koczewski.de", ImProtocol.JABBER, ImRel.HOME);
-		setWebsite(contact, "http://koczewski.de", Website.Rel.HOME_PAGE);
-		save(contact, service);
-
-		// ContactGroupEntry group = getContactGroupByTitle("testgroup", service, login.getLogin());
-		// if (group == null) {
-		// group = createContactGroup("testgroup", service, login.getLogin());
-		// }
-		//
-		// createContact(createPersonName("Duke", "Nukem"), group, service, login.getLogin());
-		//
-		// getContacts(service, group, login.getLogin());
+		GoogleOAuth client = GoogleOAuth.createTestOAuthClient();
+		Calendar calendarService = client.createCalendarService();
+		dumpCalendars(calendarService);
 	}
 
 	private static Log log = Log.get(Google.class);
@@ -114,8 +84,10 @@ public class Google {
 
 		AIM("http://schemas.google.com/g/2005#AIM"), MSN("http://schemas.google.com/g/2005#MSN"), YAHOO(
 				"http://schemas.google.com/g/2005#YAHOO"), SKYPE("http://schemas.google.com/g/2005#SKYPE"), QQ(
-				"http://schemas.google.com/g/2005#QQ"), GOOGLE_TALK("http://schemas.google.com/g/2005#GOOGLE_TALK"), ICQ(
-				"http://schemas.google.com/g/2005#ICQ"), JABBER("http://schemas.google.com/g/2005#JABBER");
+						"http://schemas.google.com/g/2005#QQ"), GOOGLE_TALK(
+								"http://schemas.google.com/g/2005#GOOGLE_TALK"), ICQ(
+										"http://schemas.google.com/g/2005#ICQ"), JABBER(
+												"http://schemas.google.com/g/2005#JABBER");
 
 		String href;
 
@@ -170,14 +142,30 @@ public class Google {
 
 	public static enum PhoneRel {
 		HOME("http://schemas.google.com/g/2005#home"), WORK("http://schemas.google.com/g/2005#work"), FAX(
-				"http://schemas.google.com/g/2005#fax"), HOME_FAX("http://schemas.google.com/g/2005#home_fax"), WORK_FAX(
-				"http://schemas.google.com/g/2005#work_fax"), MOBILE("http://schemas.google.com/g/2005#mobile"), PAGER(
-				"http://schemas.google.com/g/2005#pager"), OTHER("http://schemas.google.com/g/2005#other");
+				"http://schemas.google.com/g/2005#fax"), HOME_FAX(
+						"http://schemas.google.com/g/2005#home_fax"), WORK_FAX(
+								"http://schemas.google.com/g/2005#work_fax"), MOBILE(
+										"http://schemas.google.com/g/2005#mobile"), PAGER(
+												"http://schemas.google.com/g/2005#pager"), OTHER(
+														"http://schemas.google.com/g/2005#other");
 
 		String href;
 
 		private PhoneRel(String href) {
 			this.href = href;
+		}
+	}
+
+	public static void dumpCalendars(Calendar calendarService) {
+		List<CalendarListEntry> calendars;
+		try {
+			calendars = calendarService.calendarList().list().execute().getItems();
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
+		for (CalendarListEntry calendar : calendars) {
+			System.out.println(
+				"Calendar: " + calendar.getId() + " | " + calendar.getEtag() + " | " + calendar.getSummary());
 		}
 	}
 
@@ -239,8 +227,8 @@ public class Google {
 		Link photoLink = contact.getContactPhotoLink();
 		try {
 			URL photoUrl = new URL(photoLink.getHref());
-			GDataRequest request = service.createRequest(GDataRequest.RequestType.UPDATE, photoUrl, new ContentType(
-					contentType));
+			GDataRequest request = service.createRequest(GDataRequest.RequestType.UPDATE, photoUrl,
+				new ContentType(contentType));
 			request.setEtag(photoLink.getEtag());
 			OutputStream requestStream = request.getRequestStream();
 			requestStream.write(photoData);
@@ -336,8 +324,8 @@ public class Google {
 		contact.addUserDefinedField(createUserDefinedField(name, value));
 	}
 
-	public static void setAddress(ContactEntry contact, String street, String postcode, String city,
-			String countryCode, String countryLabel, String label, AddressRel rel, boolean primary) {
+	public static void setAddress(ContactEntry contact, String street, String postcode, String city, String countryCode,
+			String countryLabel, String label, AddressRel rel, boolean primary) {
 		for (StructuredPostalAddress a : contact.getStructuredPostalAddresses()) {
 			if (equals(street, a.getStreet()) && equals(postcode, a.getPostcode()) && equals(city, a.getCity())
 					&& equals(countryCode, a.getCountry())) {
@@ -346,8 +334,8 @@ public class Google {
 				return;
 			}
 		}
-		contact.addStructuredPostalAddress(createPostalAddress(label, street, postcode, city, countryCode,
-			countryLabel, rel, primary));
+		contact.addStructuredPostalAddress(
+			createPostalAddress(label, street, postcode, city, countryCode, countryLabel, rel, primary));
 	}
 
 	private static boolean equals(String countryCode, Country country) {
@@ -464,7 +452,8 @@ public class Google {
 		return ret;
 	}
 
-	public static void setEmail(ContactEntry contact, String emailAddress, String label, EmailRel rel, boolean primary) {
+	public static void setEmail(ContactEntry contact, String emailAddress, String label, EmailRel rel,
+			boolean primary) {
 		boolean updated = false;
 		emailAddress = emailAddress.toLowerCase();
 		for (Email email : contact.getEmailAddresses()) {
@@ -548,12 +537,14 @@ public class Google {
 		return groupMembershipInfo;
 	}
 
-	public static ContactEntry createContact(String name, ContactGroupEntry group, ContactsService service, String email) {
+	public static ContactEntry createContact(String name, ContactGroupEntry group, ContactsService service,
+			String email) {
 		if (Str.isBlank(name)) name = "?";
 		return createContact(createOrganizationName(name), group, service, email);
 	}
 
-	public static ContactEntry createContact(Name name, ContactGroupEntry group, ContactsService service, String email) {
+	public static ContactEntry createContact(Name name, ContactGroupEntry group, ContactsService service,
+			String email) {
 		if (email == null) email = "default";
 		String title = name.getFullName().getValue();
 
@@ -620,8 +611,8 @@ public class Google {
 		return name;
 	}
 
-	public static StructuredPostalAddress createPostalAddress(String label, String street, String postcode,
-			String city, String countryCode, String countryLabel, AddressRel rel, boolean primary) {
+	public static StructuredPostalAddress createPostalAddress(String label, String street, String postcode, String city,
+			String countryCode, String countryLabel, AddressRel rel, boolean primary) {
 		StructuredPostalAddress a = new StructuredPostalAddress();
 		updateAddress(a, label, street, postcode, city, countryCode, countryLabel, rel, primary);
 		return a;
