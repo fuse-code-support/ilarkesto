@@ -27,10 +27,12 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.CalendarListEntry;
+import com.google.api.services.calendar.model.Event;
 import com.google.gdata.client.Service.GDataRequest;
 import com.google.gdata.client.contacts.ContactQuery;
 import com.google.gdata.client.contacts.ContactsService;
@@ -75,7 +77,17 @@ public class Google {
 	public static void main(String[] args) throws Throwable {
 		GoogleOAuth client = GoogleOAuth.createTestOAuthClient();
 		Calendar calendarService = client.createCalendarService();
+
+		// String id = getCalendarIdBySummary(calendarService, "ilarkesto-test", true);
+		// System.out.println(id);
+
+		System.out.println("---");
 		dumpCalendars(calendarService);
+
+		System.out.println("---");
+		dumpCalendarEvents(getCalendarEvents(calendarService, CALENDAR_ID_PRIMARY));
+
+		System.exit(0);
 	}
 
 	private static Log log = Log.get(Google.class);
@@ -156,16 +168,50 @@ public class Google {
 		}
 	}
 
-	public static void dumpCalendars(Calendar calendarService) {
+	public static final String CALENDAR_ID_PRIMARY = "primary";
+
+	public static void dumpCalendarEvents(Collection<Event> events) {
+		for (Event event : events) {
+			System.out.println(event.getStart().getDateTime() + " | " + event.getSummary());
+		}
+	}
+
+	public static List<Event> getCalendarEvents(Calendar calendarService, String calendarId) {
+		try {
+			return calendarService.events().list(calendarId).execute().getItems();
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	public static String getCalendarIdBySummary(Calendar service, String summary, boolean autoCreate) {
+		try {
+			for (CalendarListEntry calendar : service.calendarList().list().execute().getItems()) {
+				if (summary.equals(calendar.getSummary())) return calendar.getId();
+			}
+
+			if (!autoCreate) return null;
+
+			com.google.api.services.calendar.model.Calendar calendar = new com.google.api.services.calendar.model.Calendar();
+			calendar.setSummary(summary);
+			calendar.setTimeZone("Europe/Berlin");
+			service.calendars().insert(calendar).execute();
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
+		return getCalendarIdBySummary(service, summary, false);
+	}
+
+	public static void dumpCalendars(Calendar service) {
 		List<CalendarListEntry> calendars;
 		try {
-			calendars = calendarService.calendarList().list().execute().getItems();
+			calendars = service.calendarList().list().execute().getItems();
 		} catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
 		for (CalendarListEntry calendar : calendars) {
 			System.out.println(
-				"Calendar: " + calendar.getId() + " | " + calendar.getEtag() + " | " + calendar.getSummary());
+				"Calendar: " + calendar.getId() + " | " + calendar.getSummary() + " | " + calendar.getTimeZone());
 		}
 	}
 
