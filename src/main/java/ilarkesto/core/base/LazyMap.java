@@ -30,6 +30,7 @@ public abstract class LazyMap<K, V> {
 		V value = map.get(key);
 		if (value == null) {
 			value = create(key);
+			if (value == null) return null;
 			map.put(key, value);
 		}
 		return value;
