@@ -47,9 +47,9 @@ public class HttpRequest {
 
 	HttpSession session = HttpSession.defaultSession;
 
-	private Method method = Method.GET;
+	Method method = Method.GET;
 	private String charset = IO.UTF_8;
-	private String url;
+	final String url;
 
 	private Map<String, String> postParameters;
 	private List<AHttpPostAttachment> postAttachments;
@@ -123,6 +123,12 @@ public class HttpRequest {
 
 	private void writeGET(HttpURLConnection connection) {
 		connection.setRequestProperty(Http.REQUEST_HEADER_ACCEPT_CHARSET, charset);
+
+		if (session.cache != null) {
+			String etag = session.cache.getCachedFileEtag(url);
+			if (etag != null) addHeader(Http.REQUEST_HEADER_IF_NONE_MATCH, etag);
+		}
+
 		writeHeaders(connection);
 		writeCookies(connection);
 	}
@@ -171,10 +177,10 @@ public class HttpRequest {
 		writer.append("--" + boundary + "--").append(CRLF).flush();
 	}
 
-	private void writePostParametersAsFormUrlencoded(HttpURLConnection connection) throws UnsupportedEncodingException,
-			IOException {
-		writeHeader(connection, Http.REQUEST_HEADER_CONTENT_TYPE, "application/x-www-form-urlencoded;charset="
-				+ charset);
+	private void writePostParametersAsFormUrlencoded(HttpURLConnection connection)
+			throws UnsupportedEncodingException, IOException {
+		writeHeader(connection, Http.REQUEST_HEADER_CONTENT_TYPE,
+			"application/x-www-form-urlencoded;charset=" + charset);
 		byte[] data = Http.encodePostParametersToByteArray(postParameters, charset);
 		writeHeader(connection, Http.REQUEST_HEADER_CONTENT_LENGTH, String.valueOf(data.length));
 		if (HttpSession.debug) log.debug("  Writing data:", new String(data, charset));

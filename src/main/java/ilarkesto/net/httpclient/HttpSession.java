@@ -25,6 +25,8 @@ public class HttpSession {
 
 	private static Log log = Log.get(HttpSession.class);
 
+	public static HttpCache defaultCache;
+
 	static HttpSession defaultSession = new HttpSession();
 	static boolean debug = false;
 
@@ -32,6 +34,7 @@ public class HttpSession {
 	private final int redirectCount = 3;
 
 	private String charset;
+	HttpCache cache = defaultCache;
 
 	public void addCookie(HttpCookie cookie) {
 		String name = cookie.getName();
@@ -61,24 +64,32 @@ public class HttpSession {
 		return cookies.get(name);
 	}
 
+	public HttpCache getCache() {
+		return cache;
+	}
+
+	public void setCache(HttpCache cache) {
+		this.cache = cache;
+	}
+
 	// --- helper ---
 
 	public String downloadText(String url) {
-		return request(url).execute().followRedirects(redirectCount).checkIfStatusCodeOk().readToString();
+		return request(url).execute().followRedirects(redirectCount).checkIfStatusCodeOkish().readToString();
 	}
 
 	public void downloadToFile(String url, File file) {
-		request(url).execute().followRedirects(redirectCount).checkIfStatusCodeOk().saveToFile(file);
+		request(url).execute().followRedirects(redirectCount).checkIfStatusCodeOkish().saveToFile(file);
 	}
 
 	public String postAndDownloadText(String url, Map<String, String> params) {
-		return request(url).setPostParameters(params).execute().followRedirects(redirectCount).checkIfStatusCodeOk()
+		return request(url).setPostParameters(params).execute().followRedirects(redirectCount).checkIfStatusCodeOkish()
 				.readToString();
 	}
 
 	public String postAndDownloadText(String url, Map<String, String> params, File file) {
 		return request(url).setPostParameters(params).addPostAttachment("file", file).execute()
-				.followRedirects(redirectCount).checkIfStatusCodeOk().readToString();
+				.followRedirects(redirectCount).checkIfStatusCodeOkish().readToString();
 	}
 
 	public HttpSession setCharset(String charset) {

@@ -24,6 +24,8 @@ public class Http {
 	public static final String REQUEST_HEADER_CONTENT_TYPE = "Content-Type";
 	public static final String REQUEST_HEADER_CONTENT_LENGTH = "Content-Length";
 	public static final String REQUEST_HEADER_COOKIE = "Cookie";
+	public static final String REQUEST_HEADER_IF_NONE_MATCH = "If-None-Match";
+	public static final String REQUEST_HEADER_ETAG = "ETag";
 
 	public static final String RESPONSE_HEADER_SET_COOKIE = "Set-Cookie";
 	public static final String RESPONSE_HEADER_CONTENT_TYPE = "Content-Type";
@@ -31,6 +33,7 @@ public class Http {
 
 	public static final int RESPONSE_SC_CONTINUE = 100;
 	public static final int RESPONSE_SC_OK = 200;
+	public static final int RESPONSE_SC_NOT_MODIFIED = 304;
 	public static final int RESPONSE_SC_MOVED_PERMANENTLY = 301; // redirect
 	public static final int RESPONSE_SC_NOT_FOUND = 404;
 

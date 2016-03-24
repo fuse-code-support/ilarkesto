@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -18,9 +18,13 @@ import ilarkesto.core.base.Str;
 import ilarkesto.core.logging.Log;
 import ilarkesto.io.IO;
 import ilarkesto.net.Http;
+import ilarkesto.net.httpclient.HttpRequest.Method;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,8 +36,10 @@ public class HttpResponse {
 
 	private static final Log log = Log.get(HttpResponse.class);
 
-	private HttpRequest request;
+	final HttpRequest request;
 	private HttpURLConnection connection;
+	private File cacheFile;
+	private InputStream cacheInputStream;
 
 	private int statusCode;
 	private Map<String, HttpResponseHeader> headers;
@@ -44,17 +50,18 @@ public class HttpResponse {
 		this.statusCode = statusCode;
 		this.connection = connection;
 
-		headers = new LinkedHashMap<String, HttpResponseHeader>();
-		for (Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
-			String name = entry.getKey();
-			List<String> value = entry.getValue();
-			HttpResponseHeader header = new HttpResponseHeader(name, value);
-			headers.put(name, header);
-			if (HttpSession.debug) log.debug("  Received header <", header);
-		}
-
+		processHeaders();
 		processCookies();
 		determineCharset();
+
+		if (request.session.cache != null && request.method == Method.GET) {
+			if (isStatusCodeNotModified()) {
+				cacheFile = request.session.cache.getCachedFile(request.url);
+			} else {
+				cacheFile = request.session.cache.cache(this);
+			}
+			if (cacheFile != null && !cacheFile.exists()) cacheFile = null;
+		}
 	}
 
 	public HttpResponse followRedirects(int maxFollowCount) {
@@ -69,7 +76,7 @@ public class HttpResponse {
 
 	public String readToString() {
 		try {
-			return IO.readToString(connection.getInputStream(), charset);
+			return IO.readToString(getInputStream(), charset);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		} finally {
@@ -79,7 +86,7 @@ public class HttpResponse {
 
 	public void saveToFile(File file) {
 		try {
-			IO.copyDataToFile(connection.getInputStream(), file);
+			IO.copyDataToFile(getInputStream(), file);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		} finally {
@@ -87,10 +94,27 @@ public class HttpResponse {
 		}
 	}
 
+	private InputStream getInputStream() throws IOException {
+		if (cacheFile != null) {
+			cacheInputStream = new BufferedInputStream(new FileInputStream(cacheFile));
+			return cacheInputStream;
+		}
+		return getConnectionInputStream();
+	}
+
+	InputStream getConnectionInputStream() throws IOException {
+		return connection.getInputStream();
+	}
+
 	public void close() {
-		if (connection == null) return;
-		connection.disconnect();
-		connection = null;
+		if (connection != null) {
+			connection.disconnect();
+			connection = null;
+		}
+		if (cacheInputStream != null) {
+			IO.closeQuiet(cacheInputStream);
+			cacheInputStream = null;
+		}
 	}
 
 	private void determineCharset() {
@@ -103,6 +127,17 @@ public class HttpResponse {
 				charset = Str.removeSuffix(charset, "\"");
 				break;
 			}
+		}
+	}
+
+	private void processHeaders() {
+		headers = new LinkedHashMap<String, HttpResponseHeader>();
+		for (Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
+			String name = entry.getKey();
+			List<String> value = entry.getValue();
+			HttpResponseHeader header = new HttpResponseHeader(name, value);
+			headers.put(name, header);
+			if (HttpSession.debug) log.debug("  Received header <", header);
 		}
 	}
 
@@ -135,18 +170,37 @@ public class HttpResponse {
 		return statusCode;
 	}
 
+	public boolean isStatusCodeOkOrNotModified() {
+		return isStatusCodeOk() || isStatusCodeNotModified();
+	}
+
 	public boolean isStatusCodeOk() {
 		return statusCode == Http.RESPONSE_SC_OK;
 	}
 
-	public HttpResponse checkIfStatusCodeOk() {
-		if (!isStatusCodeOk()) throw new RuntimeException("HTTP " + request + " failed. StatusCode: " + statusCode);
+	public boolean isStatusCodeNotModified() {
+		return statusCode == Http.RESPONSE_SC_NOT_MODIFIED;
+	}
+
+	public HttpResponse checkIfStatusCodeOkish() {
+		if (!isStatusCodeOkOrNotModified())
+			throw new RuntimeException("HTTP " + request + " failed. StatusCode: " + statusCode);
 		return this;
 	}
 
 	public HttpResponse setCharset(String charset) {
 		this.charset = charset;
 		return this;
+	}
+
+	public long getContentLength() {
+		String hcl = getHeaderValue(Http.REQUEST_HEADER_CONTENT_LENGTH);
+		if (hcl == null) return -1;
+		try {
+			return Long.parseLong(hcl);
+		} catch (Exception ex) {
+			return -1;
+		}
 	}
 
 }

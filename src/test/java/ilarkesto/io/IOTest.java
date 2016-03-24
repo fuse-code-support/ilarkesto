@@ -18,6 +18,9 @@ import ilarkesto.core.base.MapBuilder;
 import ilarkesto.json.JsonObject;
 import ilarkesto.testng.ATest;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Map;
@@ -26,6 +29,16 @@ import org.apache.tools.ant.filters.StringInputStream;
 import org.testng.annotations.Test;
 
 public class IOTest extends ATest {
+
+	@Test
+	public void textFiles() throws FileNotFoundException {
+		File file = getTestOutputFile("text.txt");
+		IO.writeFile(file, "abc", IO.UTF_8);
+
+		assertEquals(IO.readFile(file, IO.UTF_8), "abc");
+
+		assertEquals(IO.readToString(new FileInputStream(file), IO.UTF_8), "abc");
+	}
 
 	@Test
 	public void post() throws MalformedURLException, IOException {
