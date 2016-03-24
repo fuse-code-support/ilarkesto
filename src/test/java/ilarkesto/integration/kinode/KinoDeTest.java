@@ -32,7 +32,7 @@ public class KinoDeTest extends ATest {
 		Movie movie = KinoDe.loadMovie("star-wars-das-erwachen-der-macht-2015", observer);
 		assertEquals(movie.title, "Star Wars: Das Erwachen der Macht");
 		assertEquals(movie.posterUrl,
-			"http://media1.kino.de/2015/12/star-wars-das-erwachen-der-macht-2015-filmplakat-rcm236x336u.jpg");
+			"http://www.kino.de/wp-content/uploads/2015/12/star-wars-das-erwachen-der-macht-2015-filmplakat-rcm236x336u.jpg");
 	}
 
 	@Test
