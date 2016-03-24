@@ -16,7 +16,7 @@ package ilarkesto.tools.enhavo;
 
 import ilarkesto.core.base.Str;
 import ilarkesto.integration.BeanshellExecutor;
-import ilarkesto.io.FilenameComparator;
+import ilarkesto.io.FileNameComparator;
 import ilarkesto.io.IO;
 import ilarkesto.json.JsonObject;
 
@@ -126,7 +126,7 @@ public class FilesContentProvider extends AContentProvider {
 			if (file.getName().equals(".DS_Store")) continue;
 			ret.add(file);
 		}
-		Collections.sort(ret, FilenameComparator.INSTANCE);
+		Collections.sort(ret, FileNameComparator.INSTANCE);
 		return ret;
 	}
 

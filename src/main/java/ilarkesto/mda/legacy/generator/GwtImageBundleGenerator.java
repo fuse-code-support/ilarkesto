@@ -14,7 +14,7 @@
  */
 package ilarkesto.mda.legacy.generator;
 
-import ilarkesto.io.FilenameComparator;
+import ilarkesto.io.FileNameComparator;
 
 import java.io.File;
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class GwtImageBundleGenerator extends AClassGenerator {
 		File folder = new File("src/main/webapp/img");
 		File[] files = folder.listFiles();
 		if (files == null) throw new RuntimeException("Can not read folder contents: " + folder.getAbsolutePath());
-		Arrays.sort(files, new FilenameComparator());
+		Arrays.sort(files, new FileNameComparator());
 		for (File file : files) {
 			String name = file.getName();
 			String nameLower = name.toLowerCase();

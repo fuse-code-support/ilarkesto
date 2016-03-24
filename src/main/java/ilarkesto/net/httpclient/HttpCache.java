@@ -15,14 +15,17 @@
 package ilarkesto.net.httpclient;
 
 import ilarkesto.core.base.Str;
+import ilarkesto.core.base.Utl;
 import ilarkesto.core.logging.Log;
 import ilarkesto.io.IO;
 import ilarkesto.json.JsonObject;
 import ilarkesto.net.Http;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Comparator;
 
 public class HttpCache {
 
@@ -31,6 +34,7 @@ public class HttpCache {
 	private int maxFileSize = 1000000;
 	private int maxCacheSize = 23000000;
 	private File cacheDir;
+	private long cacheSize = -1;
 
 	public HttpCache(File cacheDir) {
 		super();
@@ -38,6 +42,9 @@ public class HttpCache {
 	}
 
 	public File cache(HttpResponse resp) throws IOException {
+		String url = resp.request.url;
+		if (url.length() > 127) return null;
+
 		String etag = resp.getHeaderValue(Http.REQUEST_HEADER_ETAG);
 		if (etag == null) return null;
 
@@ -46,25 +53,25 @@ public class HttpCache {
 
 		cleanup();
 
-		return cache(resp.request.url, etag, resp.getConnectionInputStream());
+		return cache(url, etag, resp.getConnectionInputStream());
 	}
 
 	private File cache(String url, String etag, InputStream is) {
 		log.info("Caching", url);
+		initCacheSize();
+
 		File metaFile = new File(path(url) + ".json");
 		JsonObject jMeta = new JsonObject();
 		jMeta.put("ETag", etag);
 
 		File cachedFile = new File(path(url));
+		if (cachedFile.exists()) cacheSize -= cachedFile.length();
 		IO.copyDataToFile(is, cachedFile);
+		cacheSize += cachedFile.length();
 
 		IO.writeFile(metaFile, jMeta.toFormatedString(), IO.UTF_8);
 
 		return cachedFile;
-	}
-
-	private void cleanup() {
-		// TODO cleanup
 	}
 
 	public String getCachedFileEtag(String url) {
@@ -88,5 +95,41 @@ public class HttpCache {
 	private String urlToFilename(String url) {
 		return Str.toFileCompatibleString(url, "-") + ".dat";
 	}
+
+	private void cleanup() {
+		initCacheSize();
+		if (cacheSize < maxCacheSize) return;
+
+		for (File file : Utl.sort(IO.listFiles(cacheDir, cacheFilesFilter), chacheFilesComparator)) {
+			cacheSize -= file.length();
+			file.delete();
+			new File(file.getPath() + ".json").delete();
+			if (cacheSize < maxCacheSize) return;
+		}
+	}
+
+	private void initCacheSize() {
+		if (cacheSize > -1) return;
+		cacheSize = IO.getSize(cacheDir);
+	}
+
+	private static final FileFilter cacheFilesFilter = new FileFilter() {
+
+		@Override
+		public boolean accept(File file) {
+			if (file.isDirectory()) return false;
+			if (!file.getName().endsWith(".dat")) return false;
+			return true;
+		}
+	};
+
+	private static final Comparator<File> chacheFilesComparator = new Comparator<File>() {
+
+		@Override
+		public int compare(File a, File b) {
+			return Utl.compare(a.lastModified(), b.lastModified());
+		}
+
+	};
 
 }
