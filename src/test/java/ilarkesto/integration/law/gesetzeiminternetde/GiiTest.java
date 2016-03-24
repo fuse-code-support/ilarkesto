@@ -38,7 +38,8 @@ public class GiiTest extends ATest {
 		// BookRef binSchStrOAbweichV = index.getBookByCode("64BinSchStrOAbweichV");
 		// assertNotNull(binSchStrOAbweichV);
 		// assertEquals(binSchStrOAbweichV.getTitle(),
-		// "Vierundsechzigste Verordnung zur vorübergehenden Abweichung von der Binnenschifffahrtsstraßen-Ordnung");
+		// "Vierundsechzigste Verordnung zur vorübergehenden Abweichung von der
+		// Binnenschifffahrtsstraßen-Ordnung");
 
 		Set<String> codes = new HashSet<String>();
 		for (BookRef book : books) {
@@ -136,7 +137,7 @@ public class GiiTest extends ATest {
 		BookRef ref = getBookIndex().getBookByCode("GG");
 		Book book = getGii().loadBook(ref);
 		assertNotNull(book);
-		assertSize(book.getAllNorms(), 198);
+		assertSize(book.getAllNorms(), 199);
 
 		Norm n76 = book.getNormByCodeNumber("76");
 		assertNotNull(n76);
@@ -213,7 +214,7 @@ public class GiiTest extends ATest {
 			assertEquals(gii.getGiiReference(code), reference);
 
 			// if (!gii.getGiiReference(code).equals(reference)) {
-			// System.out.println("		GII_REFERENCES.put(\"" + code + "\", \"" + reference + "\");");
+			// System.out.println(" GII_REFERENCES.put(\"" + code + "\", \"" + reference + "\");");
 			// }
 		}
 	}

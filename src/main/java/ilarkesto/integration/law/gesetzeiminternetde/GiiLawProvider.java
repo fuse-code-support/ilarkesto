@@ -2,6 +2,7 @@ package ilarkesto.integration.law.gesetzeiminternetde;
 
 import ilarkesto.core.base.Parser;
 import ilarkesto.core.base.Parser.ParseException;
+import ilarkesto.core.base.Str;
 import ilarkesto.core.html.Html;
 import ilarkesto.io.AFileStorage;
 import ilarkesto.io.IO;
@@ -46,7 +47,8 @@ public class GiiLawProvider extends ALawProvider {
 
 		String reference = bookRef.getJson().getString("giiReference");
 		if (reference == null)
-			throw new DataLoadFailedException("Book reference has no giiReference property: " + bookRef.getJson(), null);
+			throw new DataLoadFailedException("Book reference has no giiReference property: " + bookRef.getJson(),
+					null);
 
 		File tempDir = getTempBookDataDir(bookRef.getCode());
 		downloader.downloadZipAndExtract(reference + "/xml.zip", tempDir);
@@ -128,6 +130,8 @@ public class GiiLawProvider extends ALawProvider {
 				parser.gotoAfter("\">");
 				String code = parser.getUntil("<").trim();
 				code = Html.convertHtmlToText(code);
+
+				if (code.contains("<")) code = Str.cutTo(code, "<").trim();
 
 				// prevent duplicates
 				if (reference.equals("aeg")) {
