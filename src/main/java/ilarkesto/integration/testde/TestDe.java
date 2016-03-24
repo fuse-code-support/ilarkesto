@@ -138,6 +138,10 @@ public class TestDe {
 	private static HtmlTag removeContentSpam(HtmlTag tag) {
 		tag.removeTagsByStyleClass("product-compare", true);
 		tag.removeTagsByStyleClass("product-comparison", true);
+		tag.removeTagsByStyleClass("product-comparison-promo", true);
+		tag.removeTagsByStyleClass("product-list-functions", true);
+		tag.removeTagsByStyleClass("pageTitle__backlink", true);
+		tag.removeTagsByStyleClass("product__actions", true);
 		return tag;
 	}
 
@@ -222,15 +226,18 @@ public class TestDe {
 
 	public static String downloadPageHtml(String pageRef, Integer startOffset, OperationObserver observer) {
 		String url = TestDe.getPageUrl(pageRef);
-		if (startOffset != null) url += "?start=" + startOffset;
+		if (startOffset != null) url += "?seite=" + startOffset;
 		observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
 		return httpSession.downloadText(url);
 	}
 
 	public static Integer parseNextPageStartOffset(String html) {
-		String nav = Str.cutFromTo(html, "<a class=\"fwd\"", "</a>");
+		String nav = Str.cutFromTo(html, "<div class=\"pager", "</ul>");
 		if (nav == null) return null;
-		String start = Str.cutFromTo(nav, "start=", "\"");
+
+		nav = Str.cutFrom(nav, "<span class=\"is-active");
+
+		String start = Str.cutFromTo(nav, "seite=", "\"");
 		if (start == null) return null;
 		return Integer.parseInt(start);
 	}

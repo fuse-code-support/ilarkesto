@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -17,6 +17,9 @@ package ilarkesto.integration.testde;
 import ilarkesto.core.auth.LoginData;
 import ilarkesto.core.base.Parser.ParseException;
 import ilarkesto.core.time.Date;
+import ilarkesto.html.dom.HtmlParser;
+import ilarkesto.html.dom.HtmlTag;
+import ilarkesto.html.dom.HtmlText;
 import ilarkesto.integration.testde.TestDe.Article;
 import ilarkesto.integration.testde.TestDe.ArticleRef;
 import ilarkesto.integration.testde.TestDe.SubArticleRef;
@@ -70,8 +73,8 @@ public class TestDeTest extends ATest {
 	public void removeSpamDruckerpatronen() throws ParseException {
 		TestDe.login(loginData, observer);
 		try {
-			String html = TestDe
-					.downloadPageHtml("Druckertinten-Bis-zu-90-Prozent-Ersparnis-4673398-4673669", observer);
+			String html = TestDe.downloadPageHtml("Druckertinten-Bis-zu-90-Prozent-Ersparnis-4673398-4673669",
+				observer);
 			html = TestDe.removeSpamFromPageHtml(html);
 			log.info(html);
 
@@ -83,6 +86,30 @@ public class TestDeTest extends ATest {
 			assertContainsNot(html, "Bewertung im Detail");
 			assertContainsNot(html, "Details vergleichen");
 			assertContainsNot(html, "Vergleich öffnen");
+		} finally {
+			TestDe.logout(observer);
+		}
+	}
+
+	@Test
+	public void htmlParser() throws ParseException {
+		TestDe.login(loginData, observer);
+		try {
+			String html = TestDe.downloadPageHtml("Druckertinten-Bis-zu-90-Prozent-Ersparnis-4673398-4673669",
+				observer);
+			assertContains(html, "Zurück zum Artikel");
+
+			HtmlTag tag = new HtmlParser().parse(html);
+			// tag = tag.getTagById("primary");
+
+			HtmlText text = tag.findTextWithString("Artikel");
+			tag = text.getParent().getParent();
+
+			System.out.println(tag.getAttributes());
+
+			System.out.println(tag);
+			System.out.println("---");
+			System.out.println(tag.toHtml());
 		} finally {
 			TestDe.logout(observer);
 		}
@@ -161,8 +188,7 @@ public class TestDeTest extends ATest {
 		String summary = article.getSummary();
 		System.out.println(summary);
 		assertContains(summary, "Der Abruf- oder Rahmenkredit ist ein Nischen");
-		assertContains(
-			summary,
+		assertContains(summary,
 			"Eine Tabelle nennt unter anderem die Höhe des Kreditrahmens, die Mindestrückzahlungsraten und den Effektiven Jahreszins des jeweiligen Angebots.");
 	}
 
@@ -213,10 +239,10 @@ public class TestDeTest extends ATest {
 	public void multipageDruckertinten() throws ParseException {
 		TestDe.login(loginData, observer);
 		try {
-			String html = TestDe
-					.downloadPageHtml("Druckertinten-Bis-zu-90-Prozent-Ersparnis-4673398-4673669", observer);
+			String html = TestDe.downloadPageHtml("Druckertinten-Bis-zu-90-Prozent-Ersparnis-4673398-4673669",
+				observer);
 			Integer nextPageStartOffset = TestDe.parseNextPageStartOffset(html);
-			assertEquals(nextPageStartOffset, Integer.valueOf(19));
+			assertEquals(nextPageStartOffset, Integer.valueOf(2));
 
 			String html2 = TestDe.downloadPageHtml("Druckertinten-Bis-zu-90-Prozent-Ersparnis-4673398-4673669",
 				nextPageStartOffset, observer);

@@ -14,18 +14,26 @@
  */
 package ilarkesto.html.dom;
 
+import ilarkesto.core.base.Args;
+
 public class HtmlText extends AHtmlData {
 
+	private HtmlTag parent;
 	private String text;
 
-	public HtmlText(String text) {
-		super();
+	public HtmlText(HtmlTag parent, String text) {
+		Args.assertNotNull(parent, "parent");
+		this.parent = parent;
 		this.text = text;
 	}
 
 	@Override
 	public String getText() {
 		return text == null ? null : text;
+	}
+
+	public HtmlTag getParent() {
+		return parent;
 	}
 
 	@Override

@@ -62,6 +62,12 @@ public class HtmlParserTest extends ATest {
 		assertParseToString("<!doctype html><html><script> script <code> here</script></html>");
 	}
 
+	@Test
+	public void parseWithSpaceInTag() throws ParseException {
+		HtmlParser parser = new HtmlParser();
+		parser.parse("<!doctype html><html ></html>");
+	}
+
 	private static void assertParseToString(String html) throws ParseException {
 		assertEquals(new HtmlParser().parse(html).toHtml(), html);
 	}

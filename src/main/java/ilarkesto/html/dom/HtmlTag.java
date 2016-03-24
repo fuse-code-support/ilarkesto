@@ -284,6 +284,24 @@ public class HtmlTag extends AHtmlData implements HtmlDataContainer {
 		return null;
 	}
 
+	public HtmlText findTextWithString(String text) {
+		if (contents == null) return null;
+		for (AHtmlData data : contents) {
+
+			if (data instanceof HtmlText) {
+				HtmlText tag = (HtmlText) data;
+				String s = tag.getText();
+				if (s != null && s.contains(text)) return tag;
+			}
+
+			if (!(data instanceof HtmlTag)) continue;
+			HtmlTag tag = (HtmlTag) data;
+			HtmlText ret = tag.findTextWithString(text);
+			if (ret != null) return ret;
+		}
+		return null;
+	}
+
 	public HtmlTag getTagByStyleClass(String styleClass) {
 		return getTagByStyleClass(styleClass, true);
 	}
