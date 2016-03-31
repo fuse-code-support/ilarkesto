@@ -34,4 +34,9 @@ public abstract class AHtml extends APdfElement {
 		return this;
 	}
 
+	@Override
+	public String toString() {
+		return code;
+	}
+
 }

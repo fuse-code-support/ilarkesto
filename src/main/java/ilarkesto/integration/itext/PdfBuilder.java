@@ -70,6 +70,7 @@ public class PdfBuilder extends APdfBuilder {
 
 	private Collection<ItextElement> elements = new ArrayList<ItextElement>();
 	private boolean newPage = true;
+	private boolean strictMode = false;
 
 	private Document document;
 
@@ -113,7 +114,11 @@ public class PdfBuilder extends APdfBuilder {
 					}
 				}
 			} catch (DocumentException ex) {
-				throw new RuntimeException(ex);
+				if (strictMode) throw new RuntimeException(
+						"Adding element to document failed: " + element.getClass().getSimpleName() + ": " + element,
+						ex);
+				log.error("Adding element to document failed: " + element.getClass().getSimpleName() + ": " + element,
+					ex);
 			}
 		}
 		document.close();
@@ -178,6 +183,14 @@ public class PdfBuilder extends APdfBuilder {
 	public static BaseColor color(Color color) {
 		if (color == null) return null;
 		return new BaseColor(color.getRgb());
+	}
+
+	public void setStrictMode(boolean strictMode) {
+		this.strictMode = strictMode;
+	}
+
+	public boolean isStrictMode() {
+		return strictMode;
 	}
 
 	class PageEventHandler extends PdfPageEventHelper {
