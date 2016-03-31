@@ -47,7 +47,7 @@ public class Html extends AHtml implements ItextElement {
 		css.loadStyle(cssClassName, "size", APdfBuilder.mmToPoints(fontStyle.getSize()) + "pt");
 		css.loadStyle(cssClassName, "line-height", "100em");
 
-		StringReader reader = new StringReader(code);
+		StringReader reader = new StringReader(cleanup(code));
 		List<Element> elements;
 		HTMLWorker worker = new HTMLWorker(document);
 		try {
@@ -57,5 +57,11 @@ public class Html extends AHtml implements ItextElement {
 		}
 
 		return Utl.toArray(elements, new Element[elements.size()]);
+	}
+
+	private static String cleanup(String code) {
+		if (code == null) return null;
+		code = code.replace("font-size: inherit;", "");
+		return code;
 	}
 }
