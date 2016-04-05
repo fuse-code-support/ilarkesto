@@ -35,14 +35,12 @@ public class AFileStorageBackedCacheTest extends ATest {
 		cache.update(observer);
 		assertEquals(cache.getValue(), "a");
 
-		assertFalse(cache.isUpdateRequired());
 		remoteValue = "b";
-		cache.updateIfRequired(observer);
+		cache.updateIfLastUpdatedLongerAgoThen(observer, 1000);
 		assertEquals(cache.getValue(), "a");
 
 		Utl.sleep(1000);
-		assertTrue(cache.isUpdateRequired());
-		cache.updateIfRequired(observer);
+		cache.updateIfLastUpdatedLongerAgoThen(observer, 1000);
 		assertEquals(cache.getValue(), "b");
 	}
 
@@ -65,11 +63,6 @@ public class AFileStorageBackedCacheTest extends ATest {
 		@Override
 		protected String loadValueFromRemote(OperationObserver observer) {
 			return remoteValue;
-		}
-
-		@Override
-		protected boolean isUpdateRequired() {
-			return isLastUpdatedLongerAgoThen(1000);
 		}
 
 	}

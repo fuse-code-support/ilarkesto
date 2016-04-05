@@ -1,15 +1,14 @@
 package ilarkesto.icalendar;
 
-import ilarkesto.base.DateParser;
-import ilarkesto.base.Tuple;
-import ilarkesto.base.Utl;
 import ilarkesto.core.base.MultilineBuilder;
 import ilarkesto.core.base.Str;
+import ilarkesto.core.base.Tuple;
+import ilarkesto.core.base.Utl;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.Date;
 import ilarkesto.core.time.DateAndTime;
 import ilarkesto.core.time.Time;
-import ilarkesto.integration.google.Google;
+import ilarkesto.core.time.Tm;
 import ilarkesto.io.IO;
 
 import java.io.BufferedReader;
@@ -47,16 +46,16 @@ public class ICalendar {
 		Log.flush();
 	}
 
-	private String prodid;
-	private String version;
-	private String scale;
-	private String mehtod;
-	private String name;
-	private String description;
-	private String xTimezone;
+	private String prodid = "-//Witoslaw Koczewski//Ilarkesto";
+	private String version = "2.0";
+	private String calscale = "GREGORIAN";
+	private String mehtod = "PUBLISH";
+	private String xWrCalname;
+	private String xWrCaldesc;
+	private String xWrTimezone;
 
-	private Timezone timezone = new Timezone();
-	private Set<Event> events = new HashSet<Event>();
+	private final Timezone timezone = new Timezone();
+	private final Set<Event> events = new HashSet<Event>();
 
 	public ICalendar clear() {
 		events.clear();
@@ -73,7 +72,8 @@ public class ICalendar {
 		}
 	}
 
-	public void parse(File file) {
+	public ICalendar parse(File file) {
+		if (!file.exists()) return null;
 		FileInputStream in;
 		try {
 			in = new FileInputStream(file);
@@ -82,6 +82,8 @@ public class ICalendar {
 		}
 		parse(in);
 		IO.close(in);
+
+		return this;
 	}
 
 	public void parse(InputStream is) {
@@ -293,7 +295,7 @@ public class ICalendar {
 			return;
 		}
 		if (key.equals("CALSCALE")) {
-			scale = value;
+			calscale = value;
 			return;
 		}
 		if (key.equals("METHOD")) {
@@ -301,15 +303,15 @@ public class ICalendar {
 			return;
 		}
 		if (key.equals("X-WR-CALNAME")) {
-			name = value;
+			xWrCalname = value;
 			return;
 		}
 		if (key.equals("X-WR-TIMEZONE")) {
-			xTimezone = value;
+			xWrTimezone = value;
 			return;
 		}
 		if (key.equals("X-WR-CALDESC")) {
-			description = value;
+			xWrCaldesc = value;
 			return;
 		}
 
@@ -326,10 +328,10 @@ public class ICalendar {
 	private DateAndTime parseDateAndTime(String s) {
 		try {
 			if (s.endsWith("Z")) {
-				return DateParser.parseDateAndTime(s, FORMAT1_UTC, FORMAT2_UTC);
+				return Tm.parseDateAndTime(s, FORMAT1_UTC, FORMAT2_UTC);
 			} else {
 				// TODO consider WR-TIMEZONE
-				return DateParser.parseDateAndTime(s, FORMAT1_DE, FORMAT2_DE);
+				return Tm.parseDateAndTime(s, FORMAT1_DE, FORMAT2_DE);
 			}
 		} catch (ParseException ex) {
 			throw new RuntimeException("Parsing date/time failed: " + s);
@@ -368,13 +370,44 @@ public class ICalendar {
 		return ret;
 	}
 
-	public String getName() {
-		return name;
+	public String getxWrCalname() {
+		return xWrCalname;
 	}
 
 	@Override
 	public String toString() {
-		return getName();
+		MultilineBuilder mb = new MultilineBuilder();
+		mb.ln("BEGIN:VCALENDAR");
+
+		writeString(mb, "PRODID", prodid);
+		writeString(mb, "VERSION", version);
+		writeString(mb, "CALSCALE", calscale);
+		writeString(mb, "METHOD", mehtod);
+		writeString(mb, "X-WR-CALNAME", xWrCalname);
+		writeString(mb, "X-WR-TIMEZONE", xWrTimezone);
+		writeString(mb, "X-WR-CALNAME", xWrCalname);
+		writeString(mb, "X-WR-CALDESC", xWrCaldesc);
+
+		// TODO timezone
+
+		for (Event event : events) {
+			event.write(mb);
+		}
+
+		mb.ln("END:VCALENDAR");
+		return mb.toString();
+	}
+
+	private static final void writeString(MultilineBuilder mb, String name, String value) {
+		if (value == null) return;
+		// TODO multiline
+		mb.ln(name + ":" + value);
+	}
+
+	private static final void writeDateAndTime(MultilineBuilder mb, String name, DateAndTime value) {
+		if (value == null) return;
+		// TODO multiline
+		mb.ln(name + ":" + FORMAT1_UTC.format(value.toJavaDate()) + "Z");
 	}
 
 	public static class Event {
@@ -398,6 +431,14 @@ public class ICalendar {
 
 		public String getOrganizer() {
 			return organizer;
+		}
+
+		public void write(MultilineBuilder mb) {
+			mb.ln("BEGIN:VEVENT");
+
+			writeString(mb, "DTSTART", "");
+
+			mb.ln("END:VEVENT");
 		}
 
 		public String getUrl() {
@@ -477,12 +518,6 @@ public class ICalendar {
 			return !Str.isBlank(url);
 		}
 
-		public String getUrlOrLocationUrl() {
-			if (isUrlSet()) return getUrl();
-			if (!Str.isBlank(location)) return Google.getMapsUrl(location);
-			return null;
-		}
-
 		public String getSummaryAndLocation() {
 			MultilineBuilder mb = new MultilineBuilder();
 			mb.ln(getSummary());
@@ -496,6 +531,20 @@ public class ICalendar {
 
 		private String id; // TZID
 		private String location; // X-LIC-LOCATION
+
+	}
+
+	public static class RecurrenceRule {
+
+		public static final String FREQ_MONTHLY = "MONTHLY";
+
+		private String freq;
+		private Integer count;
+		private Integer bymonthday;
+
+		public boolean isMonthly() {
+			return FREQ_MONTHLY.equals(freq);
+		}
 
 	}
 

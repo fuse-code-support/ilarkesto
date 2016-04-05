@@ -14,7 +14,7 @@
  */
 package ilarkesto.fp;
 
-import ilarkesto.base.Tuple;
+import ilarkesto.core.base.Tuple;
 import ilarkesto.core.fp.Function;
 import ilarkesto.core.fp.Predicate;
 

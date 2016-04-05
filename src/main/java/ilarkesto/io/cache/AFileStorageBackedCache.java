@@ -41,8 +41,6 @@ public abstract class AFileStorageBackedCache<T> {
 
 	protected abstract void saveValueToCache(AFileStorage storage, T value);
 
-	protected abstract boolean isUpdateRequired();
-
 	public AFileStorageBackedCache(AFileStorage storage) {
 		super();
 		this.storage = storage;
@@ -88,9 +86,9 @@ public abstract class AFileStorageBackedCache<T> {
 		log.info("Updated in", rt.getRuntimeFormated());
 	}
 
-	public final void updateIfRequired(OperationObserver observer) {
+	public final void updateIfLastUpdatedLongerAgoThen(OperationObserver observer, long millis) {
 		loadStatus();
-		if (!isUpdateRequired()) {
+		if (!isLastUpdatedLongerAgoThen(millis)) {
 			log.info("Update not required. Skipping.");
 			return;
 		}
