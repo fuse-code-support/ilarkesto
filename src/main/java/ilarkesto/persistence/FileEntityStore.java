@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -298,11 +298,10 @@ public class FileEntityStore implements EntityStore {
 		String s = properties.getProperty("version");
 		if (Str.isBlank(s)) return;
 		long dataVersion = Long.parseLong(s);
-		if (dataVersion > version)
-			throw new IllegalStateException("Data stored in " + dir
-					+ " was created by a newer version of the application. "
-					+ "You have probably downgraded. Since data formats changed, this is not possible. "
-					+ "Application version is " + version + ", data version is " + dataVersion + ".");
+		if (dataVersion > version) throw new IllegalStateException(
+				"Data stored in " + dir + " was created by a newer version of the application. "
+						+ "You have probably downgraded. Since data formats changed, this is not possible. "
+						+ "Application version is " + version + ", data version is " + dataVersion + ".");
 	}
 
 	private synchronized void saveVersion() {
@@ -360,9 +359,10 @@ public class FileEntityStore implements EntityStore {
 
 		@Override
 		protected void prepare() {
-			tmpFile = new File(dir + "/tmp/" + entity.getId() + ".xml");
-			file = new File(dir + "/" + Str.lowercaseFirstLetter(entity.getDao().getEntityName()) + "/"
-					+ entity.getId() + ".xml");
+			// tmpFile = new File(dir + "/tmp/" + entity.getId() + ".xml");
+			file = new File(dir + "/" + Str.lowercaseFirstLetter(entity.getDao().getEntityName()) + "/" + entity.getId()
+					+ ".xml");
+			tmpFile = new File(file.getPath() + ".tmp");
 
 			wirteTemporaryFile();
 		}
@@ -417,8 +417,8 @@ public class FileEntityStore implements EntityStore {
 
 		@Override
 		protected void prepare() {
-			file = new File(dir + "/" + Str.lowercaseFirstLetter(entity.getDao().getEntityName()) + "/"
-					+ entity.getId() + ".xml");
+			file = new File(dir + "/" + Str.lowercaseFirstLetter(entity.getDao().getEntityName()) + "/" + entity.getId()
+					+ ".xml");
 		}
 
 		@Override
