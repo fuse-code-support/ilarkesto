@@ -8,7 +8,6 @@ import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.Date;
 import ilarkesto.core.time.DateAndTime;
 import ilarkesto.core.time.Time;
-import ilarkesto.core.time.Tm;
 import ilarkesto.io.IO;
 
 import java.io.BufferedReader;
@@ -20,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -328,14 +328,26 @@ public class ICalendar {
 	private DateAndTime parseDateAndTime(String s) {
 		try {
 			if (s.endsWith("Z")) {
-				return Tm.parseDateAndTime(s, FORMAT1_UTC, FORMAT2_UTC);
+				return parseDateAndTime(s, FORMAT1_UTC, FORMAT2_UTC);
 			} else {
 				// TODO consider WR-TIMEZONE
-				return Tm.parseDateAndTime(s, FORMAT1_DE, FORMAT2_DE);
+				return parseDateAndTime(s, FORMAT1_DE, FORMAT2_DE);
 			}
 		} catch (ParseException ex) {
 			throw new RuntimeException("Parsing date/time failed: " + s);
 		}
+	}
+
+	public static DateAndTime parseDateAndTime(String s, DateFormat... formats) throws ParseException {
+		ParseException ex = null;
+		for (DateFormat format : formats) {
+			try {
+				return new DateAndTime(format.parse(s));
+			} catch (ParseException e) {
+				ex = e;
+			}
+		}
+		throw ex;
 	}
 
 	private static final transient SimpleDateFormat FORMAT1_DE = new SimpleDateFormat("yyyyMMdd'T'HHmmss");

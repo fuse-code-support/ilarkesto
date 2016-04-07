@@ -16,8 +16,6 @@ package ilarkesto.core.time;
 
 import ilarkesto.core.localization.Localizer;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Date;
 
 public class Tm {
@@ -282,18 +280,6 @@ public class Tm {
 
 	public static int toYears(long millis) {
 		return (int) (millis / YEAR);
-	}
-
-	public static DateAndTime parseDateAndTime(String s, DateFormat... formats) throws ParseException {
-		ParseException ex = null;
-		for (DateFormat format : formats) {
-			try {
-				return new DateAndTime(format.parse(s));
-			} catch (ParseException e) {
-				ex = e;
-			}
-		}
-		throw ex;
 	}
 
 }
