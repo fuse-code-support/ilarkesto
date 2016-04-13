@@ -827,11 +827,16 @@ public abstract class IO {
 		if (!dir.isDirectory()) return false;
 		for (File file : dir.listFiles()) {
 			if (file.getName().equals(MAC_SYS_FILENAME)) {
-				delete(file);
 				continue;
 			}
 			if (!file.isDirectory()) return false;
 			if (!deleteDirectorysIfEmpty(file)) return false;
+		}
+		for (File file : dir.listFiles()) {
+			if (file.getName().equals(MAC_SYS_FILENAME)) {
+				delete(file);
+				continue;
+			}
 		}
 		return dir.delete();
 	}
