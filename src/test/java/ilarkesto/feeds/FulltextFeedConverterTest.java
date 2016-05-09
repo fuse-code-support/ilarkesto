@@ -42,7 +42,8 @@ public class FulltextFeedConverterTest extends ATest {
 
 	@Test
 	public void heiseFeed() {
-		new FulltextFeedConverter("http://www.heise.de/newsticker/heise.rdf").update();
+		FulltextFeedConverter converter = new FulltextFeedConverter("http://www.heise.de/newsticker/heise.rdf");
+		converter.update();
 	}
 
 }
