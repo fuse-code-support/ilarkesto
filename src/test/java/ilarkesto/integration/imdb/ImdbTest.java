@@ -58,8 +58,15 @@ public class ImdbTest extends ATest {
 	}
 
 	@Test
-	public void determineIdByTitleGuess() {
+	public void determineIdByTitleGuessSevenSamurai() {
 		assertEquals(Imdb.determineIdByTitle("Seven Samurai", true), "tt0047478");
+	}
+
+	@Test
+	public void determineIdByTitleGuessStarWars() {
+		assertEquals(
+			Imdb.determineIdByTitle("Star Wars Episode VII The Force Awakens 2015 1080p BluRay x264 DTS-JYK", true),
+			"tt2488496");
 	}
 
 }
