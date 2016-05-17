@@ -51,7 +51,9 @@ public class Feed {
 		feed.setPubDate(JDom.getChildText(eChannel, "lastBuildDate"));
 		feed.setLanguage(JDom.getChildText(eChannel, "language"));
 
-		for (Element eItem : JDom.getChildren(eRoot, "item")) {
+		List<Element> eItems = JDom.getChildren(eRoot, "item");
+		if (eItems.isEmpty()) eItems = JDom.getChildren(eChannel, "item");
+		for (Element eItem : eItems) {
 			String itemTitle = JDom.getChildText(eItem, "title");
 			String itemDescription = JDom.getChildText(eItem, "description");
 			FeedItem item = new FeedItem(itemTitle, itemDescription);
