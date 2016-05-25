@@ -40,10 +40,10 @@ public class Zeiterfassung {
 
 	public static void main(String[] args) throws Exception {
 		Localizer.setCurrent(Localizer.DE);
-		parse(new File(Sys.getUsersHomePath() + "/inbox/his/zeiterfassung/zeiterfassung.txt"));
+		parse(new File(Sys.getUsersHomePath() + "/myfiles/his/zeiterfassung/zeiterfassung.txt"));
 		Collections.sort(days);
 		determineAchievoIds();
-		writeCsv(new File(Sys.getUsersHomePath() + "/inbox/his/zeiterfassung/zeiterfassung.csv"));
+		writeCsv(new File(Sys.getUsersHomePath() + "/myfiles/his/zeiterfassung/zeiterfassung.csv"));
 		printForHiszilla();
 	}
 
@@ -70,8 +70,8 @@ public class Zeiterfassung {
 			Long minutes = entry.getValue();
 			String hiszillaId = entry.getKey();
 			String time = String.valueOf(minutes.floatValue() / 60f);
-			System.out.println(time + " | " + hiszillaId + " | https://hiszilla.his.de/hiszilla/show_bug.cgi?id="
-					+ hiszillaId);
+			System.out.println(
+				time + " | " + hiszillaId + " | https://hiszilla.his.de/hiszilla/show_bug.cgi?id=" + hiszillaId);
 		}
 	}
 
