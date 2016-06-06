@@ -25,14 +25,13 @@ import ilarkesto.io.IO;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 import com.google.gdata.client.contacts.ContactsService;
 import com.google.gdata.data.contacts.ContactEntry;
 import com.google.gdata.data.contacts.ContactGroupEntry;
-import com.google.gdata.data.extensions.FullName;
-import com.google.gdata.data.extensions.Name;
 
 public class GoogleContactsSynchronizer {
 
@@ -278,16 +277,18 @@ public class GoogleContactsSynchronizer {
 
 		private void appendList(MultilineBuilder mb, String label, Collection<ContactEntry> list) {
 			mb.ln(label + ":", list.size());
-			for (ContactEntry contact : list) {
-				String value = "?";
-				Name name = contact.getName();
-				if (name != null) {
-					FullName fullName = name.getFullName();
-					if (fullName != null) value = fullName.getValue();
-				}
-				mb.ln("*", value);
+			for (ContactEntry contact : Utl.sort(list, comparator)) {
+				mb.ln("*", Google.getFullName(contact));
 			}
 		}
+
+		private static final Comparator<ContactEntry> comparator = new Comparator<ContactEntry>() {
+
+			@Override
+			public int compare(ContactEntry a, ContactEntry b) {
+				return Utl.compare(Google.getFullName(a), Google.getFullName(b));
+			}
+		};
 
 	}
 

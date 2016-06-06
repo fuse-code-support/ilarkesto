@@ -498,6 +498,14 @@ public class Google {
 		return ret;
 	}
 
+	public static String getFullName(ContactEntry contact) {
+		Name name = contact.getName();
+		if (name == null) return null;
+		FullName fullName = name.getFullName();
+		if (fullName == null) return null;
+		return fullName.getValue();
+	}
+
 	public static void setEmail(ContactEntry contact, String emailAddress, String label, EmailRel rel,
 			boolean primary) {
 		boolean updated = false;
