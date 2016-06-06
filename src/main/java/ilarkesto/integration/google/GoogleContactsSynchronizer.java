@@ -31,6 +31,8 @@ import java.util.Set;
 import com.google.gdata.client.contacts.ContactsService;
 import com.google.gdata.data.contacts.ContactEntry;
 import com.google.gdata.data.contacts.ContactGroupEntry;
+import com.google.gdata.data.extensions.FullName;
+import com.google.gdata.data.extensions.Name;
 
 public class GoogleContactsSynchronizer {
 
@@ -259,30 +261,32 @@ public class GoogleContactsSynchronizer {
 		@Override
 		public String toString() {
 			MultilineBuilder mb = new MultilineBuilder();
-			mb.ln("UPDATED:", updated.size());
-			for (ContactEntry contact : updated) {
-				mb.ln("*", contact.getName());
-			}
+
+			appendList(mb, "UPDATED", updated);
 			mb.ln("\n");
 
-			mb.ln("CREATED:", created.size());
-			for (ContactEntry contact : created) {
-				mb.ln("*", contact.getName());
-			}
+			appendList(mb, "CREATED", created);
 			mb.ln("\n");
 
-			mb.ln("DELETED:", deleted.size());
-			for (ContactEntry contact : deleted) {
-				mb.ln("*", contact.getName());
-			}
+			appendList(mb, "DELETED", deleted);
 			mb.ln("\n");
 
-			mb.ln("SKIPPED:", skipped.size());
-			for (ContactEntry contact : skipped) {
-				mb.ln("*", contact.getName());
-			}
+			appendList(mb, "SKIPPED", skipped);
 
 			return mb.toString();
+		}
+
+		private void appendList(MultilineBuilder mb, String label, Collection<ContactEntry> list) {
+			mb.ln(label + ":", list.size());
+			for (ContactEntry contact : list) {
+				String value = "?";
+				Name name = contact.getName();
+				if (name != null) {
+					FullName fullName = name.getFullName();
+					if (fullName != null) value = fullName.getValue();
+				}
+				mb.ln("*", value);
+			}
 		}
 
 	}
