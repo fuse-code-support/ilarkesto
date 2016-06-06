@@ -15,6 +15,7 @@
 package ilarkesto.integration.google;
 
 import ilarkesto.base.Utl;
+import ilarkesto.core.base.MultilineBuilder;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.Date;
 import ilarkesto.core.time.DateAndTime;
@@ -22,7 +23,9 @@ import ilarkesto.integration.google.Google.AddressRel;
 import ilarkesto.io.IO;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import com.google.gdata.client.contacts.ContactsService;
@@ -82,7 +85,8 @@ public class GoogleContactsSynchronizer {
 						return new DateAndTime("2010-01-01 03:00:00");
 					}
 				});
-		synchronizer.updateGoogle();
+
+		System.out.println(synchronizer.updateGoogle());
 
 	}
 
@@ -95,6 +99,7 @@ public class GoogleContactsSynchronizer {
 	private LocalContactManager localContactManager;
 	private boolean addToMyContacts;
 	private ContactGroupEntry groupMyContacts;
+	private SyncProtocol protocol;
 
 	public GoogleContactsSynchronizer(ContactsService service, String localIdentifierAttribute,
 			String localTimestampAttribute, String localVersionAttribute, String localVersion,
@@ -110,38 +115,47 @@ public class GoogleContactsSynchronizer {
 		this.localContactManager = localContactManager;
 	}
 
-	public void updateGoogle() {
+	public SyncProtocol updateGoogle() {
+		protocol = new SyncProtocol();
+
 		ContactGroupEntry group = getContactGroup();
 
 		Collection<ContactEntry> gContacts = Google.getContacts(service, group, null);
-		Set oContacts = localContactManager.getContacts();
+		Set localContacts = localContactManager.getContacts();
 
 		for (ContactEntry gContact : gContacts) {
-			String oContactId = Google.getExtendedProperty(gContact, localIdentifierAttribute);
-			Object oContact = null;
-			if (oContactId != null) {
-				oContact = localContactManager.getContactById(oContactId);
+			String localContactId = Google.getExtendedProperty(gContact, localIdentifierAttribute);
+			Object localContact = null;
+			if (localContactId != null) {
+				localContact = localContactManager.getContactById(localContactId);
 			}
 
-			if (oContact == null) {
+			if (localContact == null) {
 				Google.delete(gContact);
+				protocol.addDeleted(gContact);
 				continue;
 			}
 
 			String ts = Google.getExtendedProperty(gContact, localTimestampAttribute);
 			String version = Google.getExtendedProperty(gContact, localVersionAttribute);
 
-			if (ts == null || !ts.equals(localContactManager.getLastModified(oContact).toString())
+			if (ts == null || !ts.equals(localContactManager.getLastModified(localContact).toString())
 					|| !localVersion.equals(version)) {
-				updateGoogleContact(oContact, gContact);
+				updateGoogleContact(localContact, gContact);
+				protocol.addUpdated(gContact);
+			} else {
+				protocol.addSkipped(gContact);
 			}
-			oContacts.remove(oContact);
+			localContacts.remove(localContact);
 		}
 
-		for (Object oContact : oContacts) {
-			ContactEntry gContact = Google.createContact(oContact.toString(), group, service, null);
-			updateGoogleContact(oContact, gContact);
+		for (Object localContact : localContacts) {
+			ContactEntry gContact = Google.createContact(localContact.toString(), group, service, null);
+			updateGoogleContact(localContact, gContact);
+			protocol.addCreated(gContact);
 		}
+
+		return protocol;
 	}
 
 	private void updateGoogleContact(Object oContact, ContactEntry gContact) {
@@ -197,6 +211,10 @@ public class GoogleContactsSynchronizer {
 		return group;
 	}
 
+	public SyncProtocol getProtocol() {
+		return protocol;
+	}
+
 	public static interface LocalContactManager<C> {
 
 		void onUpdateGoogleContactFailed(C contact, ContactEntry gContact, Exception ex);
@@ -212,6 +230,60 @@ public class GoogleContactsSynchronizer {
 		String getId(C contact);
 
 		DateAndTime getLastModified(C contact);
+
+	}
+
+	public static class SyncProtocol {
+
+		private List<ContactEntry> deleted = new ArrayList<ContactEntry>();
+		private List<ContactEntry> skipped = new ArrayList<ContactEntry>();
+		private List<ContactEntry> created = new ArrayList<ContactEntry>();
+		private List<ContactEntry> updated = new ArrayList<ContactEntry>();
+
+		public void addDeleted(ContactEntry gContact) {
+			deleted.add(gContact);
+		}
+
+		public void addSkipped(ContactEntry gContact) {
+			skipped.add(gContact);
+		}
+
+		public void addCreated(ContactEntry gContact) {
+			created.add(gContact);
+		}
+
+		public void addUpdated(ContactEntry gContact) {
+			updated.add(gContact);
+		}
+
+		@Override
+		public String toString() {
+			MultilineBuilder mb = new MultilineBuilder();
+			mb.ln("UPDATED:", updated.size());
+			for (ContactEntry contact : updated) {
+				mb.ln("*", contact.getName());
+			}
+			mb.ln("\n");
+
+			mb.ln("CREATED:", created.size());
+			for (ContactEntry contact : created) {
+				mb.ln("*", contact.getName());
+			}
+			mb.ln("\n");
+
+			mb.ln("DELETED:", deleted.size());
+			for (ContactEntry contact : deleted) {
+				mb.ln("*", contact.getName());
+			}
+			mb.ln("\n");
+
+			mb.ln("SKIPPED:", skipped.size());
+			for (ContactEntry contact : skipped) {
+				mb.ln("*", contact.getName());
+			}
+
+			return mb.toString();
+		}
 
 	}
 
