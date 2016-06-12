@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -134,9 +134,8 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 					String key = column.getKey();
 					if (key != null) {
 						if (key.contains(",")) log.error("Character ',' not allowed in column selfdoc key: " + key);
-						if (keys.contains(key))
-							log.error("Column with same key already exists: " + key
-									+ ". Override getKey() in column and provide a different key for the column.");
+						if (keys.contains(key)) log.error("Column with same key already exists: " + key
+								+ ". Override getKey() in column and provide a different key for the column.");
 						keys.add(key);
 
 						AAction selfdocAction = Widgets.selfdocAction(column.getSelfdocKey(), columnTitle,
@@ -281,9 +280,13 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		return title;
 	}
 
+	private AActivity activity;
+
 	@Override
 	public final Updatable update() {
 		log.debug("update()");
+
+		if (activity == null) activity = AActivity.getCurrent();
 
 		table = null;
 		wrapper = null;
@@ -471,7 +474,8 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 	}
 
 	public ActivityParameters createParametersForServer() {
-		return AActivity.getCurrent().getParameters();
+		if (activity == null) activity = AActivity.getCurrent();
+		return activity.getParameters();
 	}
 
 	protected boolean isGroupingEnabled() {
