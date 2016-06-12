@@ -280,13 +280,9 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		return title;
 	}
 
-	private AActivity activity;
-
 	@Override
 	public final Updatable update() {
 		log.debug("update()");
-
-		if (activity == null) activity = AActivity.getCurrent();
 
 		table = null;
 		wrapper = null;
@@ -471,11 +467,6 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 	public void dataReceivedOnClient(ADataTransferObject result) {
 		update();
-	}
-
-	public ActivityParameters createParametersForServer() {
-		if (activity == null) activity = AActivity.getCurrent();
-		return activity.getParameters();
 	}
 
 	protected boolean isGroupingEnabled() {
