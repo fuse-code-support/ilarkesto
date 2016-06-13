@@ -510,29 +510,23 @@ public class HtmlBuilder {
 	private static final String BODY = "body";
 
 	public void startHTML() {
-		// out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"
-		// \"http://www.w3.org/TR/html4/loose.dtd\">");
-		// out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-		// out.print("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\">");
-		// startTag(HTML);
-
-		startHTMLstandard();
+		startHTML(null);
 	}
 
-	public void startHTMLstandard() {
+	public void startHTML(String lang) {
 		out.print("<!DOCTYPE html>");
-		startTag(HTML);
+		startTag(HTML).set("lang", lang);
 	}
 
 	public void endHTML() {
 		endTag(HTML);
 	}
 
-	public void startHEAD(String title, String language) {
+	public void startHEAD(String title) {
 		startTag(HEAD);
+		METAcharset(encoding);
 		METAviewport("device-width", 1);
-		META("Content-Language", language);
-		META("Content-Type", "text/html; charset=" + encoding);
+		META("x-ua-compatible", "ie=edge");
 		TITLE(title);
 	}
 
@@ -554,10 +548,19 @@ public class HtmlBuilder {
 		startTag(META, true).set("name", name).set("content", content).end();
 	}
 
+	public void METAcharset(String charset) {
+		META("charset", charset);
+	}
+
+	public void METAcharsetUtf8() {
+		META("charset", IO.UTF_8);
+	}
+
 	public void METAviewport(String width, Integer initialScale) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("width=").append(width);
 		sb.append(", initial-scale=").append(initialScale);
+		sb.append(", shrink-to-fit=no");
 		startTag(META, true).set("name", "viewport").set("content", sb.toString()).end();
 	}
 
