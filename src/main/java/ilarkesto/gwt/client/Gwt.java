@@ -49,6 +49,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -487,14 +488,14 @@ public class Gwt {
 		return panel;
 	}
 
-	public static FlowPanel createFlowPanel(Widget... widgets) {
+	public static FlowPanel createFlowPanel(IsWidget... widgets) {
 		return createFlowPanel(null, null, widgets);
 	}
 
-	public static FlowPanel createFlowPanel(String styleName, String elementStyleName, Widget... widgets) {
+	public static FlowPanel createFlowPanel(String styleName, String elementStyleName, IsWidget... widgets) {
 		FlowPanel panel = new FlowPanel();
 		if (styleName != null) panel.setStyleName(styleName);
-		for (Widget widget : widgets) {
+		for (IsWidget widget : widgets) {
 			if (widget == null) continue;
 			panel.add(elementStyleName == null ? widget : createDiv(elementStyleName, widget));
 		}
@@ -559,7 +560,7 @@ public class Gwt {
 		return tb.createTable();
 	}
 
-	public static final SimplePanel createDiv(String styleName, Widget content) {
+	public static final SimplePanel createDiv(String styleName, IsWidget content) {
 		SimplePanel div = new SimplePanel();
 		div.setStyleName(styleName);
 		div.setWidget(content);
