@@ -14,6 +14,8 @@
  */
 package ilarkesto.gwt.client;
 
+import java.util.List;
+
 public abstract class AServiceCallResultHandler implements Runnable {
 
 	private ADataTransferObject dto;
@@ -25,5 +27,7 @@ public abstract class AServiceCallResultHandler implements Runnable {
 	public void setDto(ADataTransferObject dto) {
 		this.dto = dto;
 	}
+
+	public void onError(List<ErrorWrapper> errors) {}
 
 }

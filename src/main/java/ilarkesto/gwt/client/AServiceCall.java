@@ -43,8 +43,8 @@ public abstract class AServiceCall<D extends ADataTransferObject> {
 
 	private Runnable returnHandler;
 	private RuntimeTracker rtCall;
-	private long runtimeData = -1;
-	private long runtimeReturnHandler = -1;
+	private long runtimeLastServicecall = -1;
+	private long runtimeClientHandler = -1;
 
 	protected abstract void onExecute(int conversationNumber, AsyncCallback<D> callback);
 
@@ -134,12 +134,12 @@ public abstract class AServiceCall<D extends ADataTransferObject> {
 		return rtCall.getRuntime();
 	}
 
-	public final long getRuntimeData() {
-		return runtimeData;
+	public final long getRuntimeLastServicecall() {
+		return runtimeLastServicecall;
 	}
 
-	public final long getRuntimeReturnHandler() {
-		return runtimeReturnHandler;
+	public final long getRuntimeClientHandler() {
+		return runtimeClientHandler;
 	}
 
 	public final String getName() {
@@ -171,18 +171,23 @@ public abstract class AServiceCall<D extends ADataTransferObject> {
 		log.error("callbackError()", errors);
 		onCallbackError(errors);
 		long timeFromLastSuccess = Tm.getCurrentTimeMillis() - lastSuccessfullServiceCallTime;
+
+		if (returnHandler instanceof AServiceCallResultHandler) {
+			((AServiceCallResultHandler) returnHandler).onError(errors);
+		}
+
 		if (isDispensable() && timeFromLastSuccess < AServiceCall.MAX_FAILURE_TIME) {
 			log.warn("Dispensable service call failed:", getName(), errors);
-			return;
+		} else {
+			AGwtApplication.get().handleServiceCallError(getName(), errors);
 		}
-		AGwtApplication.get().handleServiceCallError(getName(), errors);
 	}
 
 	private void callbackSuccess(D data) {
 		lastSuccessfullServiceCallTime = Tm.getCurrentTimeMillis();
 		RuntimeTracker rtData = new RuntimeTracker();
 		AGwtApplication.get().serverDataReceived(data);
-		runtimeData = rtData.getRuntime();
+		runtimeLastServicecall = rtData.getRuntime();
 
 		if (returnHandler != null) {
 			RuntimeTracker rtHandler = new RuntimeTracker();
@@ -190,7 +195,7 @@ public abstract class AServiceCall<D extends ADataTransferObject> {
 				((AServiceCallResultHandler) returnHandler).setDto(data);
 			}
 			returnHandler.run();
-			runtimeReturnHandler = rtHandler.getRuntime();
+			runtimeClientHandler = rtHandler.getRuntime();
 		}
 		AGwtApplication.get().onServiceCallSuccessfullyProcessed(this);
 	}

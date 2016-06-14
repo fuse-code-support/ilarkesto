@@ -37,7 +37,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 
 public abstract class AGwtApplication<D extends ADataTransferObject> implements EntryPoint {
 
@@ -104,7 +103,7 @@ public abstract class AGwtApplication<D extends ADataTransferObject> implements 
 	public final void abort(String message) {
 		if (Str.isBlank(message)) message = "Unexpected error";
 		abortMessage = message;
-		Window.alert(message);
+		// Window.alert(message);
 		onAborted(message);
 	}
 

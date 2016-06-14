@@ -66,7 +66,7 @@ public class ErrorWrapper implements Serializable, IsSerializable {
 	@Override
 	public String toString() {
 		if (message == null) return name;
-		return name + ": " + message;
+		return message;
 	}
 
 	@Override
