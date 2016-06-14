@@ -66,7 +66,10 @@ public class ModalWidget implements IsWidget {
 
 	private static native void show(String id)
 	/*-{
-	$wnd.$('#'+id).modal('show');
+	$wnd.$('#'+id).modal({
+		backdrop: 'static',
+		keyboard: false
+	});
 	}-*/;
 
 	public void hide() {
