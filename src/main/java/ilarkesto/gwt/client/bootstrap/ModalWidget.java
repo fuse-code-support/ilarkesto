@@ -36,10 +36,12 @@ public class ModalWidget implements IsWidget {
 		modalElement.setId(modalId);
 		modalElement.setTabIndex(-1);
 		modalElement.setAttribute("role", "dialog");
+		modalElement.setAttribute("data-backdrop", "static");
+		modalElement.setAttribute("data-keyboard", "false");
 		modalElement.setAttribute("aria-labelledby", labelId);
 		modalElement.setAttribute("aria-hidden", "true");
 		modal.addStyleName("modal");
-		modal.addStyleName("fade");
+		// modal.addStyleName("fade");
 
 		modalDialog = new FlowPanel();
 		modalDialog.addStyleName("modal-dialog");
@@ -66,10 +68,7 @@ public class ModalWidget implements IsWidget {
 
 	private static native void show(String id)
 	/*-{
-	$wnd.$('#'+id).modal({
-		backdrop: 'static',
-		keyboard: false
-	});
+	 	$wnd.$('#'+id).modal('show');
 	}-*/;
 
 	public void hide() {
@@ -78,7 +77,7 @@ public class ModalWidget implements IsWidget {
 
 	private static native void hide(String id)
 	/*-{
-	$wnd.$('#'+id).modal('hide');
+		$wnd.$('#'+id).modal('hide');
 	}-*/;
 
 }
