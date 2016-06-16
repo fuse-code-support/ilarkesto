@@ -139,7 +139,7 @@ public class Zeiterfassung {
 				if (text.equals(activity.getText())) return activity.getAchievoId();
 			}
 		}
-		System.out.println("Achievo-ID fehlt. Text: " + text);
+		if (!hiszillaLineReached) System.out.println("Achievo-ID fehlt. Text: " + text);
 		return null;
 	}
 
@@ -151,7 +151,7 @@ public class Zeiterfassung {
 				if (hiszillaId.equals(activity.getHiszillaId())) return activity.getAchievoId();
 			}
 		}
-		// System.out.println("Achievo-ID fehlt. Hiszilla: " + hiszillaId + " Text: " + text);
+		if (!hiszillaLineReached) System.out.println("Achievo-ID fehlt. Hiszilla: " + hiszillaId + " Text: " + text);
 		return null;
 	}
 
