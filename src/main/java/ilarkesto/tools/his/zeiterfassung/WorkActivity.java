@@ -18,6 +18,7 @@ import ilarkesto.core.base.Parser;
 import ilarkesto.core.base.Parser.ParseException;
 import ilarkesto.core.time.Date;
 import ilarkesto.core.time.Time;
+import ilarkesto.core.time.TimePeriod;
 import ilarkesto.io.CsvWriter;
 
 public class WorkActivity {
@@ -82,6 +83,14 @@ public class WorkActivity {
 		this.achievoId = achievoId;
 	}
 
+	public Time getStart() {
+		return start;
+	}
+
+	public Time getEnd() {
+		return end;
+	}
+
 	@Override
 	public String toString() {
 		return start + " - " + end + " | " + hiszillaId + " | " + achievoId + " | " + text;
@@ -92,7 +101,10 @@ public class WorkActivity {
 		csv.writeField(""); // package
 		csv.writeField(achievoId); // phaseId
 		Date date = dayAtWork.getDate();
-		csv.writeField(date.getMonth() + "/" + date.getDay() + "/" + date.getYear()); // activitydate
+
+		// csv.writeField(date.getMonth() + "/" + date.getDay() + "/" + date.getYear()); // activitydate
+		csv.writeField(date.formatDayMonthYear());
+
 		csv.writeField("788"); // userid
 		csv.writeField(text); // remark
 		csv.writeField(getWorktimeInMinutes()); // time
@@ -106,7 +118,11 @@ public class WorkActivity {
 	}
 
 	public long getWorktimeInMinutes() {
-		return start.getPeriodTo(end).toMinutes();
+		return getWorktime().toMinutes();
+	}
+
+	public TimePeriod getWorktime() {
+		return start.getPeriodTo(end);
 	}
 
 	public void setAlreadyBookedInHiszilla(boolean alreadyBookedInHiszilla) {

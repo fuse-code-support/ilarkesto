@@ -14,11 +14,16 @@
  */
 package ilarkesto.tools.his.zeiterfassung;
 
+import ilarkesto.base.Str;
 import ilarkesto.core.base.Parser.ParseException;
 import ilarkesto.core.time.Date;
+import ilarkesto.core.time.Time;
+import ilarkesto.core.time.TimePeriod;
 
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class DayAtWork implements Comparable<DayAtWork> {
 
@@ -27,6 +32,41 @@ public class DayAtWork implements Comparable<DayAtWork> {
 
 	public DayAtWork(String line) {
 		date = new Date(line.substring(0, line.indexOf(" ")));
+	}
+
+	public TimePeriod getWorkTime() {
+		TimePeriod ret = new TimePeriod();
+		for (WorkActivity activity : activities) {
+			ret = ret.add(activity.getWorktime());
+		}
+		return ret;
+	}
+
+	public TimePeriod getTotaltime() {
+		return getStart().getPeriodTo(getEnd());
+	}
+
+	public Time getStart() {
+		if (activities.isEmpty()) throw new IllegalStateException("No activities: " + date.format());
+		Time firstStart = null;
+		for (WorkActivity activity : activities) {
+			Time start = activity.getStart();
+			if (firstStart == null || start.isBefore(firstStart)) firstStart = start;
+		}
+		return firstStart;
+	}
+
+	public Time getEnd() {
+		Time lastEnd = null;
+		for (WorkActivity activity : activities) {
+			Time end = activity.getEnd();
+			if (lastEnd == null || end.isAfter(lastEnd)) lastEnd = end;
+		}
+		return lastEnd;
+	}
+
+	public TimePeriod getPauseTime() {
+		return getTotaltime().subtract(getWorkTime());
 	}
 
 	public WorkActivity getLastActivity() {
@@ -50,6 +90,28 @@ public class DayAtWork implements Comparable<DayAtWork> {
 
 	public Date getDate() {
 		return date;
+	}
+
+	public boolean isAlreadyBookedInHiszilla() {
+		for (WorkActivity activity : activities) {
+			if (activity.isAlreadyBookedInHiszilla()) return true;
+		}
+		return false;
+	}
+
+	private Set<String> getActivitesTexts() {
+		LinkedHashSet<String> ret = new LinkedHashSet<String>();
+		for (WorkActivity activity : activities) {
+			ret.add(activity.getText());
+		}
+		return ret;
+	}
+
+	public String getActivitiesText() {
+		Set<String> texts = getActivitesTexts();
+		texts.remove("Daily Scrum");
+		// texts.remove("Sprint Review");
+		return Str.concat(texts, " | ");
 	}
 
 }

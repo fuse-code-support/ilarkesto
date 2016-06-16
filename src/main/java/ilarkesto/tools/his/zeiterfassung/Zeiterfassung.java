@@ -18,6 +18,7 @@ import ilarkesto.base.Sys;
 import ilarkesto.core.base.Parser.ParseException;
 import ilarkesto.core.base.Str;
 import ilarkesto.core.localization.Localizer;
+import ilarkesto.core.time.Date;
 import ilarkesto.io.CsvWriter;
 
 import java.io.BufferedReader;
@@ -44,7 +45,21 @@ public class Zeiterfassung {
 		Collections.sort(days);
 		determineAchievoIds();
 		writeCsv(new File(Sys.getUsersHomePath() + "/myfiles/his/zeiterfassung/zeiterfassung.csv"));
+		System.out.println("-------------------------------------------------------------------------------");
+		printForOrganizanto();
+		System.out.println("-------------------------------------------------------------------------------");
 		printForHiszilla();
+	}
+
+	private static void printForOrganizanto() {
+		for (DayAtWork day : days) {
+			if (day.isAlreadyBookedInHiszilla()) continue;
+			Date date = day.getDate();
+			System.out.println(date.getWeekday().toShortString("en") + ", " + date.formatDayMonthYear() + " | "
+					+ day.getStart().format() + " - " + day.getEnd().format() + " | "
+					+ day.getWorkTime().toHoursAndMinutes() + " | " + day.getPauseTime().toMinutes() + " | "
+					+ day.getActivitiesText());
+		}
 	}
 
 	private static void printForHiszilla() {
@@ -80,8 +95,11 @@ public class Zeiterfassung {
 		CsvWriter csv = new CsvWriter(out);
 		int currentMonth = 0;
 		for (DayAtWork day : days) {
-			if (currentMonth != day.getDate().getMonth()) {
-				currentMonth = day.getDate().getMonth();
+			Date date = day.getDate();
+			if (!isPreviousMonth(date)) continue;
+
+			if (currentMonth != date.getMonth()) {
+				currentMonth = date.getMonth();
 				csv.closeRecord();
 				csv.closeRecord();
 			}
@@ -91,6 +109,10 @@ public class Zeiterfassung {
 			}
 		}
 		out.close();
+	}
+
+	private static boolean isPreviousMonth(Date date) {
+		return Date.today().getFirstDateOfMonth().addDays(-1).getFirstDateOfMonth().equals(date.getFirstDateOfMonth());
 	}
 
 	private static void determineAchievoIds() {
