@@ -419,7 +419,7 @@ public class HtmlBuilder {
 	}
 
 	public void INPUTpassword(String name, Integer width, String value) {
-		INPUT("password", name, value).set("size", width).setClass("inputText").end();
+		INPUT("password", name, value).set("size", width).setClass("inputText form-control").end();
 	}
 
 	public void INPUTpassword(String id, String name, String styleClass, Integer width, String value) {
@@ -429,7 +429,7 @@ public class HtmlBuilder {
 
 	public void INPUTpasswordWithPlaceholder(String id, String name, int width, String value, String placeholder) {
 		INPUT("password", name, value).set("id", id).set("size", width).set("placeholder", placeholder)
-				.setClass("inputText").end();
+				.setClass("inputText form-control").end();
 	}
 
 	public void INPUTcheckbox(String id, String name, boolean checked, String styleClass) {
