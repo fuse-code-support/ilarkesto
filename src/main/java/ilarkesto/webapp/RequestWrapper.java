@@ -21,6 +21,8 @@ import ilarkesto.core.time.Date;
 import ilarkesto.integration.itext.PdfBuilder;
 import ilarkesto.io.IO;
 import ilarkesto.json.JsonObject;
+import ilarkesto.ui.html.Html;
+import ilarkesto.ui.web.HtmlBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -308,6 +310,11 @@ public class RequestWrapper<S extends AWebSession> {
 	@Override
 	public String toString() {
 		return getUriWithoutContext();
+	}
+
+	public void send(Html html) {
+		setContentTypeHtml();
+		html.build(new HtmlBuilder(getWriter(), IO.UTF_8));
 	}
 
 }
