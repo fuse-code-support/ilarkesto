@@ -19,6 +19,7 @@ import ilarkesto.base.Url;
 import ilarkesto.base.Utl;
 import ilarkesto.integration.links.MultiLinkConverter;
 import ilarkesto.io.IO;
+import ilarkesto.ui.html.Component;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -520,6 +521,7 @@ public class HtmlBuilder {
 
 	public void endHTML() {
 		endTag(HTML);
+		flush();
 	}
 
 	public void startHEAD(String title) {
@@ -1073,6 +1075,11 @@ public class HtmlBuilder {
 		out.print("<!-- ");
 		out.print(text);
 		out.print(" -->");
+	}
+
+	public void component(Component component) {
+		if (component == null) return;
+		component.build(this);
 	}
 
 	public void endTag(String name) {
