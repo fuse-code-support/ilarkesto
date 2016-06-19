@@ -135,6 +135,10 @@ public class RequestWrapper<S extends AWebSession> {
 		Servlet.setCookie(response, name, value, maxAgeInSeconds);
 	}
 
+	public void removeCookie(String name) {
+		Servlet.removeCookie(response, name);
+	}
+
 	public void setContentType(String type) {
 		response.setContentType(type);
 	}

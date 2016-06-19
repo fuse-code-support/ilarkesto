@@ -12,12 +12,14 @@
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package ilarkesto.integration.bootstrap;
+package ilarkesto.ui.html;
 
-public class Container extends Component {
+public class Img extends Element {
 
-	public Container(boolean fluid) {
-		super("div", fluid ? "container-fluid" : "container");
+	public Img(String src, String alt) {
+		super("img");
+		attr("src", src);
+		attr("alt", alt);
 	}
 
 }

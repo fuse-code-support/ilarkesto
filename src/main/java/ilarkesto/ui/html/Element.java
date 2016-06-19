@@ -83,6 +83,7 @@ public class Element implements Component {
 	public Element classes(String... classNames) {
 		if (attributes != null && attributes.containsKey("class")) {
 			attributes.put("class", attributes.get("class") + " " + Str.concat(classNames, " "));
+			return this;
 		}
 		return attr("class", Str.concat(classNames, " "));
 	}
@@ -90,6 +91,7 @@ public class Element implements Component {
 	public Element styles(String... styles) {
 		if (attributes != null && attributes.containsKey("style")) {
 			attributes.put("style", attributes.get("style") + " " + Str.concat(styles, "; "));
+			return this;
 		}
 		return attr("style", Str.concat(styles, "; "));
 	}

@@ -14,10 +14,10 @@
  */
 package ilarkesto.integration.bootstrap;
 
-public class Container extends Component {
+public class NavbarBrand extends Component {
 
-	public Container(boolean fluid) {
-		super("div", fluid ? "container-fluid" : "container");
+	public NavbarBrand() {
+		super("span", "navbar-brand");
 	}
 
 }
