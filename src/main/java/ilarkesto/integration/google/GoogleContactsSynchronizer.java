@@ -26,7 +26,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.gdata.client.contacts.ContactsService;
@@ -64,11 +66,6 @@ public class GoogleContactsSynchronizer {
 						gContact.setBirthday(Google.createBirthday(new Date(1979, 8, 3)));
 						Google.setAddress(gContact, "Unter Franke 1", "31737", "Rinteln", "DE", "Deutschland", "",
 							AddressRel.WORK, false);
-					}
-
-					@Override
-					public String getContactById(String localId) {
-						return localId;
 					}
 
 					@Override
@@ -123,12 +120,16 @@ public class GoogleContactsSynchronizer {
 
 		Collection<ContactEntry> gContacts = Google.getContacts(service, group, null);
 		Set localContacts = localContactManager.getContacts();
+		Map<String, Object> localContactsById = new HashMap<String, Object>();
+		for (Object localContact : localContacts) {
+			localContactsById.put(localContactManager.getId(localContact), localContact);
+		}
 
 		for (ContactEntry gContact : gContacts) {
 			String localContactId = Google.getExtendedProperty(gContact, localIdentifierAttribute);
 			Object localContact = null;
 			if (localContactId != null) {
-				localContact = localContactManager.getContactById(localContactId);
+				localContact = localContactsById.get(localContactId);
 			}
 
 			if (localContact == null) {
@@ -223,8 +224,6 @@ public class GoogleContactsSynchronizer {
 		File getContactPhoto(C contact);
 
 		void updateGoogleContactFields(C contact, ContactEntry gContact);
-
-		C getContactById(String localId);
 
 		Set<C> getContacts();
 
