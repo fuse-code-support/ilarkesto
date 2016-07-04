@@ -112,7 +112,10 @@ public class Zeiterfassung {
 	}
 
 	private static boolean isPreviousMonth(Date date) {
-		return Date.today().getFirstDateOfMonth().addDays(-1).getFirstDateOfMonth().equals(date.getFirstDateOfMonth());
+		if (Date.today().getFirstDateOfMonth().equals(date.getFirstDateOfMonth())) return true;
+		if (Date.today().getFirstDateOfMonth().addDays(-1).getFirstDateOfMonth().equals(date.getFirstDateOfMonth()))
+			return true;
+		return false;
 	}
 
 	private static void determineAchievoIds() {
