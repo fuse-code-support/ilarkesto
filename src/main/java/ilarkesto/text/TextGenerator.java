@@ -14,19 +14,30 @@
  */
 package ilarkesto.text;
 
-import ilarkesto.base.Utl;
 import ilarkesto.core.base.Str;
+
+import java.util.Random;
 
 public class TextGenerator {
 
+	private static final Random random = new Random(System.currentTimeMillis());
+
+	private static int randomInt(int min, int max) {
+		return random.nextInt(max - min + 1) + min;
+	}
+
+	private static char randomChar(String charSet) {
+		int index = randomInt(0, charSet.length() - 1);
+		return charSet.charAt(index);
+	}
+
 	public static String password() {
-		return password(Utl.randomInt(12, 24));
+		return password(randomInt(12, 24));
 	}
 
 	public static String password(int length) {
 		if (length <= 10)
-			return word("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!$%&=-_/()[]{}",
-				length);
+			return word("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!$%&=-_/()[]{}", length);
 
 		StringBuilder sb = new StringBuilder();
 		length -= 3;
@@ -62,9 +73,9 @@ public class TextGenerator {
 		return paragraph(2, 10, 4, 12, 2, 12);
 	}
 
-	public static String paragraph(int minSentences, int maxSentences, int minWords, int maxWords,
-			int minWordLenght, int maxWordLenght) {
-		int sentences = Utl.randomInt(minSentences, maxSentences);
+	public static String paragraph(int minSentences, int maxSentences, int minWords, int maxWords, int minWordLenght,
+			int maxWordLenght) {
+		int sentences = randomInt(minSentences, maxSentences);
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < sentences; i++) {
 			String sentence = sentence(minWords, maxWords, minWordLenght, maxWordLenght);
@@ -83,10 +94,10 @@ public class TextGenerator {
 	}
 
 	public static String sentence(int minWords, int maxWords, int minWordLenght, int maxWordLenght) {
-		int words = Utl.randomInt(minWords, maxWords);
+		int words = randomInt(minWords, maxWords);
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < words; i++) {
-			boolean uppercase = i == 0 || Utl.randomInt(0, 9) == 0;
+			boolean uppercase = i == 0 || randomInt(0, 9) == 0;
 			String word = word(minWordLenght, maxWordLenght, uppercase);
 			if (i != 0) sb.append(" ");
 			sb.append(word);
@@ -97,7 +108,7 @@ public class TextGenerator {
 	public static String word(int minLength, int maxLength, boolean uppercase) {
 		String vovels = "aeiouy";
 		String consonants = "bcdfghjklmnpqrstvwxz";
-		int length = Utl.randomInt(minLength, maxLength);
+		int length = randomInt(minLength, maxLength);
 		String word = word(vovels, consonants, length);
 		return uppercase ? Str.uppercaseFirstLetter(word) : word;
 	}
@@ -107,7 +118,7 @@ public class TextGenerator {
 	}
 
 	public static String word(String availableChars, int minLength, int maxLength) {
-		int length = Utl.randomInt(minLength, maxLength);
+		int length = randomInt(minLength, maxLength);
 		return word(availableChars, length);
 	}
 
@@ -115,14 +126,14 @@ public class TextGenerator {
 		StringBuilder password = new StringBuilder();
 		String charSet = charSet1;
 		for (int i = 0; i < length; i++) {
-			if (Utl.randomInt(0, 8) != 0) {
+			if (randomInt(0, 8) != 0) {
 				if (charSet.equals(charSet1)) {
 					charSet = charSet2;
 				} else {
 					charSet = charSet1;
 				}
 			}
-			password.append(Utl.randomChar(charSet));
+			password.append(randomChar(charSet));
 		}
 		return password.toString();
 	}
@@ -130,7 +141,7 @@ public class TextGenerator {
 	public static String word(String availableChars, int length) {
 		StringBuilder password = new StringBuilder();
 		for (int i = 0; i < length; i++) {
-			password.append(Utl.randomChar(availableChars));
+			password.append(randomChar(availableChars));
 		}
 		return password.toString();
 	}
