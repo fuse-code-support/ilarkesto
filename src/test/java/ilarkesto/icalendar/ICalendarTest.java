@@ -16,6 +16,15 @@ package ilarkesto.icalendar;
 
 import ilarkesto.testng.ATest;
 
+import org.testng.annotations.Test;
+
 public class ICalendarTest extends ATest {
+
+	@Test
+	public void rintelnApp() {
+		RemoteICalendar cal = new RemoteICalendar(
+				"https://calendar.google.com/calendar/ical/fpii750cluengi6bk84ccd2kn8%40group.calendar.google.com/public/basic.ics");
+		cal.update();
+	}
 
 }

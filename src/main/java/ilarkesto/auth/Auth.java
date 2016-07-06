@@ -20,6 +20,7 @@ import ilarkesto.core.base.UserInputException;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.Tm;
 import ilarkesto.persistence.AEntity;
+import ilarkesto.text.TextGenerator;
 
 import java.util.Collection;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class Auth {
 	}
 
 	private static <U> void setPasswordWithoutChecking(U user, String password, AuthenticationContext<U> context) {
-		String salt = Str.generatePassword(256);
+		String salt = TextGenerator.password(256);
 		context.setPasswordSalt(user, salt);
 		context.setPasswordHash(user, hashPassword(salt, password));
 		context.passwordChanged(user);

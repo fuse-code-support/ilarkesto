@@ -422,7 +422,7 @@ public class ICalendar {
 		mb.ln(name + ":" + FORMAT1_UTC.format(value.toJavaDate()) + "Z");
 	}
 
-	public static class Event {
+	public static class Event implements Comparable<Event> {
 
 		private Date date;
 		private Time start;
@@ -535,6 +535,17 @@ public class ICalendar {
 			mb.ln(getSummary());
 			mb.ln(location);
 			return mb.toString();
+		}
+
+		@Override
+		public int compareTo(Event other) {
+			int ret = Utl.compare(getDate(), other.getDate());
+			if (ret != 0) return ret;
+
+			ret = Utl.compare(getStart(), other.getStart());
+			if (ret != 0) return ret;
+
+			return Utl.compare(getSummaryAndLocation(), other.getSummaryAndLocation());
 		}
 
 	}

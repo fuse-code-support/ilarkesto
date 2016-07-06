@@ -82,122 +82,6 @@ public class Str extends ilarkesto.core.base.Str {
 		return sb.toString();
 	}
 
-	public static String generateRandomParagraphs(int count) {
-		return generateRandomParagraphs(count, null, null, "\n\n");
-	}
-
-	public static String generateRandomParagraphs(int count, String prefix, String suffix, String separator) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < count; i++) {
-			if (separator != null && i > 0) sb.append(separator);
-			if (prefix != null) sb.append(prefix);
-			sb.append(generateRandomParagraph());
-			if (suffix != null) sb.append(suffix);
-		}
-		return sb.toString();
-	}
-
-	public static String generateRandomParagraph() {
-		return generateRandomParagraph(2, 10, 4, 12, 2, 12);
-	}
-
-	public static String generateRandomParagraph(int minSentences, int maxSentences, int minWords, int maxWords,
-			int minWordLenght, int maxWordLenght) {
-		int sentences = Utl.randomInt(minSentences, maxSentences);
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < sentences; i++) {
-			String sentence = generateRandomSentence(minWords, maxWords, minWordLenght, maxWordLenght);
-			if (i != 0) sb.append(" ");
-			sb.append(sentence).append(".");
-		}
-		return sb.toString();
-	}
-
-	public static String generateRandomSentence() {
-		return generateRandomSentence(4, 12);
-	}
-
-	public static String generateRandomSentence(int minWords, int maxWords) {
-		return generateRandomSentence(minWords, maxWords, 2, 12);
-	}
-
-	public static String generateRandomSentence(int minWords, int maxWords, int minWordLenght, int maxWordLenght) {
-		int words = Utl.randomInt(minWords, maxWords);
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < words; i++) {
-			boolean uppercase = i == 0 || Utl.randomInt(0, 9) == 0;
-			String word = generateRandomWord(minWordLenght, maxWordLenght, uppercase);
-			if (i != 0) sb.append(" ");
-			sb.append(word);
-		}
-		return sb.toString();
-	}
-
-	public static String generateRandomWord(int minLength, int maxLength, boolean uppercase) {
-		String vovels = "aeiouy";
-		String consonants = "bcdfghjklmnpqrstvwxz";
-		int length = Utl.randomInt(minLength, maxLength);
-		String word = generateRandomWord(vovels, consonants, length);
-		return uppercase ? uppercaseFirstLetter(word) : word;
-	}
-
-	public static String generateRandomNumber(int lenght) {
-		return generateRandomWord("123456789", lenght);
-	}
-
-	public static String generatePassword() {
-		return generatePassword(Utl.randomInt(12, 24));
-	}
-
-	public static String generatePassword(int length) {
-		if (length <= 10)
-			return generateRandomWord("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!$%&=-_/()[]{}",
-				length);
-
-		StringBuilder sb = new StringBuilder();
-		length -= 3;
-
-		while (length > 6) {
-			String word = generateRandomWord(2, 5, true) + " ";
-			length -= word.length();
-			sb.append(word);
-		}
-		sb.append(generateRandomWord(length, length, true));
-
-		sb.append(' ').append(generateRandomWord("1234567890", "!$%&=-_/()[]{}", 2));
-
-		return sb.toString();
-	}
-
-	public static String generateRandomWord(String availableChars, int minLength, int maxLength) {
-		int length = Utl.randomInt(minLength, maxLength);
-		return generateRandomWord(availableChars, length);
-	}
-
-	public static String generateRandomWord(String charSet1, String charSet2, int length) {
-		StringBuilder password = new StringBuilder();
-		String charSet = charSet1;
-		for (int i = 0; i < length; i++) {
-			if (Utl.randomInt(0, 8) != 0) {
-				if (charSet.equals(charSet1)) {
-					charSet = charSet2;
-				} else {
-					charSet = charSet1;
-				}
-			}
-			password.append(Utl.randomChar(charSet));
-		}
-		return password.toString();
-	}
-
-	public static String generateRandomWord(String availableChars, int length) {
-		StringBuilder password = new StringBuilder();
-		for (int i = 0; i < length; i++) {
-			password.append(Utl.randomChar(availableChars));
-		}
-		return password.toString();
-	}
-
 	public static boolean endsWith(String s, String... suffixes) {
 		for (String suffix : suffixes) {
 			if (s.endsWith(suffix)) return true;
@@ -266,7 +150,8 @@ public class Str extends ilarkesto.core.base.Str {
 				|| c == '(' || c == ')' || c == '=' || c == '?' || c == '{' || c == '}' || c == '[' || c == ']'
 				|| c == '\\' || c == '*' || c == '+' || c == '~' || c == '#' || c == '\'' || c == '-' || c == '_'
 				|| c == '.' || c == ':' || c == ',' || c == ';' || c == '<' || c == '>' || c == '@' || c == EUR
-				|| c == '^' || c == '|' || c == 'µ' || c == '²' || c == '³') return true;
+				|| c == '^' || c == '|' || c == 'µ' || c == '²' || c == '³')
+			return true;
 		return false;
 	}
 
@@ -1029,7 +914,5 @@ public class Str extends ilarkesto.core.base.Str {
 
 		public static final char LF = 10;
 	}
-
-	// --- dependencies ---
 
 }

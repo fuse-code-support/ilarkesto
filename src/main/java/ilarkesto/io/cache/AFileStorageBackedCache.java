@@ -79,7 +79,7 @@ public abstract class AFileStorageBackedCache<T> {
 	public final void update(OperationObserver observer) {
 		RuntimeTracker rt = new RuntimeTracker();
 		log.debug("update()");
-		observer.onOperationInfoChanged(OperationObserver.UPDATING);
+		if (observer != null) observer.onOperationInfoChanged(OperationObserver.UPDATING);
 		loadStatus();
 		value = loadValueFromRemote(observer);
 		saveValueToCache();
