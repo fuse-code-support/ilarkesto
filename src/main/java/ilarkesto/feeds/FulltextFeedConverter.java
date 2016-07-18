@@ -161,7 +161,7 @@ public class FulltextFeedConverter {
 		}
 
 		if ((idx = text.indexOf("<article")) > 0) {
-			log.debug("<article>"); // golem
+			log.debug("<article>"); // golem.de, kinder-verstehen.de
 			text = text.substring(idx);
 			text = Str.removeSuffixStartingWith(text, "</article>");
 			return text;
