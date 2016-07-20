@@ -153,6 +153,7 @@ public class Str {
 		s = s.replace('&', '_');
 		s = s.replace('?', '_');
 		s = s.replace('=', '_');
+		s = s.replace('*', '_');
 
 		return s;
 	}
@@ -337,6 +338,10 @@ public class Str {
 		return sb.toString();
 	}
 
+	/**
+	 * @deprecated UrlEncoding.encode()
+	 */
+	@Deprecated
 	public static String encodeUrlParameter(String s) {
 		if (s == null) return "";
 		StringBuilder sb = new StringBuilder();
