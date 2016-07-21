@@ -141,12 +141,12 @@ public class GoogleContactsSynchronizer {
 			String ts = Google.getExtendedProperty(gContact, localTimestampAttribute);
 			String version = Google.getExtendedProperty(gContact, localVersionAttribute);
 
-			if (ts == null || !ts.equals(localContactManager.getLastModified(localContact).toString())
-					|| !localVersion.equals(version)) {
+			String localLastModified = localContactManager.getLastModified(localContact).toString();
+			if (ts == null || !ts.equals(localLastModified) || !localVersion.equals(version)) {
 				updateGoogleContact(localContact, gContact);
-				protocol.addUpdated(gContact);
+				protocol.addUpdated(gContact, ts, localLastModified);
 			} else {
-				protocol.addSkipped(gContact);
+				protocol.addSkipped(gContact, ts, localLastModified);
 			}
 			localContacts.remove(localContact);
 		}
@@ -235,25 +235,25 @@ public class GoogleContactsSynchronizer {
 
 	public static class SyncProtocol {
 
-		private List<ContactEntry> deleted = new ArrayList<ContactEntry>();
-		private List<ContactEntry> skipped = new ArrayList<ContactEntry>();
-		private List<ContactEntry> created = new ArrayList<ContactEntry>();
-		private List<ContactEntry> updated = new ArrayList<ContactEntry>();
+		private List<SyncProtocolEntry> deleted = new ArrayList<SyncProtocolEntry>();
+		private List<SyncProtocolEntry> skipped = new ArrayList<SyncProtocolEntry>();
+		private List<SyncProtocolEntry> created = new ArrayList<SyncProtocolEntry>();
+		private List<SyncProtocolEntry> updated = new ArrayList<SyncProtocolEntry>();
 
 		public void addDeleted(ContactEntry gContact) {
-			deleted.add(gContact);
+			deleted.add(new SyncProtocolEntry(gContact, null));
 		}
 
-		public void addSkipped(ContactEntry gContact) {
-			skipped.add(gContact);
+		public void addSkipped(ContactEntry gContact, String gModified, String lModified) {
+			skipped.add(new SyncProtocolEntry(gContact, "gTime: " + gModified + " | lTime: " + lModified));
+		}
+
+		public void addUpdated(ContactEntry gContact, String gModified, String lModified) {
+			updated.add(new SyncProtocolEntry(gContact, "gTime: " + gModified + " | lTime: " + lModified));
 		}
 
 		public void addCreated(ContactEntry gContact) {
-			created.add(gContact);
-		}
-
-		public void addUpdated(ContactEntry gContact) {
-			updated.add(gContact);
+			created.add(new SyncProtocolEntry(gContact, null));
 		}
 
 		@Override
@@ -274,20 +274,40 @@ public class GoogleContactsSynchronizer {
 			return mb.toString();
 		}
 
-		private void appendList(MultilineBuilder mb, String label, Collection<ContactEntry> list) {
+		private void appendList(MultilineBuilder mb, String label, Collection<SyncProtocolEntry> list) {
 			mb.ln(label + ":", list.size());
-			for (ContactEntry contact : Utl.sort(list, comparator)) {
-				mb.ln("*", Google.getFullName(contact));
+			for (SyncProtocolEntry contact : Utl.sort(list, comparator)) {
+				mb.ln("*", contact.toString());
 			}
 		}
 
-		private static final Comparator<ContactEntry> comparator = new Comparator<ContactEntry>() {
+		private static final Comparator<SyncProtocolEntry> comparator = new Comparator<SyncProtocolEntry>() {
 
 			@Override
-			public int compare(ContactEntry a, ContactEntry b) {
-				return Utl.compare(Google.getFullName(a), Google.getFullName(b));
+			public int compare(SyncProtocolEntry a, SyncProtocolEntry b) {
+				return Utl.compare(Google.getFullName(a.contact), Google.getFullName(b.contact));
 			}
 		};
+
+	}
+
+	public static class SyncProtocolEntry {
+
+		private ContactEntry contact;
+		private String info;
+
+		public SyncProtocolEntry(ContactEntry contact, String info) {
+			super();
+			this.contact = contact;
+			this.info = info;
+		}
+
+		@Override
+		public String toString() {
+			String ret = Google.getFullName(contact);
+			if (info != null) ret += " | " + info;
+			return ret;
+		}
 
 	}
 
