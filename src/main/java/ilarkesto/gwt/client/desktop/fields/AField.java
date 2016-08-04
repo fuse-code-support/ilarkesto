@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -19,9 +19,11 @@ import ilarkesto.core.logging.Log;
 import ilarkesto.gwt.client.Updatable;
 import ilarkesto.gwt.client.desktop.Widgets;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -103,15 +105,13 @@ public abstract class AField implements Updatable {
 
 		focusPanel.setWidget(vertical);
 		focusPanel.setTitle(getTooltip());
-		focusPanel.getElement().getStyle().setPadding(Widgets.defaultSpacing, Unit.PX);
-		focusPanel.setStyleName("goon-FieldEditor");
-		focusPanel.getElement().getStyle().setHeight(100, Unit.PCT);
+
+		configurator.styleFocusPanel(focusPanel);
 		focusPanel.getElement().getStyle().setColor(getDisplayValueColor());
-		focusPanel.getElement().setAttribute("display", "table-cell");
 	}
 
 	protected String getDisplayValueColor() {
-		return "#777";
+		return configurator.getDisplayValueColor();
 	}
 
 	private Widget createWarningWidget() {
@@ -178,6 +178,25 @@ public abstract class AField implements Updatable {
 			throw new RuntimeException(Str.getSimpleName(getClass()) + ".initFocusPanel() failed.", ex);
 		}
 		return this;
+	}
+
+	public static Configurator configurator = new Configurator();
+
+	public static class Configurator {
+
+		public void styleFocusPanel(FocusPanel focusPanel) {
+			focusPanel.setStyleName("goon-FieldEditor");
+			Element element = focusPanel.getElement();
+			Style style = element.getStyle();
+			style.setPadding(Widgets.defaultSpacing, Unit.PX);
+			style.setHeight(100, Unit.PCT);
+			element.setAttribute("display", "table-cell");
+		}
+
+		public String getDisplayValueColor() {
+			return "#777";
+		}
+
 	}
 
 }

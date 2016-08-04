@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -25,6 +25,18 @@ import ilarkesto.core.time.DateRange;
 import ilarkesto.gwt.client.AAction;
 import ilarkesto.gwt.client.desktop.fields.AField;
 import ilarkesto.gwt.client.desktop.fields.ASelfdocPanel;
+import ilarkesto.gwt.client.editor.ABooleanEditorModel;
+import ilarkesto.gwt.client.editor.ADateAndTimeEditorModel;
+import ilarkesto.gwt.client.editor.ADateEditorModel;
+import ilarkesto.gwt.client.editor.AFieldModel;
+import ilarkesto.gwt.client.editor.AIntegerEditorModel;
+import ilarkesto.gwt.client.editor.ATextEditorModel;
+import ilarkesto.gwt.client.editor.DateAndTimeEditorWidget;
+import ilarkesto.gwt.client.editor.DateEditorWidget;
+import ilarkesto.gwt.client.editor.IntegerEditorWidget;
+import ilarkesto.gwt.client.editor.RichtextEditorWidget;
+import ilarkesto.gwt.client.editor.TextEditorWidget;
+import ilarkesto.gwt.client.editor.YesNoEditorWidget;
 
 import java.util.Iterator;
 
@@ -234,8 +246,8 @@ public class Widgets {
 		Widget contentScroller = scrollerY(contentWidget);
 
 		content.add(contentScroller);
-		contentScroller.getElement().getStyle()
-				.setProperty("maxHeight", String.valueOf((int) (Window.getClientHeight() * 0.7f)) + "px");
+		contentScroller.getElement().getStyle().setProperty("maxHeight",
+			String.valueOf((int) (Window.getClientHeight() * 0.7f)) + "px");
 
 		content.add(verticalLine(5));
 		content.add(footerWidget);
@@ -279,7 +291,8 @@ public class Widgets {
 		return frame(widget, paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
 	}
 
-	public static SimplePanel frame(Object widget, int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
+	public static SimplePanel frame(Object widget, int paddingLeft, int paddingTop, int paddingRight,
+			int paddingBottom) {
 		SimplePanel panel = new SimplePanel(widget(widget));
 		panel.setStyleName("goon-frame");
 		panel.getElement().getStyle().setPaddingLeft(paddingLeft, Unit.PX);
@@ -375,6 +388,11 @@ public class Widgets {
 
 	public static Label text(Number object, boolean thousandsSeparator) {
 		return new Label(Localizer.get().format(object, thousandsSeparator));
+	}
+
+	public static HTML html(String html) {
+		if (html == null) return null;
+		return new HTML(html);
 	}
 
 	public static Label text(Object object) {
@@ -621,7 +639,34 @@ public class Widgets {
 			if (object instanceof IsWidget) return ((IsWidget) object).asWidget();
 			if (object instanceof AField) return ((AField) object).getWidget();
 			if (object instanceof AAction) return new ActionButton((AAction) object).asWidget();
+			if (object instanceof AFieldModel) return editor((AFieldModel) object).asWidget();
 			return text(object);
+		}
+
+		private IsWidget editor(AFieldModel model) {
+			if (model == null) return null;
+			IsWidget editor;
+			if (model instanceof ATextEditorModel) {
+				if (((ATextEditorModel) model).isRichtext()) {
+					editor = new RichtextEditorWidget((ATextEditorModel) model);
+				} else {
+					editor = new TextEditorWidget((ATextEditorModel) model);
+					if (((ATextEditorModel) model).isSwitchToEditModeIfNull()) {
+						((TextEditorWidget) editor).switchToEditModeIfNull();
+					}
+				}
+			} else if (model instanceof ADateAndTimeEditorModel) {
+				editor = new DateAndTimeEditorWidget((ADateAndTimeEditorModel) model);
+			} else if (model instanceof ADateEditorModel) {
+				editor = new DateEditorWidget((ADateEditorModel) model);
+			} else if (model instanceof AIntegerEditorModel) {
+				editor = new IntegerEditorWidget((AIntegerEditorModel) model);
+			} else if (model instanceof ABooleanEditorModel) {
+				editor = new YesNoEditorWidget((ABooleanEditorModel) model);
+			} else {
+				throw new RuntimeException("Unsupported field model: " + model.getClass().getSimpleName());
+			}
+			return editor;
 		}
 
 		public ASidebarWidget desktopSidebar() {

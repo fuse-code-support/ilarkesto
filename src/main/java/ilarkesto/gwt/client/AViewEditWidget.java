@@ -33,13 +33,10 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class AViewEditWidget extends AWidget {
 
 	private static Log log = Log.get(AViewEditWidget.class);
-	private static AViewEditWidget currentEditor;
-	private static ModeSwitchHandler globalModeSwitchHandler;
 
 	private boolean viewMode = true;
-	private ModeSwitchHandler modeSwitchHandler;
 
-	private FocusPanel masterWrapper;
+	private FlowPanel masterWrapper;
 	private FocusPanel viewerWrapper;
 	private FlowPanel editorWrapper;
 	private SimplePanel errorWrapper;
@@ -61,47 +58,30 @@ public abstract class AViewEditWidget extends AWidget {
 
 	@Override
 	protected final Widget onInitialization() {
-		masterWrapper = new FocusPanel();
+		masterWrapper = new FlowPanel();
 		masterWrapper.setStyleName("AViewEditWidget");
-		Gwt.addTooltipHtml(masterWrapper, getTooltip());
 		return masterWrapper;
 	}
 
 	@Override
-	protected void onUpdate() {
+	protected final void onUpdate() {
 		if (isViewMode()) {
 			updateViewer();
 		} else {
-			focusEditor();
 			// updateEditor();
 		}
 	}
-
-	protected void onEditorClose() {}
-
-	protected void focusEditor() {}
 
 	public void switchToEditMode() {
 		if (isEditMode()) return;
 		if (!isEditable()) return;
 		ensureEditorInitialized();
 		viewMode = false;
-		if (currentEditor != null) {
-			try {
-				currentEditor.closeEditor();
-			} catch (Throwable ex) {
-				log.error(ex);
-			}
-		}
-		currentEditor = this;
-		updateEditor();
-		focusEditor();
-		if (modeSwitchHandler != null) modeSwitchHandler.onEditorActivated(this);
-		if (globalModeSwitchHandler != null) globalModeSwitchHandler.onEditorActivated(this);
-		onSwitchToEditModeCompleted();
-	}
 
-	protected void onSwitchToEditModeCompleted() {}
+		initialize();
+		onEditorUpdate();
+		// editorWrapper;
+	}
 
 	public abstract boolean isEditable();
 
@@ -112,18 +92,14 @@ public abstract class AViewEditWidget extends AWidget {
 	public void switchToViewMode() {
 		if (isViewMode()) return;
 		viewMode = true;
-		onEditorClose();
-		if (currentEditor == this) currentEditor = null;
-		if (modeSwitchHandler != null) modeSwitchHandler.onViewerActivated(this);
-		if (globalModeSwitchHandler != null) globalModeSwitchHandler.onViewerActivated(this);
 		update();
 	}
 
-	public final boolean submitEditor() {
-		return submitEditor(true);
+	protected void updateAutoUpdateWidget() {
+		Gwt.update(Gwt.getRootWidget());
 	}
 
-	public final boolean submitEditor(boolean switchToViewMode) {
+	public final boolean submitEditor() {
 		if (!isEditMode()) throw new RuntimeException("submitEditor() not allowed. Not in edit mode: " + toString());
 		try {
 			onEditorSubmit();
@@ -133,15 +109,9 @@ public abstract class AViewEditWidget extends AWidget {
 			return false;
 		}
 		setEditorError(null);
-		if (switchToViewMode || !editorWrapper.isAttached()) {
-			switchToViewMode();
-			if (isAttached()) updateAutoUpdateWidget();
-		}
+		switchToViewMode();
+		if (isAttached()) updateAutoUpdateWidget();
 		return true;
-	}
-
-	protected void updateAutoUpdateWidget() {
-		Gwt.update(Gwt.getRootWidget());
 	}
 
 	protected final void cancelEditor() {
@@ -150,14 +120,10 @@ public abstract class AViewEditWidget extends AWidget {
 		switchToViewMode();
 	}
 
-	protected void closeEditor() {
-		cancelEditor();
-	}
-
 	@Override
 	protected void onDetach() {
 		super.onDetach();
-		if (isEditMode()) closeEditor();
+		if (isEditMode()) cancelEditor();
 	}
 
 	private void initializeViewer() {
@@ -175,18 +141,14 @@ public abstract class AViewEditWidget extends AWidget {
 	}
 
 	private void updateViewer() {
-		if (viewerInitializing)
-			throw new RuntimeException("Viewer initializing. Don't call update() within onViewerInitailization(): "
-					+ toString());
-		if (!viewerInitialized) initializeViewer();
+		if (viewerInitializing) throw new RuntimeException(
+				"Viewer initializing. Don't call update() within onViewerInitailization(): " + toString());
+		if (!viewerInitialized) {
+			initializeViewer();
+			masterWrapper.add(viewerWrapper);
+		}
 		// GwtLogger.DEBUG("Updating viewer: " + toString());
 		onViewerUpdate();
-		if (isEditable()) {
-			viewerWrapper.addStyleDependentName("editable");
-		} else {
-			viewerWrapper.removeStyleDependentName("editable");
-		}
-		masterWrapper.setWidget(viewerWrapper);
 	}
 
 	private void initializeEditor() {
@@ -215,22 +177,10 @@ public abstract class AViewEditWidget extends AWidget {
 		}
 	}
 
-	public void setModeSwitchHandler(ModeSwitchHandler modeSwitchHandler) {
-		this.modeSwitchHandler = modeSwitchHandler;
-	}
-
 	protected final void ensureEditorInitialized() {
-		if (editorInitializing)
-			throw new RuntimeException("Editor initializing. Don't call update() within onEditorInitailization(): "
-					+ toString());
+		if (editorInitializing) throw new RuntimeException(
+				"Editor initializing. Don't call update() within onEditorInitailization(): " + toString());
 		if (!editorInitialized) initializeEditor();
-	}
-
-	private void updateEditor() {
-		initialize();
-		masterWrapper.setWidget(editorWrapper);
-		onEditorUpdate();
-		getElement().scrollIntoView();
 	}
 
 	public final boolean isViewMode() {
@@ -252,14 +202,6 @@ public abstract class AViewEditWidget extends AWidget {
 
 	protected String getEditroId() {
 		return "editor_" + getId();
-	}
-
-	public static AViewEditWidget getCurrentEditor() {
-		return currentEditor;
-	}
-
-	public static void setGlobalModeSwitchHandler(ModeSwitchHandler globalModeSwitchHandler) {
-		AViewEditWidget.globalModeSwitchHandler = globalModeSwitchHandler;
 	}
 
 	@Override
@@ -319,14 +261,6 @@ public abstract class AViewEditWidget extends AWidget {
 				cancelEditor();
 			}
 		}
-
-	}
-
-	public static interface ModeSwitchHandler {
-
-		void onViewerActivated(AViewEditWidget widget);
-
-		void onEditorActivated(AViewEditWidget widget);
 
 	}
 

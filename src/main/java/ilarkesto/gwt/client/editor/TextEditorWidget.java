@@ -87,24 +87,18 @@ public class TextEditorWidget extends AViewEditWidget {
 		viewer.setHTML(html);
 	}
 
-	protected RichtextFormater getRichtextFormater() {
+	protected final RichtextFormater getRichtextFormater() {
 		return Gwt.getDefaultRichtextFormater();
 	}
 
 	public final void setEditorText(String text) {
 		editor.setText(text);
-		focusEditor();
 		editor.setSelectionRange(0, editor.getText().length());
 	}
 
 	@Override
 	public boolean isEditable() {
 		return model.isEditable();
-	}
-
-	@Override
-	protected void focusEditor() {
-		editor.setFocus(true);
 	}
 
 	public final String getEditorText() {

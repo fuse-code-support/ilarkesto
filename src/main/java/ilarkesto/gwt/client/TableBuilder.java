@@ -14,17 +14,13 @@
  */
 package ilarkesto.gwt.client;
 
+import ilarkesto.gwt.client.desktop.Widgets;
 import ilarkesto.gwt.client.editor.ABooleanEditorModel;
 import ilarkesto.gwt.client.editor.ADateAndTimeEditorModel;
 import ilarkesto.gwt.client.editor.ADateEditorModel;
+import ilarkesto.gwt.client.editor.AFieldModel;
 import ilarkesto.gwt.client.editor.AIntegerEditorModel;
 import ilarkesto.gwt.client.editor.ATextEditorModel;
-import ilarkesto.gwt.client.editor.DateAndTimeEditorWidget;
-import ilarkesto.gwt.client.editor.DateEditorWidget;
-import ilarkesto.gwt.client.editor.IntegerEditorWidget;
-import ilarkesto.gwt.client.editor.RichtextEditorWidget;
-import ilarkesto.gwt.client.editor.TextEditorWidget;
-import ilarkesto.gwt.client.editor.YesNoEditorWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +29,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
 public class TableBuilder {
@@ -95,12 +92,6 @@ public class TableBuilder {
 		this.columnWidths = columnWidths;
 	}
 
-	public TableBuilder addFieldRow(String label, ATextEditorModel model, int colspan) {
-		addField(label, model, colspan);
-		nextRow();
-		return this;
-	}
-
 	public TableBuilder addFieldRow(String label, Widget value, int colspan) {
 		addField(label, value, colspan);
 		nextRow();
@@ -137,63 +128,28 @@ public class TableBuilder {
 		return this;
 	}
 
-	public TableBuilder addFieldRow(String label, Widget value) {
+	public TableBuilder addFieldRow(String label, IsWidget value) {
 		addField(label, value);
 		nextRow();
 		return this;
 	}
 
-	public TableBuilder addField(String label, Widget value) {
+	public TableBuilder addField(String label, IsWidget value) {
 		addFieldLabel(label);
 		add(value);
 		return this;
 	}
 
-	public TableBuilder addField(String label, ATextEditorModel model, int colspan) {
-		Widget editor;
-		if (model.isRichtext()) {
-			editor = new RichtextEditorWidget(model);
-		} else {
-			editor = new TextEditorWidget(model);
-			if (model.isSwitchToEditModeIfNull()) {
-				((TextEditorWidget) editor).switchToEditModeIfNull();
-			}
-		}
-		// if (model.isRichtext()) {
-		// FlowPanel panel = new FlowPanel();
-		// panel.add(Gwt.createFieldLabel(label));
-		// panel.add(editor);
-		// return add(panel, colspan + 1);
-		// } else {
-		// }
+	public TableBuilder addField(String label, AFieldModel model, int colspan) {
+		Widget editor = Widgets.widget(model);
 		return addField(label, editor, colspan);
 	}
 
-	public TableBuilder addField(String label, ADateAndTimeEditorModel model, int colspan) {
-		return addField(label, new DateAndTimeEditorWidget(model), colspan);
-	}
-
-	public TableBuilder addField(String label, ADateEditorModel model) {
+	public TableBuilder addField(String label, AFieldModel model) {
 		return addField(label, model, 1);
 	}
 
-	public TableBuilder addField(String label, ADateEditorModel model, int colspan) {
-		return addField(label, new DateEditorWidget(model), colspan);
-	}
-
-	public TableBuilder addField(String label, AIntegerEditorModel model) {
-		return addField(label, new IntegerEditorWidget(model), 1);
-	}
-
-	public TableBuilder addField(String label, AIntegerEditorModel model, int colspan) {
-		return addField(label, new IntegerEditorWidget(model), colspan);
-	}
-
-	public TableBuilder addField(String label, ABooleanEditorModel model, int colspan) {
-		return addField(label, new YesNoEditorWidget(model), colspan);
-	}
-
-	public TableBuilder addField(String label, Widget value, int colspan) {
+	public TableBuilder addField(String label, IsWidget value, int colspan) {
 		addFieldLabel(label);
 		add(value, colspan, null);
 		return this;
@@ -204,13 +160,13 @@ public class TableBuilder {
 		return this;
 	}
 
-	public TableBuilder addRow(Widget widget, int colspan) {
+	public TableBuilder addRow(IsWidget widget, int colspan) {
 		add(widget, colspan, null);
 		nextRow();
 		return this;
 	}
 
-	public TableBuilder addRow(Widget... widgets) {
+	public TableBuilder addRow(IsWidget... widgets) {
 		add(widgets);
 		nextRow();
 		return this;
@@ -221,22 +177,22 @@ public class TableBuilder {
 		return this;
 	}
 
-	public TableBuilder add(Widget... widgets) {
-		for (Widget widget : widgets) {
+	public TableBuilder add(IsWidget... widgets) {
+		for (IsWidget widget : widgets) {
 			add(widget);
 		}
 		return this;
 	}
 
-	public TableBuilder add(Widget widget) {
+	public TableBuilder add(IsWidget widget) {
 		return add(widget, 1, null);
 	}
 
-	public TableBuilder add(Widget widget, int colspan) {
+	public TableBuilder add(IsWidget widget, int colspan) {
 		return add(widget, colspan, null);
 	}
 
-	public TableBuilder add(Widget widget, int colspan, HorizontalAlignmentConstant align) {
+	public TableBuilder add(IsWidget widget, int colspan, HorizontalAlignmentConstant align) {
 		Cell cell = new Cell();
 		cell.widget = widget;
 		cell.align = align;
@@ -281,17 +237,17 @@ public class TableBuilder {
 
 	private static class Cell {
 
-		private Widget widget;
+		private IsWidget widget;
 		private int colspan = 1;
 		private HorizontalAlignmentConstant align;
 
 	}
 
-	public static FlexTable row(int spacing, Widget... widgets) {
+	public static FlexTable row(int spacing, IsWidget... widgets) {
 		return row(true, spacing, widgets);
 	}
 
-	public static FlexTable row(boolean width100, int spacing, Widget... widgets) {
+	public static FlexTable row(boolean width100, int spacing, IsWidget... widgets) {
 		assert widgets.length > 0;
 
 		TableBuilder tb = new TableBuilder();
@@ -316,7 +272,7 @@ public class TableBuilder {
 
 		tb.setColumnWidths(widths);
 		boolean first = true;
-		for (Widget widget : widgets) {
+		for (IsWidget widget : widgets) {
 			if (first) {
 				first = false;
 			} else {
@@ -328,13 +284,13 @@ public class TableBuilder {
 		return tb.createTable();
 	}
 
-	public static FlexTable column(int spacing, Widget... widgets) {
+	public static FlexTable column(int spacing, IsWidget... widgets) {
 		assert widgets.length > 0;
 
 		TableBuilder tb = new TableBuilder();
 
 		boolean first = true;
-		for (Widget widget : widgets) {
+		for (IsWidget widget : widgets) {
 			if (first) {
 				first = false;
 			} else {

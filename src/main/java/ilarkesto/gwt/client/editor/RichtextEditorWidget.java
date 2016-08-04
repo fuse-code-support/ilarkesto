@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -28,7 +28,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.user.client.ui.AttachDetachException;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HTML;
@@ -54,16 +53,6 @@ public class RichtextEditorWidget extends AViewEditWidget {
 	public RichtextEditorWidget(ATextEditorModel model) {
 		super();
 		this.model = model;
-	}
-
-	@Override
-	protected void onUpdate() {
-		if (editor != null && editor.isBurned()) {
-			editor = null;
-			closeEditor();
-			return;
-		}
-		super.onUpdate();
 	}
 
 	@Override
@@ -105,14 +94,13 @@ public class RichtextEditorWidget extends AViewEditWidget {
 	}
 
 	@Override
-	protected void focusEditor() {
-		if (editor != null) editor.focus();
+	protected void onEditorSubmit() {
+		storeValue();
 	}
 
-	@Override
-	protected void onEditorSubmit() {
+	public void storeValue() {
 		String value = getEditorText();
-		// TODO check lenght
+		// TODO check length
 		// TODO check format/syntax
 		model.changeValue(value);
 	}
@@ -199,16 +187,16 @@ public class RichtextEditorWidget extends AViewEditWidget {
 		return editorPanel;
 	}
 
-	@Override
-	protected void onEditorClose() {
-		super.onEditorClose();
-		editor = null;
-		try {
-			editorWrapper.clear();
-		} catch (AttachDetachException ex) {
-			log.error(ex);
-		}
-	}
+	// @Override
+	// protected void onEditorClose() {
+	// super.onEditorClose();
+	// editor = null;
+	// try {
+	// editorWrapper.clear();
+	// } catch (AttachDetachException ex) {
+	// log.error(ex);
+	// }
+	// }
 
 	public ToolbarWidget getEditorToolbar() {
 		return editorToolbar;
@@ -231,15 +219,6 @@ public class RichtextEditorWidget extends AViewEditWidget {
 	// if (Str.isBlank(html)) html = ".";
 	// viewer.setHTML(html);
 	// }
-
-	@Override
-	protected void closeEditor() {
-		if (autosave) {
-			submitEditor();
-		} else {
-			super.closeEditor();
-		}
-	}
 
 	public final String getEditorText() {
 		if (editor == null) return null;

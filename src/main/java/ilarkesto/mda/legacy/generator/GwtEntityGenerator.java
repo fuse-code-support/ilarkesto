@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -177,8 +177,8 @@ public class GwtEntityGenerator extends ABeanGenerator<EntityModel> {
 		ln("        return " + modelProperty + ";");
 		ln("    }");
 		ln();
-		ln("    protected " + Str.uppercaseFirstLetter(nameUpper) + "Model create" + nameUpper
-				+ "Model() { return new " + nameUpper + "Model(); }");
+		ln("    protected " + Str.uppercaseFirstLetter(nameUpper) + "Model create" + nameUpper + "Model() { return new "
+				+ nameUpper + "Model(); }");
 		ln();
 		ln("    protected class " + nameUpper + "Model extends " + baseClassName + " {");
 		ln();
@@ -226,8 +226,8 @@ public class GwtEntityGenerator extends ABeanGenerator<EntityModel> {
 		}
 		String editablePredicate = property.getEditablePredicate();
 		if (editablePredicate != null) {
-			String returnValue = editablePredicate.equals("false") ? "false" : getName() + ".this.is"
-					+ Str.uppercaseFirstLetter(editablePredicate) + "()";
+			String returnValue = editablePredicate.equals("false") ? "false"
+					: getName() + ".this.is" + Str.uppercaseFirstLetter(editablePredicate) + "()";
 			ln();
 			ln("        @Override");
 			ln("        public boolean isEditable() { return " + returnValue + "; }");
@@ -256,8 +256,16 @@ public class GwtEntityGenerator extends ABeanGenerator<EntityModel> {
 			}
 		}
 		if (property.getTooltip() != null) {
+			ln();
 			ln("        @Override");
-			ln("        public String getTooltip() { return \"" + property.getTooltip().replace("\\", "\\\\") + "\"; }");
+			ln("        public String getTooltip() { return \"" + property.getTooltip().replace("\\", "\\\\")
+					+ "\"; }");
+		}
+		ln();
+		if (property.getLabel() != null) {
+			ln();
+			ln("        @Override");
+			ln("        public String getLabel() { return \"" + property.getLabel().replace("\\", "\\\\") + "\"; }");
 		}
 		ln();
 		ln("        @Override");
@@ -371,7 +379,8 @@ public class GwtEntityGenerator extends ABeanGenerator<EntityModel> {
 						+ p.getContentType() + ">();");
 				ln();
 				ln("    public final " + p.getType() + " get" + nameUpper + "() {");
-				ln("        return new " + p.getCollectionImpl() + "<" + p.getContentType() + ">(" + p.getName() + ");");
+				ln("        return new " + p.getCollectionImpl() + "<" + p.getContentType() + ">(" + p.getName()
+						+ ");");
 				ln("    }");
 				ln();
 				ln("    public final void set" + nameUpper + "(" + p.getType() + " " + p.getName() + ") {");
@@ -425,8 +434,8 @@ public class GwtEntityGenerator extends ABeanGenerator<EntityModel> {
 				ln("        return (" + bean.getName() + ")this;");
 				ln("    }");
 				ln();
-				ln("    public final boolean is" + nameUpper + "(" + type.replace(".server.", ".client."), p.getName()
-						+ ") {");
+				ln("    public final boolean is" + nameUpper + "(" + type.replace(".server.", ".client."),
+					p.getName() + ") {");
 				ln("        String id = " + p.getName() + "==null ? null : " + p.getName() + ".getId();");
 				ln("        return " + Utl.class.getName() + ".equals(this." + p.getName() + "Id" + ", id);");
 				ln("    }");
@@ -459,8 +468,8 @@ public class GwtEntityGenerator extends ABeanGenerator<EntityModel> {
 				ln("        return (" + bean.getName() + ")this;");
 				ln("    }");
 				ln();
-				ln("    public final boolean is" + nameUpper + "(" + type.replace(".server.", ".client."), p.getName()
-						+ ") {");
+				ln("    public final boolean is" + nameUpper + "(" + type.replace(".server.", ".client."),
+					p.getName() + ") {");
 				ln("        return " + Utl.class.getName() + ".equals(this." + p.getName() + ", " + p.getName() + ");");
 				ln("    }");
 				if (p.isOptionRestricted()) {
@@ -493,31 +502,31 @@ public class GwtEntityGenerator extends ABeanGenerator<EntityModel> {
 		// for (PropertyModel p : bean.getProperties()) {
 		// if (p.isCollection()) {
 		// if (p.isReference()) {
-		// ln("        " + p.getName() + "Ids = (Set<String>) props.get(\"" + p.getName() + "Ids\");");
+		// ln(" " + p.getName() + "Ids = (Set<String>) props.get(\"" + p.getName() + "Ids\");");
 		// } else {
-		// ln("        " + p.getName(), " = (" + p.getType() + ") props.get(\"" + p.getName() + "\");");
+		// ln(" " + p.getName(), " = (" + p.getType() + ") props.get(\"" + p.getName() + "\");");
 		// }
 		// } else {
 		// if (p.isReference()) {
-		// ln("        " + p.getName() + "Id = (String) props.get(\"" + p.getName() + "Id\");");
+		// ln(" " + p.getName() + "Id = (String) props.get(\"" + p.getName() + "Id\");");
 		// } else {
 		// String type = p.getType();
 		// if (type.equals(Date.class.getName())) {
-		// ln("        String " + p.getName() + "AsString = (String) props.get(\"" + p.getName() + "\");");
-		// ln("        " + p.getName(), " =  " + p.getName() + "AsString == null ? null : new "
+		// ln(" String " + p.getName() + "AsString = (String) props.get(\"" + p.getName() + "\");");
+		// ln(" " + p.getName(), " = " + p.getName() + "AsString == null ? null : new "
 		// + ilarkesto.core.time.Date.class.getName() + "(" + p.getName() + "AsString);");
 		// } else if (type.equals(Time.class.getName())) {
-		// ln("        String " + p.getName() + "AsString = (String) props.get(\"" + p.getName() + "\");");
-		// ln("        " + p.getName(), " =  " + p.getName() + "AsString == null ? null : new "
+		// ln(" String " + p.getName() + "AsString = (String) props.get(\"" + p.getName() + "\");");
+		// ln(" " + p.getName(), " = " + p.getName() + "AsString == null ? null : new "
 		// + ilarkesto.core.time.Time.class.getName() + "(" + p.getName() + "AsString);");
 		// } else if (type.equals(DateAndTime.class.getName())) {
-		// ln("        String " + p.getName() + "AsString = (String) props.get(\"" + p.getName() + "\");");
-		// ln("        " + p.getName(), " =  " + p.getName() + "AsString == null ? null : new "
+		// ln(" String " + p.getName() + "AsString = (String) props.get(\"" + p.getName() + "\");");
+		// ln(" " + p.getName(), " = " + p.getName() + "AsString == null ? null : new "
 		// + ilarkesto.core.time.DateAndTime.class.getName() + "(" + p.getName() + "AsString);");
 		// } else {
 		// if (type.equals("boolean")) type = "Boolean";
 		// if (type.equals("int")) type = "Integer";
-		// ln("        " + p.getName(), " = (" + type + ") props.get(\"" + p.getName() + "\");");
+		// ln(" " + p.getName(), " = (" + type + ") props.get(\"" + p.getName() + "\");");
 		// }
 		// }
 		// }

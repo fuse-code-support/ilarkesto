@@ -151,6 +151,10 @@ public abstract class AWidget extends Composite implements Updatable {
 
 	private class Wrapper extends SimplePanel {
 
+		public Wrapper() {
+
+		}
+
 		// private Widget content;
 		//
 		// @Override
