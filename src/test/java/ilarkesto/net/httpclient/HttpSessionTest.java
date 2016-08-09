@@ -36,4 +36,9 @@ public class HttpSessionTest extends ATest {
 		assertEquals(session.downloadText(url), content);
 	}
 
+	@Test
+	public void https() {
+		String text = new HttpSession().disableSsl().downloadText("https://kunagi-demo.servisto.de/kunagi/login.html");
+		System.out.println(text);
+	}
 }

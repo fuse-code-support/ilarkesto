@@ -36,6 +36,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+
 // http://stackoverflow.com/questions/2793150/using-java-net-urlconnection-to-fire-and-handle-http-requests
 public class HttpRequest {
 
@@ -50,6 +52,7 @@ public class HttpRequest {
 	Method method = Method.GET;
 	private String charset = IO.UTF_8;
 	final String url;
+	private boolean sslCheckDisabled;
 
 	private Map<String, String> postParameters;
 	private List<AHttpPostAttachment> postAttachments;
@@ -78,6 +81,11 @@ public class HttpRequest {
 			connection = (HttpURLConnection) javaUrl.openConnection();
 		} catch (IOException ex) {
 			throw new RuntimeException(ex);
+		}
+
+		if (connection instanceof HttpsURLConnection && session.isSslCheckDisabled()) {
+			HttpsURLConnection sslConnection = (HttpsURLConnection) connection;
+			sslConnection.setSSLSocketFactory(session.getIgnorantSslSocketFactory());
 		}
 
 		try {
@@ -262,6 +270,15 @@ public class HttpRequest {
 
 	public HttpSession getSession() {
 		return session;
+	}
+
+	public HttpRequest setSslCheckDisabled(boolean sslCheckDisabled) {
+		this.sslCheckDisabled = sslCheckDisabled;
+		return this;
+	}
+
+	public HttpRequest disableSsl() {
+		return setSslCheckDisabled(true);
 	}
 
 	@Override
