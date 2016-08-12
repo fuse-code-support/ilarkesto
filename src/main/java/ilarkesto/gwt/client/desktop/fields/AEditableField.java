@@ -69,8 +69,8 @@ public abstract class AEditableField extends AField {
 	}
 
 	protected void onEditorRequested(Callback callback) {
-		if (this instanceof DataForClientLoader) {
-			DataForClientLoader loader = (DataForClientLoader) this;
+		DataForClientLoader loader = getDataForClientLoader();
+		if (loader != null) {
 			this.callback = callback;
 			DataForClientLoaderHelper.load(loader);
 			return;
@@ -78,12 +78,18 @@ public abstract class AEditableField extends AField {
 		throw new IllegalStateException(getClass().getName() + ".onEditorRequested() not implemented");
 	}
 
+	protected DataForClientLoader getDataForClientLoader() {
+		if (this instanceof DataForClientLoader) return (DataForClientLoader) this;
+		return null;
+	}
+
 	public void dataReceivedOnClient(ADataTransferObject result) {
 		callback.success(result);
 	}
 
 	protected boolean isEditorAsync() {
-		return editorAsync;
+		if (editorAsync) return true;
+		return getDataForClientLoader() != null;
 	}
 
 	public AEditableField setEditorAsync() {
@@ -305,8 +311,7 @@ public abstract class AEditableField extends AField {
 
 		@Override
 		public void success(Object result) {
-			clear();
-			add(createEditorWidget());
+			setWidget(createEditorWidget());
 			if (fieldEditorDialogBox != null) fieldEditorDialogBox.center();
 		}
 

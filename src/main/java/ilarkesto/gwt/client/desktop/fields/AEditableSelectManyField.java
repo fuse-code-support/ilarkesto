@@ -96,7 +96,7 @@ public abstract class AEditableSelectManyField extends AEditableField {
 	}
 
 	@Override
-	public IsWidget createEditorWidget() {
+	public final IsWidget createEditorWidget() {
 		Collection<String> optionKeys = createOptionKeys();
 		if (isShowAsTable(optionKeys)) {
 			table = createItemsTable(optionKeys);
