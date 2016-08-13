@@ -25,6 +25,12 @@ import org.testng.annotations.Test;
 public class UtlTest extends ATest {
 
 	@Test
+	public void array() {
+		assertEquals(Utl.array(new String[4], new String[] { "a", "b" }, "c", "d"),
+			new String[] { "a", "b", "c", "d" });
+	}
+
+	@Test
 	void getOptimalScale() {
 		assertEquals(Utl.getOptimalScale(new BigDecimal("1")), 0);
 		assertEquals(Utl.getOptimalScale(new BigDecimal("1.0")), 0);

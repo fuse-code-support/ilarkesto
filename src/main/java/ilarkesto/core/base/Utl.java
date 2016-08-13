@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -33,6 +33,24 @@ import java.util.Set;
 public class Utl {
 
 	public static final BigDecimal BD_HUNDRED = new BigDecimal(100);
+
+	public static <T> List<T> join(T[] elements, T... newElements) {
+		ArrayList<T> ret = new ArrayList<T>();
+		for (T element : elements) {
+			ret.add(element);
+		}
+		for (T element : newElements) {
+			ret.add(element);
+		}
+		return ret;
+	}
+
+	public static <T> T[] array(T[] emptyArrayWhichReturns, T[] elementsAtStart, T... elementsAtEnd) {
+		System.arraycopy(elementsAtStart, 0, emptyArrayWhichReturns, 0, elementsAtStart.length);
+		System.arraycopy(elementsAtEnd, 0, emptyArrayWhichReturns, emptyArrayWhichReturns.length - elementsAtEnd.length,
+			elementsAtEnd.length);
+		return emptyArrayWhichReturns;
+	}
 
 	public static <T> List<List<T>> splitByCount(Collection<T> collection, int countPerGroup) {
 		if (countPerGroup < 2) throw new IllegalArgumentException("countPerGroup < 2");
