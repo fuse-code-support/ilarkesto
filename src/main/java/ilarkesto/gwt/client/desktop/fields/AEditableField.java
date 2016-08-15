@@ -88,8 +88,8 @@ public abstract class AEditableField extends AField {
 	}
 
 	protected boolean isEditorAsync() {
-		if (editorAsync) return true;
-		return getDataForClientLoader() != null;
+		if (getDataForClientLoader() == null) return false;
+		return editorAsync;
 	}
 
 	public AEditableField setEditorAsync() {
