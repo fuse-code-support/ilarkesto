@@ -65,7 +65,13 @@ public abstract class AEditableField extends AField {
 			onEditorRequested(asyncEditorWrapper);
 			return asyncEditorWrapper;
 		}
-		return createEditorWidget().asWidget();
+		IsWidget editorWidget;
+		try {
+			editorWidget = createEditorWidget();
+		} catch (Exception ex) {
+			throw new RuntimeException(getClass().getName() + ".createEditorWidget() failed", ex);
+		}
+		return editorWidget.asWidget();
 	}
 
 	protected void onEditorRequested(Callback callback) {
