@@ -33,6 +33,7 @@ import java.util.Set;
 public class Utl {
 
 	public static final BigDecimal BD_HUNDRED = new BigDecimal(100);
+	public static final Set<String> EMPTY_STRING_SET = Collections.emptySet();
 
 	public static <T> List<T> join(T[] elements, T... newElements) {
 		ArrayList<T> ret = new ArrayList<T>();
@@ -540,6 +541,29 @@ public class Utl {
 			i++;
 		}
 		return ret;
+	}
+
+	public static <T> boolean containsExactly(Collection<T> collection, T... items) {
+		if (collection.size() != items.length) return false;
+		for (T item : items) {
+			if (!collection.contains(item)) return false;
+		}
+		return true;
+	}
+
+	public static <T> boolean containsAny(Collection<T> collection, T... items) {
+		for (T item : items) {
+			if (collection.contains(item)) return true;
+		}
+		return false;
+	}
+
+	public static <T> boolean containsOther(Collection<T> collection, T... items) {
+		Set<T> test = new HashSet<T>(collection);
+		for (T item : items) {
+			test.remove(item);
+		}
+		return !test.isEmpty();
 	}
 
 }

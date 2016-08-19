@@ -16,6 +16,7 @@ package ilarkesto.mda.legacy.generator;
 
 import ilarkesto.core.base.MultilineBuilder;
 import ilarkesto.core.base.Str;
+import ilarkesto.core.base.Utl;
 import ilarkesto.core.money.Money;
 import ilarkesto.core.persistance.AEntity;
 import ilarkesto.core.time.Date;
@@ -248,7 +249,8 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 		ln();
 		annotationOverride();
 		ln("    protected Collection<" + referencedType + "> getSelectedEntities() {");
-		ln("        return entity.get" + Str.uppercaseFirstLetter(property.getName()) + "();");
+		ln("        return " + Utl.class.getName() + ".sort(entity.get" + Str.uppercaseFirstLetter(property.getName())
+				+ "());");
 		ln("    }");
 	}
 
