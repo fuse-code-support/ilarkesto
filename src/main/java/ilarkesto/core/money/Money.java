@@ -179,6 +179,7 @@ public final class Money implements Comparable<Money>, Serializable, Formatable 
 	}
 
 	public Money divideAndRound(BigDecimal divisor) {
+		if (Utl.isZeroOrNull(divisor)) return null;
 		return new Money(getAmount().divide(divisor, BigDecimal.ROUND_HALF_UP), currency);
 	}
 
