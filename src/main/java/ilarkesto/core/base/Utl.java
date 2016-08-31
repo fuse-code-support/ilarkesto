@@ -566,4 +566,13 @@ public class Utl {
 		return !test.isEmpty();
 	}
 
+	public static <T> boolean containsAnyOnly(Collection<T> collection, T... items) {
+		if (!containsAny(collection, items)) return false;
+		Set<T> itemsSet = new HashSet<T>();
+		for (T item : items) {
+			itemsSet.add(item);
+		}
+		return itemsSet.containsAll(collection);
+	}
+
 }
