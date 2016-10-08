@@ -65,17 +65,27 @@ public abstract class AEditableDateRangeField extends AEditableField {
 
 	@Override
 	protected IsWidget createEditorWidget() {
+		String editVeto = getEditVetoMessage();
+
 		startBox = new GoonDateBox(new DateBox.DefaultFormat(format));
 		startBox.getElement().setId(getId() + "_start_textBox");
 		startBox.getElement().getStyle().setWidth(100, Unit.PX);
 		startBox.setMaxLength(10);
-		startBox.addKeyUpHandler(new EnterKeyUpHandler());
+		if (editVeto == null) {
+			startBox.addKeyUpHandler(new EnterKeyUpHandler());
+		} else {
+			startBox.setEnabled(false);
+		}
 
 		endBox = new GoonDateBox(new DateBox.DefaultFormat(format));
 		endBox.getElement().setId(getId() + "_end_textBox");
 		endBox.getElement().getStyle().setWidth(100, Unit.PX);
 		endBox.setMaxLength(10);
-		endBox.addKeyUpHandler(new EnterKeyUpHandler());
+		if (editVeto == null) {
+			endBox.addKeyUpHandler(new EnterKeyUpHandler());
+		} else {
+			endBox.setEnabled(false);
+		}
 
 		DateRange value = getValue();
 		previousValue = value;
