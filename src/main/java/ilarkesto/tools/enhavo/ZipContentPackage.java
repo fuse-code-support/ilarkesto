@@ -16,6 +16,7 @@ package ilarkesto.tools.enhavo;
 
 import ilarkesto.core.logging.Log;
 import ilarkesto.io.IO;
+import ilarkesto.json.JsonObject;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -49,8 +50,9 @@ public class ZipContentPackage extends AContentPackage {
 			return;
 		}
 
+		String text = (object instanceof JsonObject) ? ((JsonObject) object).toFormatedString() : object.toString();
 		try {
-			addText(object.toString(), path);
+			addText(text, path);
 		} catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
