@@ -70,6 +70,7 @@ public class DayAtWork implements Comparable<DayAtWork> {
 	}
 
 	public WorkActivity getLastActivity() {
+		if (activities.isEmpty()) return null;
 		return activities.getLast();
 	}
 

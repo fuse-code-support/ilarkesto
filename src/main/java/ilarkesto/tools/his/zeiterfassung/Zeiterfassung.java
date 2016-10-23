@@ -127,14 +127,21 @@ public class Zeiterfassung {
 				if (hiszillaId != null) {
 					activity.setAchievoId(determineAchievoIdByHiszillaId(hiszillaId, activity.getText()));
 				} else {
-					activity.setAchievoId(determineAchievoIdByText(activity.getText()));
+					String id = determineAchievoIdByText(activity.getText());
+					if (id != null) {
+						activity.setAchievoPackageId("10282");
+						activity.setAchievoProjectId("5461");
+					}
+					activity.setAchievoId(id);
 				}
 			}
 		}
 	}
 
 	private static String determineAchievoIdByText(String text) {
-		if ("Product Backlog Refinement".equals(text)) return "22804";
+		if ("Sprint Review".equals(text)) return "27683";
+		if ("Integrationstest".equals(text)) return "27684";
+		if ("Product Backlog Refinement".equals(text)) return "27817";
 		for (DayAtWork day : days) {
 			for (WorkActivity activity : day.getActivities()) {
 				if (activity.getAchievoId() == null) continue;

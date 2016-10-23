@@ -28,6 +28,8 @@ public class WorkActivity {
 	private Time end;
 	private String hiszillaId;
 	private String achievoId;
+	private String achievoPackageId;
+	private String achievoProjectId;
 	private String text;
 	private boolean bookingRequired = true;
 	private boolean alreadyBookedInHiszilla;
@@ -44,8 +46,9 @@ public class WorkActivity {
 			parser.gotoAfter(" ");
 		}
 
+		WorkActivity lastActivity = dayAtWork.getLastActivity();
+
 		if (parser.getNext(1).startsWith("%")) {
-			WorkActivity lastActivity = dayAtWork.getLastActivity();
 			hiszillaId = lastActivity.getHiszillaId();
 			achievoId = lastActivity.getAchievoId();
 			text = lastActivity.getText();
@@ -61,6 +64,11 @@ public class WorkActivity {
 		}
 
 		text = parser.getRemaining();
+
+		if (lastActivity != null && "Daily Scrum".equals(text)) {
+			hiszillaId = lastActivity.getHiszillaId();
+			achievoId = lastActivity.getAchievoId();
+		}
 	}
 
 	public boolean isBookingRequired() {
@@ -83,6 +91,22 @@ public class WorkActivity {
 		this.achievoId = achievoId;
 	}
 
+	public String getAchievoPackageId() {
+		return achievoPackageId;
+	}
+
+	public void setAchievoPackageId(String achievoPackageId) {
+		this.achievoPackageId = achievoPackageId;
+	}
+
+	public String getAchievoProjectId() {
+		return achievoProjectId;
+	}
+
+	public void setAchievoProjectId(String achievoProjectId) {
+		this.achievoProjectId = achievoProjectId;
+	}
+
 	public Time getStart() {
 		return start;
 	}
@@ -97,8 +121,8 @@ public class WorkActivity {
 	}
 
 	public void appendTo(CsvWriter csv) {
-		csv.writeField(""); // projectId
-		csv.writeField(""); // package
+		csv.writeField(achievoProjectId); // projectId
+		csv.writeField(achievoPackageId); // package
 		csv.writeField(achievoId); // phaseId
 		Date date = dayAtWork.getDate();
 
