@@ -18,7 +18,6 @@ import ilarkesto.core.logging.Log;
 import ilarkesto.io.IO;
 import ilarkesto.json.JsonObject;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,7 +32,7 @@ public class ZipContentPackage extends AContentPackage {
 
 	public ZipContentPackage(OutputStream os) {
 		super();
-		this.zipOs = new ZipOutputStream(new BufferedOutputStream(os));
+		this.zipOs = new ZipOutputStream(os);
 	}
 
 	@Override
