@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -89,6 +89,12 @@ public abstract class AEntityJsonFileUpgrades {
 		return false;
 	}
 
+	protected boolean addIfMissing(JsonObject json, String fieldName, boolean value) {
+		if (json.isSet(fieldName)) return false;
+		json.put(fieldName, value);
+		return true;
+	}
+
 	protected boolean addNew(JsonObject json, String fieldName, boolean value) {
 		if (json.contains(fieldName)) return false;
 		json.put(fieldName, value);
@@ -131,7 +137,8 @@ public abstract class AEntityJsonFileUpgrades {
 		for (FileUpgrader upgrader : upgraders) {
 			Class upgraderType = upgrader.getEntityType();
 			if (fileVersion < upgrader.getChangeInsertionVersion()
-					&& (upgraderType == null || entityType.equals(upgraderType))) upgrader.upgrade(file, fileVersion);
+					&& (upgraderType == null || entityType.equals(upgraderType)))
+				upgrader.upgrade(file, fileVersion);
 
 		}
 	}
@@ -166,8 +173,8 @@ public abstract class AEntityJsonFileUpgrades {
 			String userAndTimeId = json.getString(refPropertyName);
 			if (userAndTimeId == null) return remove(json, refPropertyName);
 
-			File userAndTimeFile = new File(entityFile.getParentFile().getParentFile().getPath() + "/UserAndTime/"
-					+ userAndTimeId + ".json");
+			File userAndTimeFile = new File(
+					entityFile.getParentFile().getParentFile().getPath() + "/UserAndTime/" + userAndTimeId + ".json");
 
 			JsonObject userAndTimeJson = JsonObject.loadFile(userAndTimeFile, false);
 

@@ -19,6 +19,9 @@ import ilarkesto.core.logging.Log;
 import ilarkesto.gwt.client.Updatable;
 import ilarkesto.gwt.client.desktop.Widgets;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -37,6 +40,7 @@ public abstract class AField implements Updatable {
 	private FocusPanel focusPanel;
 	private IsWidget valueWidget;
 	private String warning;
+	private List<String> additionalInfos;
 
 	public abstract String getLabel();
 
@@ -62,6 +66,13 @@ public abstract class AField implements Updatable {
 	public AField setWarningIf(boolean condition, String warning) {
 		if (!condition) return this;
 		return setWarning(warning);
+	}
+
+	public AField addAdditionalInfo(String text) {
+		if (Str.isBlank(text)) return this;
+		if (additionalInfos == null) additionalInfos = new ArrayList<String>();
+		additionalInfos.add(text);
+		return this;
 	}
 
 	public Widget getWidget() {
@@ -98,16 +109,33 @@ public abstract class AField implements Updatable {
 			throw new RuntimeException(Str.getSimpleName(getClass()) + ".createWarningWidget() failed.", ex);
 		}
 
+		Widget additionalInfosWidget;
+		try {
+			additionalInfosWidget = createAdditionalInfosWidget();
+		} catch (Exception ex) {
+			throw new RuntimeException(Str.getSimpleName(getClass()) + ".createAdditionalInfosWidget() failed.", ex);
+		}
+
 		FlowPanel vertical = new FlowPanel();
 		if (label != null) vertical.add(label);
 		if (valueWidget != null) vertical.add(valueWidget);
 		if (warningWidget != null) vertical.add(warningWidget);
+		if (additionalInfosWidget != null) vertical.add(additionalInfosWidget);
 
 		focusPanel.setWidget(vertical);
 		focusPanel.setTitle(getTooltip());
 
 		configurator.styleFocusPanel(focusPanel);
 		focusPanel.getElement().getStyle().setColor(getDisplayValueColor());
+	}
+
+	private Widget createAdditionalInfosWidget() {
+		if (additionalInfos == null || additionalInfos.isEmpty()) return null;
+		String text = additionalInfos.size() == 1 ? additionalInfos.get(0)
+				: Str.concat(additionalInfos, "\n", "* ", null);
+		Label widget = Widgets.textSecondary(text);
+		widget.getElement().getStyle().setFontSize(80, Unit.PCT);
+		return widget;
 	}
 
 	protected String getDisplayValueColor() {
