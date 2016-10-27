@@ -21,6 +21,8 @@ import ilarkesto.json.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -29,6 +31,7 @@ public class ZipContentPackage extends AContentPackage {
 	private static final Log log = Log.get(ZipContentPackage.class);
 
 	private ZipOutputStream zipOs;
+	private Set<String> entries = new HashSet<String>();
 
 	public ZipContentPackage(OutputStream os) {
 		super();
@@ -68,11 +71,13 @@ public class ZipContentPackage extends AContentPackage {
 
 	private void addFile(File file, String path) throws IOException {
 		if (!file.exists()) return;
+		if (entries.contains(path)) return;
 		log.debug("ZipEntry:", path);
 		ZipEntry e = new ZipEntry(path);
 		zipOs.putNextEntry(e);
 		IO.copyData(file, zipOs);
 		zipOs.closeEntry();
+		entries.add(path);
 	}
 
 	public void close() {

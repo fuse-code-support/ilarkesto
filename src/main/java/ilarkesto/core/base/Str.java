@@ -28,6 +28,8 @@ import java.util.Set;
 
 public class Str {
 
+	public static final char interpunct = '·';
+
 	public static final char ue = '\u00FC';
 	public static final char UE = '\u00DC';
 	public static final char oe = '\u00F6';
