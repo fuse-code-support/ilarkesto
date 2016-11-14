@@ -575,4 +575,9 @@ public class Utl {
 		return itemsSet.containsAll(collection);
 	}
 
+	public static <_> List<_> conj(List<_> list, _ element) {
+		list.add(element);
+		return list;
+	}
+
 }

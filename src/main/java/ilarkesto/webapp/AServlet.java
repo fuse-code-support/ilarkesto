@@ -68,6 +68,7 @@ public abstract class AServlet<A extends AWebApplication, S extends AWebSession>
 	@Override
 	protected final void doGet(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
 			throws ServletException, IOException {
+
 		RequestWrapper<S> req = new RequestWrapper<S>(httpRequest, httpResponse);
 		if (!init(req)) return;
 		if (!isAuthorized(req)) {
