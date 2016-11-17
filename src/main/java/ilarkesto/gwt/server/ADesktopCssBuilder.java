@@ -91,7 +91,7 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 		style("#goon .gwt-Label").whiteSpacePreWrap();
 	}
 
-	private void goonButton() {
+	protected void goonButton() {
 		style("#goon .goon-Button").background(colBgButton).colorWhite().border(1, Colors.googleLightBlue)
 				.fontSize("75%").whiteSpaceNowrap();
 		style("#goon .goon-Button:hover").background(Colors.googleLightBlue);
@@ -116,7 +116,7 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 				.colorInherit();
 	}
 
-	private void desktop() {
+	protected void desktop() {
 		style("#goon").background(colBg).padding(0).margin(0);
 		style("#desktop").background(colBg).height(2000);
 
@@ -151,7 +151,7 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 		style("#goon .gwt-PopupPanel").borderNone();
 	}
 
-	private void cards() {
+	protected void cards() {
 		style(".goon-CardPanel").backgroundWhite().border(0, colSeparatorLine).boxShadow(1, 1, 0, "#cccccc")
 				.color("#444444");
 		style(".goon-CardPanel .title").color("#222222").fontWeightBold().fontSize("105%");

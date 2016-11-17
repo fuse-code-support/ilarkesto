@@ -59,7 +59,8 @@ public class Workspace {
 		titleLabel = new InlineLabel();
 		titleLabel.getElement().getStyle().setMarginRight(Widgets.defaultSpacing, Unit.PX);
 		titleContentLabel = new InlineLabel();
-		titleContentLabel.getElement().getStyle().setColor("#ff7");
+		// titleContentLabel.getElement().getStyle().setColor("#ff7");
+		titleContentLabel.setStyleName("titleContentLabel");
 
 		breadcrumb = new FlowPanel();
 		breadcrumb.addStyleName("breadcrumb");
@@ -96,7 +97,7 @@ public class Workspace {
 			titleText = contentTitle + " - " + title;
 		}
 
-		Window.setTitle(titleText + " - GOON28");
+		Window.setTitle(titleText + " - Watermann BP");
 
 		return this;
 	}

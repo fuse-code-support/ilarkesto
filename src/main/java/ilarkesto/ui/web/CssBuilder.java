@@ -232,6 +232,14 @@ public class CssBuilder {
 			return attr("left", value + unit);
 		}
 
+		public Style content(String value) {
+			return attr("content", "'" + value + "'");
+		}
+
+		public Style willChange(String value) {
+			return attr("will-change", value);
+		}
+
 		public Style positionRelative() {
 			return position("relative");
 		}
@@ -795,8 +803,8 @@ public class CssBuilder {
 			background("-o-linear-gradient(top,  " + topColor + " 0%," + bottomColor + " 100%)");
 			background("-ms-linear-gradient(top,  " + topColor + " 0%," + bottomColor + " 100%)");
 			background("linear-gradient(top,  " + topColor + " 0%," + bottomColor + " 100%)");
-			attr("filter", "progid:DXImageTransform.Microsoft.gradient( startColorstr='" + topColor + "', endColorstr='"
-					+ bottomColor + "',GradientType=0 )");
+			attr("filter", "progid:DXImageTransform.Microsoft.gradient( startColorstr='" + topColor
+					+ "', endColorstr='" + bottomColor + "',GradientType=0 )");
 			return this;
 		}
 
