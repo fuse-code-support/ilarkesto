@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -42,6 +42,7 @@ public class Workspace {
 	private static Log log = Log.get(Workspace.class);
 
 	private String titleText;
+	private String windowTitlePostfix;
 	private InlineLabel titleLabel;
 	private InlineLabel titleContentLabel;
 	private SimplePanel contentWrapper;
@@ -54,7 +55,12 @@ public class Workspace {
 	private BreadcrumbHelper breadcrumbResolver;
 
 	public Workspace(BreadcrumbHelper breadcrumbResolver) {
+		this(breadcrumbResolver, null);
+	}
+
+	public Workspace(BreadcrumbHelper breadcrumbResolver, String windowTitlePostfix) {
 		this.breadcrumbResolver = breadcrumbResolver;
+		this.windowTitlePostfix = windowTitlePostfix;
 
 		titleLabel = new InlineLabel();
 		titleLabel.getElement().getStyle().setMarginRight(Widgets.defaultSpacing, Unit.PX);
@@ -97,13 +103,17 @@ public class Workspace {
 			titleText = contentTitle + " - " + title;
 		}
 
-		Window.setTitle(titleText + " - Watermann BP");
+		Window.setTitle(windowTitlePostfix == null ? titleText : titleText + windowTitlePostfix);
 
 		return this;
 	}
 
 	public String getTitleText() {
 		return titleText;
+	}
+
+	public String getWindowTitlePostfix() {
+		return windowTitlePostfix;
 	}
 
 	public void setBreadcrumb(List<? extends AEntity> entities) {
