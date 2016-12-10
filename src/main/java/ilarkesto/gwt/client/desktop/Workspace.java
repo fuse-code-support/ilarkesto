@@ -85,8 +85,8 @@ public class Workspace {
 		contentWrapper.getElement().getStyle().setWidth(100, Unit.PCT);
 	}
 
-	public Workspace addToActionbar(IsWidget widget) {
-		actionbar.insert(widget, actionbar.getWidgetCount() - 1);
+	private Workspace addToActionbar(IsWidget widget, int index) {
+		actionbar.insert(widget, index);
 		return this;
 	}
 
@@ -182,6 +182,10 @@ public class Workspace {
 	}
 
 	public void addToolbarAction(AAction action) {
+		addToolbarAction(action, false);
+	}
+
+	public void addToolbarAction(AAction action, boolean positionAtFront) {
 		if (action == null) return;
 		// if (true) {
 		// addMenuAction(action);
@@ -192,7 +196,9 @@ public class Workspace {
 		style.setMarginLeft(Widgets.defaultSpacing, Unit.PX);
 		if (action.getIcon() == null) style.setPadding(4, Unit.PX);
 		// button.getElement().getStyle().setMargin(0, Unit.PX);
-		addToActionbar(button);
+
+		int index = positionAtFront ? 0 : actionbar.getWidgetCount() - 1;
+		addToActionbar(button, index);
 	}
 
 	public void createBreadcrumbForEntity(AEntity entity) {

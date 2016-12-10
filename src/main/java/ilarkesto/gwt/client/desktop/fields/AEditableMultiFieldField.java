@@ -56,15 +56,20 @@ public abstract class AEditableMultiFieldField extends AEditableField {
 			panel.add(Widgets.verticalSpacer(2));
 			if (subField.isSelfdocEnabled()) {
 				String selfdocKey = subField.getSelfdocKey();
-				panel.add(Widgets.horizontalPanel(0, subField.createEditorWidgetForUse(),
-					new ActionButton(Widgets.selfdocAction(selfdocKey, subField.getLabel(), subField.getTooltip()),
-							false)));
+				panel.add(Widgets.horizontalPanel(0, subField.createEditorWidgetForUse(), new ActionButton(
+						Widgets.selfdocAction(selfdocKey, subField.getLabel(), subField.getTooltip()), false)));
 			} else {
 				panel.add(subField.createEditorWidgetForUse());
 			}
 			panel.add(Widgets.verticalSpacer());
 		}
+		Integer maxWidth = getMaxWidth();
+		if (maxWidth != null) panel.getElement().getStyle().setProperty("maxWidth", maxWidth + "px");
 		return panel;
+	}
+
+	protected Integer getMaxWidth() {
+		return null;
 	}
 
 	protected void initializeEditorPanel(VerticalPanel panel) {}

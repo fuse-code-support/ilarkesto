@@ -237,6 +237,7 @@ public class Widgets {
 		Style style = dialog.getElement().getStyle();
 		style.setPadding(0, Unit.PX);
 		dialog.center();
+		dialog.setPopupPosition(dialog.getPopupLeft(), (int) (Window.getClientHeight() * 0.05) + Window.getScrollTop());
 
 		return dialog;
 	}

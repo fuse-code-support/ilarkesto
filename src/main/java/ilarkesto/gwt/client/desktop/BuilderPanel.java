@@ -273,6 +273,11 @@ public class BuilderPanel implements IsWidget {
 		return this;
 	}
 
+	public BuilderPanel setHeight(int width) {
+		panel.getElement().getStyle().setHeight(width, Unit.PX);
+		return this;
+	}
+
 	public BuilderPanel setSpacingLine() {
 		return setSpacing(SPACING_LINE);
 	}
