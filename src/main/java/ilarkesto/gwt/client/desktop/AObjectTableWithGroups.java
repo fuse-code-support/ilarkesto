@@ -553,10 +553,15 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		}
 		int count = 0;
 		for (O o : list) {
+			if (isRowHidden(o)) continue;
 			ret.add(new Row(null, o, ++rowIndex));
 			count++;
 		}
 		return count;
+	}
+
+	protected boolean isRowHidden(O o) {
+		return false;
 	}
 
 	private final void sortObjects(List<O> objects) {
