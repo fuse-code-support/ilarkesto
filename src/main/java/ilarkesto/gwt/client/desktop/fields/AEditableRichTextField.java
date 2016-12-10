@@ -2,6 +2,9 @@ package ilarkesto.gwt.client.desktop.fields;
 
 import ilarkesto.gwt.client.desktop.Widgets;
 
+import com.google.gwt.dom.client.BodyElement;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
@@ -35,10 +38,11 @@ public abstract class AEditableRichTextField extends AEditableField {
 		return text;
 	}
 
-	protected String prepareText(String text) {
+	protected final String prepareText(String text) {
 		if (text == null) return null;
 		text = text.trim();
 		if (text.isEmpty()) return null;
+
 		return text;
 	}
 
@@ -59,21 +63,26 @@ public abstract class AEditableRichTextField extends AEditableField {
 	public Widget createEditorWidget() {
 		textArea = new RichTextArea();
 		textArea.getElement().setId(getId() + "_textArea");
-		textArea.getElement().getStyle().setProperty("minWidth", "1000px");
-		textArea.getElement().getStyle().setProperty("minHeight", "400px");
-		textArea.getElement().getStyle().setBackgroundColor("#fff");
-		textArea.getElement().getStyle().setBorderWidth(1, Unit.PX);
-		textArea.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
-		textArea.getElement().getStyle().setBorderColor("#aaa");
+		Style style = textArea.getElement().getStyle();
+		style.setFontSize(100, Unit.PX);
+		style.setProperty("minWidth", "1000px");
+		style.setProperty("minHeight", "400px");
+		style.setBackgroundColor("#fff");
+		style.setBorderWidth(1, Unit.PX);
+		style.setBorderStyle(BorderStyle.SOLID);
+		style.setBorderColor("#aaa");
 		textArea.addInitializeHandler(new InitializeHandler() {
 
 			@Override
 			public void onInitialize(InitializeEvent event) {
-				// textArea.getFormatter().setFontName("Helvetica");
+				// textArea.getFormatter().setFontName("OpenSans");
 				// textArea.getFormatter().setFontSize(FontSize.X_SMALL);
+				IFrameElement iFrame = IFrameElement.as(textArea.getElement());
+				Document document = iFrame.getContentDocument();
+				BodyElement body = document.getBody();
+				body.setAttribute("style", "font-family: OpenSans, Arial, sans-serif;");
 			}
 		});
-		Style style = textArea.getElement().getStyle();
 		style.setWidth(getTextBoxWidth(), Unit.PX);
 		style.setHeight(100, Unit.PX);
 		style.setPadding(Widgets.defaultSpacing, Unit.PX);
