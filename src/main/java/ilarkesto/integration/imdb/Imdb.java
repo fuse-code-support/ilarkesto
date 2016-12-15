@@ -44,7 +44,8 @@ public class Imdb {
 	static final String URL_AKAS_TITLE = URL_AKAS + PATH_TITLE;
 	static final String URL_AKAS_TRAILER = URL_AKAS + PATH_TRAILER;
 
-	static final String URL_COVERS = "http://ia.media-imdb.com/images/M/";
+	static final String URL_COVERS_ALT = "http://ia.media-imdb.com/images/M/";
+	static final String URL_COVERS = "https://images-na.ssl-images-amazon.com/images/M/";
 
 	private static Log log = Log.get(Imdb.class);
 
