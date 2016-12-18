@@ -268,7 +268,11 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 	protected Widget createGroupWidget(G group) {
 		if (group instanceof IsWidget) return ((IsWidget) group).asWidget();
-		return createGroupHeader(group, "white", Colors.googleBlue);
+		return createGroupHeader(group, "white", getGroupHeaderColor());
+	}
+
+	protected String getGroupHeaderColor() {
+		return Colors.googleBlue;
 	}
 
 	protected Widget createGroupHeader(Object text, String textColor, String backgroundColor) {
