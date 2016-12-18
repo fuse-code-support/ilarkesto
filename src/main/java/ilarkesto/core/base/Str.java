@@ -1092,4 +1092,16 @@ public class Str {
 		return len;
 	}
 
+	public static String concatOrNull(String seperator, String... ss) {
+		if (ss == null) return null;
+		int count = 0;
+		StringBuilder sb = new StringBuilder();
+		for (String s : ss) {
+			if (s == null) continue;
+			if (count > 0) sb.append(seperator);
+			sb.append(s);
+		}
+		return count == 0 ? null : sb.toString();
+	}
+
 }
