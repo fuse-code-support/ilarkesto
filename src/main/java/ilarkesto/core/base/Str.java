@@ -1100,6 +1100,7 @@ public class Str {
 			if (s == null) continue;
 			if (count > 0) sb.append(seperator);
 			sb.append(s);
+			count++;
 		}
 		return count == 0 ? null : sb.toString();
 	}
