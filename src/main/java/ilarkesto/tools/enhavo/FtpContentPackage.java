@@ -17,11 +17,14 @@ package ilarkesto.tools.enhavo;
 import ilarkesto.integration.ftp.FtpClient;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class FtpContentPackage extends AContentPackage {
 
+	private Map<String, Long> timings = new HashMap<String, Long>();
 	private FtpClient ftp;
 	private String remotePath;
 
@@ -38,18 +41,19 @@ public class FtpContentPackage extends AContentPackage {
 		if (object == null) return;
 		path = getPath(path);
 
+		long start = System.currentTimeMillis();
+
 		if (object.equals(DIRECTORY)) {
 			ftp.createDir(path);
-			return;
-		}
-
-		if (object instanceof File) {
+		} else if (object instanceof File) {
 			createDirForFile(path);
 			ftp.uploadFile(path, (File) object);
-			return;
+		} else {
+			ftp.uploadText(path, object.toString());
 		}
 
-		ftp.uploadText(path, object.toString());
+		long runtime = System.currentTimeMillis() - start;
+		timings.put(path, runtime);
 	}
 
 	private void createDirForFile(String path) {
@@ -64,6 +68,10 @@ public class FtpContentPackage extends AContentPackage {
 	private String getPath(String path) {
 		if (remotePath == null) return path;
 		return remotePath + "/" + path;
+	}
+
+	public Map<String, Long> getTimings() {
+		return timings;
 	}
 
 }

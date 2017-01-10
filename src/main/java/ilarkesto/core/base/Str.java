@@ -916,6 +916,18 @@ public class Str {
 		return sb.toString();
 	}
 
+	public static String formatMapAsKeyValueLines(Map<?, ?> map) {
+		if (map == null) return "";
+		StringBuilder sb = new StringBuilder();
+		for (Map.Entry entry : map.entrySet()) {
+			sb.append(format(entry.getKey()));
+			sb.append(" = ");
+			sb.append(format(entry.getValue()));
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+
 	public static String getStackTrace(Throwable t) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(t.toString()).append("\n");
