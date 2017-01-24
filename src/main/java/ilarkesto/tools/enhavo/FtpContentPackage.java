@@ -47,7 +47,7 @@ public class FtpContentPackage extends AContentPackage {
 			ftp.createDir(path);
 		} else if (object instanceof File) {
 			createDirForFile(path);
-			ftp.uploadFile(path, (File) object);
+			ftp.uploadFileIfNotThere(path, (File) object);
 		} else {
 			ftp.uploadText(path, object.toString());
 		}
