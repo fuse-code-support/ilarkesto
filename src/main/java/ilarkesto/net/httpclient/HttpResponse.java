@@ -26,9 +26,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 // http://stackoverflow.com/questions/2793150/using-java-net-urlconnection-to-fire-and-handle-http-requests
@@ -42,7 +41,7 @@ public class HttpResponse {
 	private InputStream cacheInputStream;
 
 	private int statusCode;
-	private Map<String, HttpResponseHeader> headers;
+	private List<HttpResponseHeader> headers;
 	private String charset = IO.UTF_8;
 
 	HttpResponse(HttpRequest request, int statusCode, HttpURLConnection connection) throws IOException {
@@ -131,12 +130,12 @@ public class HttpResponse {
 	}
 
 	private void processHeaders() {
-		headers = new LinkedHashMap<String, HttpResponseHeader>();
+		headers = new ArrayList<HttpResponseHeader>();
 		for (Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
 			String name = entry.getKey();
 			List<String> value = entry.getValue();
 			HttpResponseHeader header = new HttpResponseHeader(name, value);
-			headers.put(name, header);
+			headers.add(header);
 			if (HttpSession.debug) log.debug("  Received header <", header);
 		}
 	}
@@ -163,7 +162,10 @@ public class HttpResponse {
 	}
 
 	public HttpResponseHeader getHeader(String name) {
-		return headers.get(name);
+		for (HttpResponseHeader header : headers) {
+			if (header.isName(name)) return header;
+		}
+		return null;
 	}
 
 	public int getStatusCode() {

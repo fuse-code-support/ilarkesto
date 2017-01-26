@@ -38,7 +38,7 @@ public class HttpSession {
 	private static SSLSocketFactory ignorantSslSocketFactory;
 
 	static HttpSession defaultSession = new HttpSession();
-	static boolean debug = false;
+	public static boolean debug = false;
 
 	private final Map<String, HttpCookie> cookies = new HashMap<String, HttpCookie>();
 	private final int redirectCount = 3;

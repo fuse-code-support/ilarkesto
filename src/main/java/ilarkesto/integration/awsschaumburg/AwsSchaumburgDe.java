@@ -7,34 +7,29 @@ import ilarkesto.core.base.Parser.ParseException;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.Date;
 import ilarkesto.core.time.Tm;
+import ilarkesto.io.IO;
 import ilarkesto.net.httpclient.HttpSession;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
 public class AwsSchaumburgDe {
 
 	private static Log log = Log.get(AwsSchaumburgDe.class);
-	private static final String CHARSET = "ISO-8859-1";
+	private static final String CHARSET = IO.UTF_8;
 	public static final String BASE_URL = "http://aws-shg.de/";
 	private static final String LISTE_URL = BASE_URL + "abfuhr/Liste.php?ortid=17";
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
 	private static final Date minDate = Date.beforeDays(14);
 
 	public static List<WastePickupArea> loadPickupAreas() throws ParseException {
-		GregorianCalendar calendar = new GregorianCalendar(Locale.GERMANY);
-		int year = calendar.get(Calendar.YEAR);
-		String url = LISTE_URL + "&curJahr=" + year;
-		log.debug(url);
-
+		String url = "http://abfuhr.aws-shg.de/getListe.php";
 		HttpSession session = new HttpSession().setCharset(CHARSET);
-		session.postAndDownloadText("http://aws-shg.de/abfuhr/getListe.php?ortid=17",
+		session.postAndDownloadText(url,
 			new MapBuilder().put("ortid", "17").put("curJahr", String.valueOf(Tm.getCurrentYear())).getMap());
-		String data = session.downloadText("http://aws-shg.de/abfuhr/getListe.php");
+		String data = session.downloadText(url);
 
 		Parser parser = new Parser(data);
 		List<WastePickupArea> ret = new ArrayList<WastePickupArea>();
