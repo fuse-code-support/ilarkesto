@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -16,22 +16,31 @@ package ilarkesto.integration.fuel;
 
 import ilarkesto.core.base.Parser;
 import ilarkesto.core.base.Parser.ParseException;
+import ilarkesto.core.logging.Log;
 import ilarkesto.core.time.Date;
 import ilarkesto.core.time.DateAndTime;
 import ilarkesto.core.time.Time;
 import ilarkesto.integration.fuel.FuelStation.Price;
 import ilarkesto.io.IO;
-import ilarkesto.net.HttpDownloader;
+import ilarkesto.net.httpclient.HttpSession;
 
 public class TonlineFuelPriceUpdater extends AFuelPriceUpdater {
+
+	private static final Log log = Log.get(TonlineFuelPriceUpdater.class);
 
 	private static final String charset = IO.ISO_LATIN_1;
 
 	@Override
 	protected void onUpdatePrices(FuelStation station) {
-		HttpDownloader httpDownloader = HttpDownloader.create();
 		String url = "http://tanken.t-online.de/tankstelle/Super/" + station.getTonlineId();
-		String data = httpDownloader.downloadText(url, charset);
+
+		String data;
+		try {
+			data = new HttpSession().setCharset(charset).downloadText(url);
+		} catch (Exception ex) {
+			log.error("Failed to update fuel prices:", station, ex);
+			return;
+		}
 
 		updatePrice(Fuel.E5, "Super", station, data);
 		updatePrice(Fuel.DIESEL, "Diesel", station, data);
