@@ -44,7 +44,17 @@ public class OrganizantoTracker extends ATask {
 
 	public synchronized void track(String name, String value, String message, String info, boolean alert) {
 		if (Sys.isDevelopmentMode()) return;
-		events.add(new Event(DateAndTime.now(), name, value, message, info, alert));
+
+		Event event = new Event(DateAndTime.now(), name, value, message, info, alert);
+
+		if (alert) {
+			try {
+				postEvent(null);
+				return;
+			} catch (Exception ex) {}
+		}
+
+		events.add(event);
 	}
 
 	@Override
