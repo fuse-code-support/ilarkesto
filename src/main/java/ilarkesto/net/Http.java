@@ -35,6 +35,7 @@ public class Http {
 	public static final int RESPONSE_SC_OK = 200;
 	public static final int RESPONSE_SC_NOT_MODIFIED = 304;
 	public static final int RESPONSE_SC_MOVED_PERMANENTLY = 301; // redirect
+	public static final int RESPONSE_SC_FOUND = 302; // found
 	public static final int RESPONSE_SC_NOT_FOUND = 404;
 
 	public static String encodePostParametersToString(Map<String, String> parameters, String encoding) {

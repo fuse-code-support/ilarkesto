@@ -66,7 +66,7 @@ public class HttpResponse {
 
 	public HttpResponse followRedirects(int maxFollowCount) {
 		if (maxFollowCount < 1) return this;
-		if (statusCode != Http.RESPONSE_SC_MOVED_PERMANENTLY) return this;
+		if (statusCode != Http.RESPONSE_SC_MOVED_PERMANENTLY && statusCode != Http.RESPONSE_SC_FOUND) return this;
 		String location = getHeaderValue(Http.RESPONSE_HEADER_LOCATION);
 		if (location == null)
 			throw new RuntimeException("HTTP error. Status 301 received, but Location-Header missing.");
