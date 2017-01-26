@@ -16,6 +16,7 @@ package ilarkesto.html.dom;
 
 import ilarkesto.core.base.Parser;
 import ilarkesto.core.base.Parser.ParseException;
+import ilarkesto.core.base.Str;
 import ilarkesto.core.logging.Log;
 
 import java.util.LinkedHashMap;
@@ -117,27 +118,33 @@ public class HtmlParser {
 		Parser p = parser;
 		LinkedHashMap<String, String> ret = new LinkedHashMap<String, String>();
 
-		while (true) {
-			p.skipWhitespace();
-			if (p.isNext(">") || p.isNext("/>")) break;
-			String name = p.getUntilAndGotoAfter("=").trim();
-			p.skipWhitespace();
-			String quoting = null;
-			if (p.isNext("\"")) {
-				quoting = "\"";
-			} else if (p.isNext("'")) {
-				quoting = "'";
+		try {
+
+			while (true) {
+				p.skipWhitespace();
+				if (p.isNext(">") || p.isNext("/>")) break;
+				String name = p.getUntilAndGotoAfter("=").trim();
+				p.skipWhitespace();
+				String quoting = null;
+				if (p.isNext("\"")) {
+					quoting = "\"";
+				} else if (p.isNext("'")) {
+					quoting = "'";
+				}
+				String value;
+				if (quoting == null) {
+					value = p.getUntilIf(" ", "/>", ">");
+					if (value == null) value = p.getRemaining();
+					p.gotoAfter(value);
+				} else {
+					p.gotoAfter(quoting);
+					value = p.getUntilAndGotoAfter(quoting);
+				}
+				ret.put(name.trim(), value.trim());
 			}
-			String value;
-			if (quoting == null) {
-				value = p.getUntilIf(" ", "/>", ">");
-				if (value == null) value = p.getRemaining();
-				p.gotoAfter(value);
-			} else {
-				p.gotoAfter(quoting);
-				value = p.getUntilAndGotoAfter(quoting);
-			}
-			ret.put(name.trim(), value.trim());
+		} catch (Exception ex) {
+			throw new ParseException("Parsing HTTML attributes failed. Already parsed: " + Str.format(ret), 0,
+					p.getRemaining());
 		}
 
 		return ret;

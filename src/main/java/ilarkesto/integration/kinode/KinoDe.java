@@ -95,6 +95,9 @@ public class KinoDe {
 		String url = URL_BASE_PROGRAMM + cinemaId;
 		if (observer != null) observer.onOperationInfoChanged(OperationObserver.DOWNLOADING, url);
 		String html = http.downloadText(url);
+		if (html.contains("<!–- Facebook Pixel Code -–>")) {
+			html = html.substring(0, html.indexOf("<!–- Facebook Pixel Code -–>")) + "</body></html>";
+		}
 		HtmlPage page;
 		try {
 			page = new HtmlParser().parse(html);
