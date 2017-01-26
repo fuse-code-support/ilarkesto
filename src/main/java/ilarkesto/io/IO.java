@@ -403,7 +403,7 @@ public abstract class IO {
 		if (!from.exists())
 			throw new RuntimeException("Moving file " + from + " to " + to + " failed. Source file does not exist.");
 		if (!to.isDirectory() && to.exists()) {
-			if (!overwrite)
+			if (!overwrite && !to.getName().equals(MAC_SYS_FILENAME))
 				throw new RuntimeException("Moving file " + from + " to " + to + " failed. File already exists.");
 		}
 		createDirectory(to.getParentFile());
