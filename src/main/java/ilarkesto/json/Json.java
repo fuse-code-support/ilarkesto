@@ -60,6 +60,21 @@ public class Json {
 			return;
 		}
 
+		if (value instanceof BigDecimal) {
+			out.print(((BigDecimal) value).toPlainString());
+			return;
+		}
+
+		if (value instanceof Double) {
+			out.print(new BigDecimal(value.toString()).toPlainString());
+			return;
+		}
+
+		if (value instanceof Float) {
+			out.print(new BigDecimal(value.toString()).toPlainString());
+			return;
+		}
+
 		out.print(value);
 	}
 
@@ -130,6 +145,7 @@ public class Json {
 
 	public static Number parseNumber(String s) throws NumberFormatException {
 		if (s.contains(".")) return new BigDecimal(s);
+		if (s.contains("E")) return new BigDecimal(new BigDecimal(s).toPlainString());
 		return Long.parseLong(s);
 	}
 

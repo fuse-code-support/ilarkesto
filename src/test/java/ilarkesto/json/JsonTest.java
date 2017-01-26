@@ -3,11 +3,30 @@ package ilarkesto.json;
 import ilarkesto.core.base.Utl;
 import ilarkesto.testng.ATest;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.testng.annotations.Test;
 
 public class JsonTest extends ATest {
+
+	@Test
+	public void printDecimal() {
+		StringWriter sw = new StringWriter();
+		PrintWriter out = new PrintWriter(sw);
+		Json.printValue(new Double(23.42), out, 0);
+		out.flush();
+		assertEquals(sw.toString(), "23.42");
+	}
+
+	@Test
+	public void parseNumber() {
+		assertEquals(Json.parseNumber("23"), Long.valueOf(23));
+		assertEquals(Json.parseNumber("23.42"), new BigDecimal("23.42"));
+		assertEquals(Json.parseNumber("1E+1"), new BigDecimal("10"));
+	}
 
 	@Test
 	public void parseString() {
