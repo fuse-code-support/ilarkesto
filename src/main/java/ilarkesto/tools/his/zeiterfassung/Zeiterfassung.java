@@ -122,16 +122,15 @@ public class Zeiterfassung {
 		for (DayAtWork day : days) {
 			for (WorkActivity activity : day.getActivities()) {
 				if (!activity.isBookingRequired()) continue;
+				activity.setAchievoPackageId("10282");
+				activity.setAchievoProjectId("5461");
+
 				if (activity.getAchievoId() != null) continue;
 				String hiszillaId = activity.getHiszillaId();
 				if (hiszillaId != null) {
 					activity.setAchievoId(determineAchievoIdByHiszillaId(hiszillaId, activity.getText()));
 				} else {
 					String id = determineAchievoIdByText(activity.getText());
-					if (id != null) {
-						activity.setAchievoPackageId("10282");
-						activity.setAchievoProjectId("5461");
-					}
 					activity.setAchievoId(id);
 				}
 			}
