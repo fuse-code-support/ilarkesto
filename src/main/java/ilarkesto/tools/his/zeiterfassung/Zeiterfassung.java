@@ -93,13 +93,13 @@ public class Zeiterfassung {
 	private static void writeCsv(File file) throws IOException {
 		FileWriter out = new FileWriter(file);
 		CsvWriter csv = new CsvWriter(out);
-		int currentMonth = 0;
+		int currentWeek = 0;
 		for (DayAtWork day : days) {
 			Date date = day.getDate();
 			if (!isPreviousMonth(date)) continue;
 
-			if (currentMonth != date.getMonth()) {
-				currentMonth = date.getMonth();
+			if (currentWeek != date.getWeek()) {
+				currentWeek = date.getWeek();
 				csv.closeRecord();
 				csv.closeRecord();
 			}
