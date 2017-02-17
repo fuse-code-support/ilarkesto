@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -39,11 +39,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class AGwtConversation<S extends AWebSession> implements ClientDataTransporter,
-		Comparable<AGwtConversation> {
+public abstract class AGwtConversation<S extends AWebSession>
+		implements ClientDataTransporter, Comparable<AGwtConversation> {
 
 	private static final Log log = Log.get(AGwtConversation.class);
-	private static final TimePeriod DEFAULT_TIMEOUT = TimePeriod.minutes(2);
+	private static final TimePeriod DEFAULT_TIMEOUT = TimePeriod.minutes(10);
 
 	/**
 	 * Data that will be transferred to the client at the next request.
@@ -202,9 +202,8 @@ public abstract class AGwtConversation<S extends AWebSession> implements ClientD
 		if (nd.containsDeletedEntity(entity.getId())) return;
 
 		if (timeLocal.equals(timeRemote)) {
-			if (log.isDebugEnabled())
-				log.debug("Remote entity already up to date:", toString(entity), "for", this, "->", timeLocal, "/",
-					timeRemote);
+			if (log.isDebugEnabled()) log.debug("Remote entity already up to date:", toString(entity), "for", this,
+				"->", timeLocal, "/", timeRemote);
 			return;
 		}
 
