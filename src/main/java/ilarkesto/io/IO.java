@@ -14,6 +14,7 @@
  */
 package ilarkesto.io;
 
+import ilarkesto.core.base.Str;
 import ilarkesto.net.HttpDownloader;
 
 import java.io.BufferedInputStream;
@@ -1260,6 +1261,30 @@ public abstract class IO {
 			throw new RuntimeException(ex);
 		}
 		return ret;
+	}
+
+	public static String tail(int lineCount) {
+		List<String> lines = new LinkedList();
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new FileReader("var/log/goon/catalina.out"));
+		} catch (FileNotFoundException ex) {
+			throw new RuntimeException(ex);
+		}
+		String line;
+		try {
+			line = in.readLine();
+			while (line != null) {
+				lines.add(line);
+				if (lines.size() > 1000) lines.remove(0);
+				line = in.readLine();
+			}
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		} finally {
+			IO.closeQuiet(in);
+		}
+		return Str.concat(lines, "\n", null, null);
 	}
 
 	public static String readToString(InputStream is, String encoding) {
