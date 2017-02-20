@@ -1263,11 +1263,11 @@ public abstract class IO {
 		return ret;
 	}
 
-	public static String tail(int lineCount) {
+	public static String tail(String filename, int lineCount) {
 		List<String> lines = new LinkedList();
 		BufferedReader in;
 		try {
-			in = new BufferedReader(new FileReader("var/log/goon/catalina.out"));
+			in = new BufferedReader(new FileReader(filename));
 		} catch (FileNotFoundException ex) {
 			throw new RuntimeException(ex);
 		}
