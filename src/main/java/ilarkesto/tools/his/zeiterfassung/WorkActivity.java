@@ -65,10 +65,10 @@ public class WorkActivity {
 
 		text = parser.getRemaining();
 
-		if (lastActivity != null && "Daily Scrum".equals(text)) {
-			hiszillaId = lastActivity.getHiszillaId();
-			achievoId = lastActivity.getAchievoId();
-		}
+		// if (lastActivity != null && "Daily Scrum".equals(text)) {
+		// hiszillaId = lastActivity.getHiszillaId();
+		// achievoId = lastActivity.getAchievoId();
+		// }
 	}
 
 	public boolean isBookingRequired() {

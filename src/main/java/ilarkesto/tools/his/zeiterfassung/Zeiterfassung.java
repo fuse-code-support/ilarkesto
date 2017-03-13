@@ -138,16 +138,16 @@ public class Zeiterfassung {
 	}
 
 	private static String determineAchievoIdByText(String text) {
-		if ("Sprint Review".equals(text)) return "27683";
-		if ("Integrationstest".equals(text)) return "27684";
-		if ("Product Backlog Refinement".equals(text)) return "27817";
-		for (DayAtWork day : days) {
-			for (WorkActivity activity : day.getActivities()) {
-				if (activity.getAchievoId() == null) continue;
-				if (Str.isBlank(activity.getText())) continue;
-				if (text.equals(activity.getText())) return activity.getAchievoId();
-			}
-		}
+		// if ("Sprint Review".equals(text)) return "27683";
+		// if ("Integrationstest".equals(text)) return "27684";
+		// if ("Product Backlog Refinement".equals(text)) return "27817";
+		// for (DayAtWork day : days) {
+		// for (WorkActivity activity : day.getActivities()) {
+		// if (activity.getAchievoId() == null) continue;
+		// if (Str.isBlank(activity.getText())) continue;
+		// if (text.equals(activity.getText())) return activity.getAchievoId();
+		// }
+		// }
 		if (!hiszillaLineReached) System.out.println("Achievo-ID fehlt. Text: " + text);
 		return null;
 	}
@@ -167,7 +167,9 @@ public class Zeiterfassung {
 	private static void parse(File file) throws IOException, ParseException {
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		String line = null;
+		int lineCount = 0;
 		while ((line = in.readLine()) != null) {
+			lineCount++;
 			if (Str.isBlank(line)) continue;
 			line = line.trim();
 			if (line.startsWith("//")) continue;
@@ -176,12 +178,16 @@ public class Zeiterfassung {
 				hiszillaLineReached = true;
 				continue;
 			}
-			if (line.startsWith("* ")) {
-				currentDay.addActivity(line).setAlreadyBookedInHiszilla(hiszillaLineReached);
-				continue;
+			try {
+				if (line.startsWith("* ")) {
+					currentDay.addActivity(line).setAlreadyBookedInHiszilla(hiszillaLineReached);
+					continue;
+				}
+				currentDay = new DayAtWork(line);
+				days.add(currentDay);
+			} catch (Exception ex) {
+				throw new RuntimeException("Parsing failed at line " + lineCount, ex);
 			}
-			currentDay = new DayAtWork(line);
-			days.add(currentDay);
 		}
 		in.close();
 	}
