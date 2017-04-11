@@ -42,24 +42,31 @@ public class Feed {
 		Document document = JDom.createDocumentFromUrl(url);
 		Element eRoot = document.getRootElement();
 		Element eChannel = JDom.getChild(eRoot, "channel");
+		if (eChannel == null) eChannel = eRoot;
 
 		String title = JDom.getChildText(eChannel, "title");
 		String link = JDom.getChildText(eChannel, "link");
 		String description = JDom.getChildText(eChannel, "description");
+		if (description == null) description = JDom.getChildText(eChannel, "subtitle");
 		Feed feed = new Feed(title, link, description);
 		feed.setLastBuildDate(JDom.getChildText(eChannel, "lastBuildDate"));
 		feed.setPubDate(JDom.getChildText(eChannel, "lastBuildDate"));
 		feed.setLanguage(JDom.getChildText(eChannel, "language"));
 
-		List<Element> eItems = JDom.getChildren(eRoot, "item");
-		if (eItems.isEmpty()) eItems = JDom.getChildren(eChannel, "item");
+		List<Element> eItems = JDom.getChildren(eChannel, "item");
+		if (eItems.isEmpty()) eItems = JDom.getChildren(eChannel, "entry");
 		for (Element eItem : eItems) {
 			String itemTitle = JDom.getChildText(eItem, "title");
 			String itemDescription = JDom.getChildText(eItem, "description");
+			if (itemDescription == null) itemDescription = JDom.getChildText(eItem, "summary");
 			FeedItem item = new FeedItem(itemTitle, itemDescription);
 			feed.addItem(item);
-			item.setLink(JDom.getChildText(eItem, "link"));
-			item.setPubDate(JDom.getChildText(eItem, "pubDate"));
+			String itemLink = JDom.getChildText(eItem, "link");
+			if (itemLink == null) JDom.getChildAttributeValue(eItem, "link", "href");
+			item.setLink(itemLink);
+			String itemPubDate = JDom.getChildText(eItem, "pubDate");
+			if (itemPubDate == null) itemPubDate = JDom.getChildText(eItem, "published");
+			item.setPubDate(itemPubDate);
 			item.setGuid(JDom.getChildText(eItem, "guid"));
 		}
 

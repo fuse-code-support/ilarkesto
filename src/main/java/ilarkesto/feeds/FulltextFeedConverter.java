@@ -141,6 +141,13 @@ public class FulltextFeedConverter {
 			return text;
 		}
 
+		if ((idx = text.indexOf("<div class=\"m-permalink-post-data\"")) > 0) {
+			log.debug("class=m-permalink-post-data"); // engadget.com 2017-04-11
+			text = text.substring(idx);
+			text = Str.removeSuffixStartingWith(text, "<div class=\"post-footer-content\"");
+			return text;
+		}
+
 		if ((idx = text.indexOf("<div class=\"o-article_block")) > 0) {
 			log.debug("class=o-article_block"); // engadget.com 2016-03-21
 			text = text.substring(idx);

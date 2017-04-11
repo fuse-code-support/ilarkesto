@@ -51,7 +51,7 @@ public class FulltextFeedConverterTest extends ATest {
 
 	@Test
 	public void feeds() {
-		assertNotEmpty(Feed.load("http://www.heise.de/newsticker/heise.rdf").getItems());
+		assertNotEmpty(Feed.load("https://www.heise.de/newsticker/heise-atom.xml").getItems());
 		assertNotEmpty(Feed.load("http://newsfeed.zeit.de/index").getItems());
 	}
 
