@@ -14,6 +14,7 @@
  */
 package ilarkesto.feeds;
 
+import ilarkesto.base.Str;
 import ilarkesto.base.Tm;
 import ilarkesto.core.time.DateAndTime;
 import ilarkesto.integration.jdom.JDom;
@@ -46,6 +47,7 @@ public class Feed {
 
 		String title = JDom.getChildText(eChannel, "title");
 		String link = JDom.getChildText(eChannel, "link");
+		if (Str.isBlank(link)) link = JDom.getChildAttributeValue(eChannel, "link", "href");
 		String description = JDom.getChildText(eChannel, "description");
 		if (description == null) description = JDom.getChildText(eChannel, "subtitle");
 		Feed feed = new Feed(title, link, description);
@@ -62,7 +64,7 @@ public class Feed {
 			FeedItem item = new FeedItem(itemTitle, itemDescription);
 			feed.addItem(item);
 			String itemLink = JDom.getChildText(eItem, "link");
-			if (itemLink == null) JDom.getChildAttributeValue(eItem, "link", "href");
+			if (Str.isBlank(itemLink)) itemLink = JDom.getChildAttributeValue(eItem, "link", "href");
 			item.setLink(itemLink);
 			String itemPubDate = JDom.getChildText(eItem, "pubDate");
 			if (itemPubDate == null) itemPubDate = JDom.getChildText(eItem, "published");
