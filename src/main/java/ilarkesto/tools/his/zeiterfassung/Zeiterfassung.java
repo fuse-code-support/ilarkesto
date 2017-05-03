@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -94,19 +95,34 @@ public class Zeiterfassung {
 		FileWriter out = new FileWriter(file);
 		CsvWriter csv = new CsvWriter(out);
 		int currentWeek = 0;
+		long totalMinutes = 0;
 		for (DayAtWork day : days) {
 			Date date = day.getDate();
+			if (date.isFirstDayOfMonth()) totalMinutes = 0;
 			if (!isPreviousMonth(date)) continue;
 
 			if (currentWeek != date.getWeek()) {
 				currentWeek = date.getWeek();
 				csv.closeRecord();
+				csv.writeField("KW " + currentWeek);
 				csv.closeRecord();
 			}
-			for (WorkActivity activity : day.getActivities()) {
+
+			List<WorkActivity> activities = day.getActivities();
+			int i = 0;
+			int count = activities.size();
+			for (WorkActivity activity : activities) {
+				i++;
 				if (!activity.isBookingRequired()) continue;
 				activity.appendTo(csv);
+				if (i == count) {
+					csv.writeField(day.getWorkTime().toHoursAndMinutes());
+					totalMinutes += day.getWorkTime().toMinutes();
+					csv.writeField(new BigDecimal(totalMinutes / 60f / 8f).setScale(2, BigDecimal.ROUND_HALF_UP));
+				}
+				csv.closeRecord();
 			}
+
 		}
 		out.close();
 	}

@@ -138,7 +138,6 @@ public class WorkActivity {
 		csv.writeField("");
 		csv.writeField(date.getWeekday().format());
 		csv.writeField(date.format());
-		csv.closeRecord();
 	}
 
 	public long getWorktimeInMinutes() {
