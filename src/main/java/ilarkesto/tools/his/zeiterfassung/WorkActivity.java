@@ -134,7 +134,7 @@ public class WorkActivity {
 		csv.writeField(getWorktimeInMinutes()); // time
 		csv.writeField("0"); // business_trip
 		csv.writeField(hiszillaId); // hiszilla
-		csv.writeField(""); // remaining_effort_time
+		csv.writeField("0"); // remaining_effort_time
 		csv.writeField("");
 		csv.writeField(date.getWeekday().format());
 		csv.writeField(date.format());
