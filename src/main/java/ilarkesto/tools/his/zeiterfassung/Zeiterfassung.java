@@ -156,12 +156,12 @@ public class Zeiterfassung {
 	}
 
 	private static String determineAchievoProjectId(WorkActivity activity) {
-		if (activity.getAchievoId().equals("29170")) return "8444";
+		if ("29170".equals(activity.getAchievoId())) return "8444";
 		return "5461";
 	}
 
 	private static String determineAchievoPackageId(WorkActivity activity) {
-		if (activity.getAchievoId().equals("29170")) return "10577";
+		if ("29170".equals(activity.getAchievoId())) return "10577";
 		return "10282";
 	}
 
