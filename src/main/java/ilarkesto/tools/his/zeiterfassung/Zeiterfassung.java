@@ -138,19 +138,31 @@ public class Zeiterfassung {
 		for (DayAtWork day : days) {
 			for (WorkActivity activity : day.getActivities()) {
 				if (!activity.isBookingRequired()) continue;
-				activity.setAchievoPackageId("10282");
-				activity.setAchievoProjectId("5461");
 
-				if (activity.getAchievoId() != null) continue;
-				String hiszillaId = activity.getHiszillaId();
-				if (hiszillaId != null) {
-					activity.setAchievoId(determineAchievoIdByHiszillaId(hiszillaId, activity.getText()));
-				} else {
-					String id = determineAchievoIdByText(activity.getText());
-					activity.setAchievoId(id);
+				if (activity.getAchievoId() == null) {
+					String hiszillaId = activity.getHiszillaId();
+					if (hiszillaId != null) {
+						activity.setAchievoId(determineAchievoIdByHiszillaId(hiszillaId, activity.getText()));
+					} else {
+						String id = determineAchievoIdByText(activity.getText());
+						activity.setAchievoId(id);
+					}
 				}
+
+				activity.setAchievoPackageId(determineAchievoPackageId(activity));
+				activity.setAchievoProjectId(determineAchievoProjectId(activity));
 			}
 		}
+	}
+
+	private static String determineAchievoProjectId(WorkActivity activity) {
+		if (activity.getAchievoId().equals("29170")) return "8444";
+		return "5461";
+	}
+
+	private static String determineAchievoPackageId(WorkActivity activity) {
+		if (activity.getAchievoId().equals("29170")) return "10577";
+		return "10282";
 	}
 
 	private static String determineAchievoIdByText(String text) {
