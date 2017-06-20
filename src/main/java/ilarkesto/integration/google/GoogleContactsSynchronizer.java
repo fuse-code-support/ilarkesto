@@ -245,15 +245,32 @@ public class GoogleContactsSynchronizer {
 		}
 
 		public void addSkipped(ContactEntry gContact, String gModified, String lModified) {
-			skipped.add(new SyncProtocolEntry(gContact, "gTime: " + gModified + " | lTime: " + lModified));
+			skipped.add(new SyncProtocolEntry(gContact, time(gModified, lModified) + dump(gContact)));
 		}
 
 		public void addUpdated(ContactEntry gContact, String gModified, String lModified) {
-			updated.add(new SyncProtocolEntry(gContact, "gTime: " + gModified + " | lTime: " + lModified));
+			updated.add(new SyncProtocolEntry(gContact, time(gModified, lModified) + dump(gContact)));
 		}
 
 		public void addCreated(ContactEntry gContact) {
-			created.add(new SyncProtocolEntry(gContact, null));
+			created.add(new SyncProtocolEntry(gContact, dump(gContact)));
+		}
+
+		private String dump(ContactEntry gContact) {
+			MultilineBuilder mb = new MultilineBuilder();
+			mb.setLinePrefix("-- ");
+			for (Map.Entry<String, Object> entry : Google.getAllProperties(gContact).entrySet()) {
+				Object value = entry.getValue();
+				if (value == null) continue;
+				if ((value instanceof Collection) && ((Collection) value).isEmpty()) continue;
+				mb.ln(entry.getKey() + ":", value);
+			}
+			return "\n" + mb.toString();
+		}
+
+		private String time(String gModified, String lModified) {
+			return gModified.equals(lModified) ? "time: " + gModified
+					: "gTime: " + gModified + " | lTime: " + lModified;
 		}
 
 		@Override
@@ -275,9 +292,10 @@ public class GoogleContactsSynchronizer {
 		}
 
 		private void appendList(MultilineBuilder mb, String label, Collection<SyncProtocolEntry> list) {
-			mb.ln(label + ":", list.size());
+			mb.ln("\n= " + label + " (" + list.size() + ") =");
 			for (SyncProtocolEntry contact : Utl.sort(list, comparator)) {
 				mb.ln("*", contact.toString());
+				mb.ln();
 			}
 		}
 
