@@ -235,7 +235,8 @@ public abstract class Servlet {
 	}
 
 	public static void setFilename(String fileName, HttpServletResponse httpResponse) {
-		httpResponse.setHeader("Content-Disposition", "attachment; filename=" + Str.encodeUrlParameter(fileName));
+		httpResponse.setHeader("Content-Disposition",
+			"attachment; filename=\"" + Str.encodeUrlParameter(fileName) + "\"");
 	}
 
 	public static final String getContextPath(ServletConfig servletConfig) {
