@@ -21,9 +21,7 @@ import ilarkesto.core.persistance.AEntity;
 import ilarkesto.core.persistance.Entity;
 import ilarkesto.core.persistance.EntityDoesNotExistException;
 import ilarkesto.core.persistance.Transient;
-import ilarkesto.core.time.Date;
 import ilarkesto.core.time.DateAndTime;
-import ilarkesto.core.time.Time;
 import ilarkesto.io.AFileStorage;
 import ilarkesto.io.IO;
 import ilarkesto.json.JsonMapper;
@@ -40,6 +38,7 @@ import java.util.Map;
 public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend {
 
 	protected AFileStorage storage;
+	protected AFileStorage logStorage;
 
 	protected abstract AEntityJsonFileUpgrades createUpgrader();
 
@@ -50,10 +49,9 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 	private DateAndTime loadTime;
 	private DateAndTime lastSaveTime;
 
-	private boolean writeLog = true;
-
-	public AJsonFilesEntitiesBackend(AFileStorage storage) {
+	public AJsonFilesEntitiesBackend(AFileStorage storage, AFileStorage logStorage) {
 		this.storage = storage;
+		this.logStorage = logStorage;
 		load();
 	}
 
@@ -159,7 +157,7 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 			}
 		}
 
-		if (writeLog) writeLog(modifiedPropertiesByEntityIds, deleted, transactionText);
+		writeLog(modifiedPropertiesByEntityIds, deleted, transactionText);
 
 		log.info("Entity changes saved:", rt.getRuntimeFormated(), "(" + saveCount, "saved,", deleteCount, "deleted)");
 
@@ -171,12 +169,14 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 
 	private void writeLog(Map<String, Map<String, String>> modifiedPropertiesByEntityIds, Collection<String> deleted,
 			String transactionText) {
+		File file = getLogFile();
+		if (file == null) return;
 		JsonObject json = new JsonObject();
 		json.put("time", DateAndTime.now().toString());
 		json.put("txMessage", transactionText);
 		json.put("deleted", deleted);
 		json.put("modified", modifiedPropertiesByEntityIds);
-		json.write(getLogFile(), true);
+		json.write(file, true);
 	}
 
 	@Override
@@ -210,11 +210,10 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 	}
 
 	private File getLogFile() {
+		if (logStorage == null) return null;
 		long ct = System.currentTimeMillis();
 		DateAndTime dateAndTime = new DateAndTime(ct);
-		Date date = dateAndTime.getDate();
-		Time time = dateAndTime.getTime();
-		return storage.getFile("_log/" + date.formatYearMonthDay() + "/" + time.formatLog() + "_" + ct + ".json");
+		return logStorage.getFile(dateAndTime.formatLog() + "_" + ct + ".json");
 	}
 
 	@Override
