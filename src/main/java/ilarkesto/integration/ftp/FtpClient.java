@@ -185,8 +185,8 @@ public class FtpClient {
 		}
 
 		try {
-			if (deleteRemotey) deleteFile(path);
 			IO.move(tmpFile, destination, true);
+			if (deleteRemotey) deleteFile(path);
 		} finally {
 			IO.deleteQuiet(tmpFile);
 		}
