@@ -1722,4 +1722,16 @@ public abstract class IO {
 		return true;
 	}
 
+	public static void touchAndDeleteInDir(File dir) {
+		File file = new File(dir.getPath() + "/touch-and-delete_" + System.currentTimeMillis() + ".txt");
+		FileOutputStream out;
+		try {
+			out = new FileOutputStream(file, true);
+			out.close();
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+		IO.delete(file);
+	}
+
 }
