@@ -260,16 +260,19 @@ public abstract class AApplication {
 
 					if (runOnShutdown) {
 
-						Persistence.runInTransaction("shutdown", new Runnable() {
+						try {
+							Persistence.runInTransaction("shutdown", new Runnable() {
 
-							@Override
-							public void run() {
-								onShutdown();
-							}
-						});
+								@Override
+								public void run() {
+									onShutdown();
+								}
+							});
+						} catch (Exception ex) {
+							onShutdown();
+						}
 
 					}
-
 					getTaskManager().shutdown(10000);
 					Set<ATask> tasks = getTaskManager().getRunningTasks();
 					if (!tasks.isEmpty()) {
