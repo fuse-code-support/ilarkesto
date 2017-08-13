@@ -60,17 +60,17 @@ public class GoogleContactsSynchronizer {
 					@Override
 					public void updateGoogleContactFields(String contact, ContactEntry gContact) {
 						Google.setEmail(gContact, "test@test.com", null, Google.EmailRel.HOME, true);
-						gContact.addOrganization(Google.createOrganization("Test GmbH", "Badass"));
+						gContact.addOrganization(Google.createOrganization("Testü GmbH", "Badassü"));
 						gContact.addUserDefinedField(
-							Google.createUserDefinedField("Ilarkesto Test", "Ein\nZweizeiler"));
+							Google.createUserDefinedField("Ilarkesto Test", "Ein\nZweizeilerü"));
 						gContact.setBirthday(Google.createBirthday(new Date(1979, 8, 3)));
-						Google.setAddress(gContact, "Unter Franke 1", "31737", "Rinteln", "DE", "Deutschland", "",
+						Google.setAddress(gContact, "Unter Frankü 1", "31737", "Rinteln", "DE", "Deutschland", "",
 							AddressRel.WORK, false);
 					}
 
 					@Override
 					public Set<String> getContacts() {
-						return Utl.toSet("Test1", "Test2");
+						return Utl.toSet("Test1_" + System.currentTimeMillis(), "Test2_" + System.currentTimeMillis());
 					}
 
 					@Override
