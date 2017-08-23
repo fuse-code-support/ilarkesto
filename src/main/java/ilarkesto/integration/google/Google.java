@@ -836,6 +836,7 @@ public class Google {
 	public static ContactsService createContactsService(LoginDataProvider login, String clientApplicationId) {
 		LoginData loginData = login.getLoginData();
 		ContactsService contactsService = new ContactsService(clientApplicationId);
+		contactsService.getRequestFactory().setHeader("User-Agent", "Ilarkesto");
 		try {
 			contactsService.setHeader("GData-Version", "3.0");
 			contactsService.setUserCredentials(loginData.getLogin(), loginData.getPassword());
