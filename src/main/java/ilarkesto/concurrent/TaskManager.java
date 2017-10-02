@@ -77,6 +77,10 @@ public class TaskManager {
 		abortAllRunningTasks();
 		waitForRunningTasks(waitUntilKill);
 		executorService.shutdownNow();
+
+		for (ATask task : getRunningTasks()) {
+			task.stopThread();
+		}
 	}
 
 	public Set<ATask> getScheduledTasks() {
