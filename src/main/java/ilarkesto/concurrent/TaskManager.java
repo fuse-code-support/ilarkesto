@@ -79,6 +79,9 @@ public class TaskManager {
 		executorService.shutdownNow();
 
 		for (ATask task : getRunningTasks()) {
+			Thread thread = task.getThread();
+			if (thread == null) continue;
+			thread.setDaemon(true);
 			task.stopThread();
 		}
 	}
