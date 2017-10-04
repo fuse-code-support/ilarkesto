@@ -160,7 +160,10 @@ public abstract class AApplication {
 				getApplicationConfig();
 			} catch (Throwable ex) {
 				startupFailed = true;
-				throw new RuntimeException("Application startup failed. Loading configuration failed.", ex);
+				RuntimeException ret = new RuntimeException("Application startup failed. Loading configuration failed.",
+						ex);
+				onApplicationStartupFailed(ret);
+				throw ret;
 			}
 
 			try {
@@ -181,7 +184,10 @@ public abstract class AApplication {
 			} catch (Throwable ex) {
 				startupFailed = true;
 				shutdown(false);
-				throw new RuntimeException("Application startup failed. Initializing persistence failed.", ex);
+				RuntimeException ret = new RuntimeException(
+						"Application startup failed. Initializing persistence failed.", ex);
+				onApplicationStartupFailed(ret);
+				throw ret;
 			}
 
 			log.info("Ensuring application integrity");
@@ -196,7 +202,10 @@ public abstract class AApplication {
 			} catch (Throwable ex) {
 				startupFailed = true;
 				shutdown(false);
-				throw new RuntimeException("Application startup failed. Data integrity check or repair failed.", ex);
+				RuntimeException ret = new RuntimeException(
+						"Application startup failed. Data integrity check or repair failed.", ex);
+				onApplicationStartupFailed(ret);
+				throw ret;
 			}
 
 			try {
@@ -211,7 +220,9 @@ public abstract class AApplication {
 			} catch (Throwable ex) {
 				startupFailed = true;
 				shutdown(false);
-				throw new RuntimeException("Application startup failed.", ex);
+				RuntimeException ret = new RuntimeException("Application startup failed.", ex);
+				onApplicationStartupFailed(ret);
+				throw ret;
 			}
 
 			try {
@@ -219,7 +230,9 @@ public abstract class AApplication {
 			} catch (Throwable ex) {
 				startupFailed = true;
 				shutdown(true);
-				throw new RuntimeException("Application startup failed.", ex);
+				RuntimeException ret = new RuntimeException("Application startup failed.", ex);
+				onApplicationStartupFailed(ret);
+				throw ret;
 			}
 
 			if (isPreventProcessEnd()) {
@@ -238,6 +251,8 @@ public abstract class AApplication {
 			}
 		}
 	}
+
+	protected void onApplicationStartupFailed(RuntimeException ret) {}
 
 	protected boolean isPreventProcessEnd() {
 		return false;
