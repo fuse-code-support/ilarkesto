@@ -294,6 +294,7 @@ public class FtpClient {
 	}
 
 	public void createDir(String path) {
+		if (path == null) return;
 		if (existsDir(path)) return;
 		log.info("Create dir:", path);
 		boolean created;
