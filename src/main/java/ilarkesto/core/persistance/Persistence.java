@@ -64,11 +64,11 @@ public class Persistence {
 	public static void runInTransaction(String name, Runnable runnable, Runnable runAfterCommited) {
 		// log.debug("runInTransaction()", name, "->", runnable.getClass());
 
-		// if (transactionManager == null) {
-		// runnable.run();
-		// if (runAfterCommited != null) runAfterCommited.run();
-		// return;
-		// }
+		if (transactionManager == null) {
+			runnable.run();
+			if (runAfterCommited != null) runAfterCommited.run();
+			return;
+		}
 
 		final ATransaction transaction = transactionManager.createWriteTransaction(name);
 		boolean autoCommit = transaction.isAutoCommit();
