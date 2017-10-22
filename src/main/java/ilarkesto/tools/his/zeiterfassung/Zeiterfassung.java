@@ -139,20 +139,33 @@ public class Zeiterfassung {
 			for (WorkActivity activity : day.getActivities()) {
 				if (!activity.isBookingRequired()) continue;
 
-				if (activity.getAchievoPhaseId() == null) {
+				String phaseId = activity.getAchievoPhaseId();
+				if (phaseId == null) {
 					String hiszillaId = activity.getHiszillaId();
 					if (hiszillaId != null) {
-						activity.setAchievoPhaseId(determineAchievoPhaseIdByHiszillaId(hiszillaId, activity.getText()));
+						phaseId = determineAchievoPhaseIdByHiszillaId(hiszillaId, activity.getText());
 					} else {
-						String id = determineAchievoPhaseIdByText(activity.getText());
-						activity.setAchievoPhaseId(id);
+						phaseId = determineAchievoPhaseIdByText(activity.getText());
 					}
 				}
+				if (day.getDate().getPeriodToToday().toDays() < 60 && phaseId == null)
+					throw new RuntimeException("Missing $-Id in " + day + " " + activity);
+				if (phaseId != null) {
+					phaseId = convertAchievoPhaseId(phaseId, activity);
+				}
+				activity.setAchievoPhaseId(phaseId);
 
 				activity.setAchievoPackageId(determineAchievoPackageId(activity, day.getDate()));
 				activity.setAchievoProjectId(determineAchievoProjectId(activity));
 			}
 		}
+	}
+
+	private static String convertAchievoPhaseId(String id, WorkActivity activity) {
+		if (id.equals("QS")) return "32054";
+		if (id.equals("FDU")) return "32056";
+
+		return id;
 	}
 
 	private static String determineAchievoProjectId(WorkActivity activity) {

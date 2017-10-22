@@ -34,6 +34,11 @@ public class DayAtWork implements Comparable<DayAtWork> {
 		date = new Date(line.substring(0, line.indexOf(" ")));
 	}
 
+	@Override
+	public String toString() {
+		return date.toString();
+	}
+
 	public TimePeriod getWorkTime() {
 		TimePeriod ret = new TimePeriod();
 		for (WorkActivity activity : activities) {
