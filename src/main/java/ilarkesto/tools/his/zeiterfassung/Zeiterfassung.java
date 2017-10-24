@@ -165,6 +165,8 @@ public class Zeiterfassung {
 		if (id.equals("QS")) return "32054";
 		if (id.equals("FDU")) return "32056";
 
+		if (id.equals("QS-17.06")) return "32053";
+
 		return id;
 	}
 

@@ -74,6 +74,9 @@ public abstract class JavaLogging {
 		if (idx > 0) {
 			loggerName = loggerName.substring(idx + 1);
 		}
+
+		if ("UploadServlet".equals(loggerName)) return; // reports FATAL without reason
+
 		Log logger = Log.get(loggerName);
 		logger.log(toLevel(record.getLevel()), "[JavaLogging]", getMessage(record));
 	}
