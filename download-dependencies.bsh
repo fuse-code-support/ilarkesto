@@ -110,3 +110,5 @@ mavendownload commons-logging commons-logging 1.2
 mavendownload commons-net commons-net 3.3
 mavendownload commons-codec commons-codec 1.10
 
+servistodownload asterisk-java-1.0.0.final.jar
+
