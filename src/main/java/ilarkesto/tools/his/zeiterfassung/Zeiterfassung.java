@@ -36,6 +36,8 @@ import java.util.Map.Entry;
 
 public class Zeiterfassung {
 
+	private static final Date BEGIN_2018_06 = new Date(2017, 11, 16);
+
 	private static List<DayAtWork> days = new ArrayList<DayAtWork>();
 	private static DayAtWork currentDay;
 	private static boolean hiszillaLineReached;
@@ -151,7 +153,7 @@ public class Zeiterfassung {
 				if (day.getDate().getPeriodToToday().toDays() < 60 && phaseId == null)
 					throw new RuntimeException("Missing $-Id in " + day + " " + activity);
 				if (phaseId != null) {
-					phaseId = convertAchievoPhaseId(phaseId, activity);
+					phaseId = convertAchievoPhaseId(phaseId, activity, day);
 				}
 				activity.setAchievoPhaseId(phaseId);
 
@@ -161,7 +163,13 @@ public class Zeiterfassung {
 		}
 	}
 
-	private static String convertAchievoPhaseId(String id, WorkActivity activity) {
+	private static String convertAchievoPhaseId(String id, WorkActivity activity, DayAtWork day) {
+		if (day.getDate().isSameOrAfter(BEGIN_2018_06)) {
+			if (id.equals("FDU")) return "33181";
+			if (id.equals("ERW")) return "33093";
+			if (id.equals("QS")) return "33095";
+		}
+
 		if (id.equals("FDU")) return "32056";
 		if (id.equals("ERW")) return "32052";
 		if (id.equals("QS")) return "32054";
@@ -173,7 +181,7 @@ public class Zeiterfassung {
 	private static String determineAchievoProjectId(WorkActivity activity) {
 		String text = activity.getText();
 
-		if ("Sprint Retrospective".equals(text)) return "8444";
+		if ("Sprint Retrospektive".equals(text)) return "8444";
 		if ("29170".equals(activity.getAchievoPhaseId())) return "8444";
 
 		return "5461";
@@ -182,7 +190,7 @@ public class Zeiterfassung {
 	private static String determineAchievoPackageId(WorkActivity activity, Date date) {
 		String text = activity.getText();
 
-		if ("Sprint Retrospective".equals(text)) return "10577";
+		if ("Sprint Retrospektive".equals(text)) return "10577";
 		if ("29170".equals(activity.getAchievoPhaseId())) return "10577";
 
 		if (date.isBefore(new Date(2017, 7, 24))) return "10282";
@@ -191,9 +199,10 @@ public class Zeiterfassung {
 
 	private static String determineAchievoPhaseIdByText(String text) {
 
-		if ("Sprint Retrospecitve".equals(text)) return "29170";
-		if ("Daily Scrum".equals(text)) return "32052";
-		if ("Product Backlog Refinement".equals(text)) return "32056";
+		if ("Sprint Retrospektive".equals(text)) return "29170";
+		if ("Sprint Planning".equals(text)) return "ERW";
+		if ("Daily Scrum".equals(text)) return "ERW";
+		if ("Product Backlog Refinement".equals(text)) return "FDU";
 
 		if (!hiszillaLineReached) System.out.println("Achievo-ID fehlt. Text: " + text);
 		return null;
