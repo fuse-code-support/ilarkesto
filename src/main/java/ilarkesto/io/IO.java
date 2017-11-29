@@ -15,7 +15,6 @@
 package ilarkesto.io;
 
 import ilarkesto.core.base.Str;
-import ilarkesto.net.HttpDownloader;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -1544,9 +1543,6 @@ public abstract class IO {
 		return downloadUrlToString(url, ISO_LATIN_1);
 	}
 
-	/**
-	 * @see HttpDownloader
-	 */
 	@Deprecated
 	public static String downloadUrlToString(String url, String charset) {
 		return downloadUrlToString(url, charset, null, null);
