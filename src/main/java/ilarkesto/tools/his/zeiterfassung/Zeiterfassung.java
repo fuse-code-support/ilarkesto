@@ -201,6 +201,7 @@ public class Zeiterfassung {
 
 		if ("Sprint Retrospektive".equals(text)) return "29170";
 		if ("Sprint Planning".equals(text)) return "ERW";
+		if ("Sprint Review".equals(text)) return "ERW";
 		if ("Daily Scrum".equals(text)) return "ERW";
 		if ("Product Backlog Refinement".equals(text)) return "FDU";
 
