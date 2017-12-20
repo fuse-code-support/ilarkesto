@@ -310,7 +310,7 @@ public class FtpClient {
 		} catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
-		if (!created) throw new RuntimeException("Creating directory failed: " + path);
+		if (!created) throw new RuntimeException("Creating directory failed: " + path + ". " + client.getReplyString());
 
 		chmod(chmodForCreatedDirs, path);
 	}
