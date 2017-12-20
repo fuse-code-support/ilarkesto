@@ -14,8 +14,10 @@
  */
 package ilarkesto.persistence.file;
 
+import ilarkesto.core.base.MultilineBuilder;
 import ilarkesto.core.base.RuntimeTracker;
 import ilarkesto.core.base.Str;
+import ilarkesto.core.base.Utl;
 import ilarkesto.core.persistance.ACachingEntitiesBackend;
 import ilarkesto.core.persistance.AEntity;
 import ilarkesto.core.persistance.Entity;
@@ -32,6 +34,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -216,6 +220,54 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 		return logStorage.getFile(dateAndTime.formatLog() + "_" + ct + ".json");
 	}
 
+	public List<JsonObject> getLogsWithEntity(String entityId) {
+		ArrayList<JsonObject> ret = new ArrayList<JsonObject>();
+
+		File rootDir = logStorage.getDir().getParentFile();
+		log.info("Scanning for log dirs:", rootDir);
+		for (File dir : IO.listFiles(rootDir)) {
+			if (!dir.isDirectory()) continue;
+			log.info("Scanning for log files:", dir);
+			for (File file : IO.listFiles(dir)) {
+				if (!file.isFile()) continue;
+				if (!file.getName().endsWith(".json")) continue;
+				JsonObject json = JsonObject.loadFile(file);
+				if (logContainsEntity(json, entityId)) ret.add(json);
+			}
+		}
+
+		Collections.sort(ret, logsByTimeComparator);
+		return ret;
+	}
+
+	private boolean logContainsEntity(JsonObject json, String entityId) {
+		List<String> deleted = json.getArrayOfStrings("deleted");
+		if (deleted != null && deleted.contains(entityId)) return true;
+
+		JsonObject modified = json.getObject("modified");
+		if (modified != null) {
+			if (modified.contains(entityId)) return true;
+
+			for (String prop : modified.getProperties()) {
+				if (prop.endsWith("Ids") || prop.endsWith("Id")) {
+					String ids = modified.getString(prop);
+					if (ids != null && ids.contains(entityId)) return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public String getLogsWithEntityAsString(String entityId) {
+		MultilineBuilder mb = new MultilineBuilder();
+		for (JsonObject json : getLogsWithEntity(entityId)) {
+			if (!mb.isEmpty()) mb.ln("\n----------------------------------------\n");
+			mb.ln(json.toFormatedString());
+		}
+		return mb.toString();
+	}
+
 	@Override
 	public String createInfo() {
 		StringBuilder sb = new StringBuilder();
@@ -231,5 +283,13 @@ public abstract class AJsonFilesEntitiesBackend extends ACachingEntitiesBackend 
 
 		return sb.toString();
 	}
+
+	public static final Comparator<JsonObject> logsByTimeComparator = new Comparator<JsonObject>() {
+
+		@Override
+		public int compare(JsonObject a, JsonObject b) {
+			return Utl.compare(a.getString("time"), b.getString("time"));
+		}
+	};
 
 }
