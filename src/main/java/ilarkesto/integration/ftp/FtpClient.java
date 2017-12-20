@@ -296,6 +296,13 @@ public class FtpClient {
 	public void createDir(String path) {
 		if (path == null) return;
 		if (existsDir(path)) return;
+
+		int sepIdx = path.lastIndexOf('/');
+		if (sepIdx > 0) {
+			String parent = path.substring(0, sepIdx);
+			createDir(parent);
+		}
+
 		log.info("Create dir:", path);
 		boolean created;
 		try {
