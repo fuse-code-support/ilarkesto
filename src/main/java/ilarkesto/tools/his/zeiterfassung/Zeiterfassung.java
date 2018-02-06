@@ -147,7 +147,7 @@ public class Zeiterfassung {
 					if (hiszillaId != null) {
 						phaseId = determineAchievoPhaseIdByHiszillaId(hiszillaId, activity.getText());
 					} else {
-						phaseId = determineAchievoPhaseIdByText(activity.getText());
+						phaseId = determineAchievoPhaseIdByText(activity.getText(), day);
 					}
 				}
 				if (day.getDate().getPeriodToToday().toDays() < 60 && phaseId == null)
@@ -157,8 +157,8 @@ public class Zeiterfassung {
 				}
 				activity.setAchievoPhaseId(phaseId);
 
-				activity.setAchievoPackageId(determineAchievoPackageId(activity, day.getDate()));
-				activity.setAchievoProjectId(determineAchievoProjectId(activity));
+				activity.setAchievoPackageId(determineAchievoPackageId(activity, day));
+				activity.setAchievoProjectId(determineAchievoProjectId(activity, day));
 			}
 		}
 	}
@@ -178,8 +178,14 @@ public class Zeiterfassung {
 		return id;
 	}
 
-	private static String determineAchievoProjectId(WorkActivity activity) {
+	private static String determineAchievoProjectId(WorkActivity activity, DayAtWork day) {
+		// Projekt Nr
+
 		String text = activity.getText();
+
+		if (day.getDate().isSameOrAfter(BEGIN_2018_06)) {
+			if ("Sprint Retrospektive".equals(text)) return "8535";
+		}
 
 		if ("Sprint Retrospektive".equals(text)) return "8444";
 		if ("29170".equals(activity.getAchievoPhaseId())) return "8444";
@@ -187,17 +193,28 @@ public class Zeiterfassung {
 		return "5461";
 	}
 
-	private static String determineAchievoPackageId(WorkActivity activity, Date date) {
+	private static String determineAchievoPackageId(WorkActivity activity, DayAtWork day) {
+		// Aufgabenpaket Nr
+
 		String text = activity.getText();
+
+		if (day.getDate().isSameOrAfter(BEGIN_2018_06)) {
+			if ("Sprint Retrospektive".equals(text)) return "11211";
+		}
 
 		if ("Sprint Retrospektive".equals(text)) return "10577";
 		if ("29170".equals(activity.getAchievoPhaseId())) return "10577";
 
-		if (date.isBefore(new Date(2017, 7, 24))) return "10282";
+		if (day.getDate().isBefore(new Date(2017, 7, 24))) return "10282";
 		return "11025";
 	}
 
-	private static String determineAchievoPhaseIdByText(String text) {
+	private static String determineAchievoPhaseIdByText(String text, DayAtWork day) {
+		// Aufgabe Nr
+
+		if (day.getDate().isSameOrAfter(BEGIN_2018_06)) {
+			if ("Sprint Retrospektive".equals(text)) return "31890";
+		}
 
 		if ("Sprint Retrospektive".equals(text)) return "29170";
 		if ("Sprint Planning".equals(text)) return "ERW";

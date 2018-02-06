@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+FOLDER="share"
+NAME=$1
+
+cd /var/git
+cd $FOLDER
+
+mkdir $NAME
+cd $NAME
+git init
+
+echo "target" > .gitignore
+git add .gitignore
+git commit -m init
+
+cd ..
+git clone --bare $NAME $NAME.git
+rm -rf $NAME
+sudo chgrp devs $NAME.git
