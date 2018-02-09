@@ -51,7 +51,7 @@ public abstract class AFileChangeWatchTask extends ALoopTask {
 			NIO.registerDirectoryTreeForAllChanges(watcher, root);
 		} catch (IOException ex) {
 			watcher = null;
-			log.info("Offline:", root);
+			log.info("Connecting failed. Offline:", root.getAbsolutePath(), ex);
 			return;
 		}
 
@@ -97,14 +97,14 @@ public abstract class AFileChangeWatchTask extends ALoopTask {
 
 		key.pollEvents();
 		if (!key.reset()) {
-			log.info("Offline:", root);
+			log.info("Reset failed. Offline:", root);
 			watcher = null;
 			return;
 		}
 		try {
 			NIO.registerDirectoryTreeForAllChanges(watcher, root);
 		} catch (IOException ex) {
-			log.info("Offline:", root);
+			log.info("Reset failed. Offline:", root, ex);
 			watcher = null;
 			return;
 		}
