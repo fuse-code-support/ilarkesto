@@ -110,7 +110,7 @@ public abstract class AEditableSelectManyField extends AEditableField {
 	}
 
 	protected boolean isShowAsTable(Collection<String> optionKeys) {
-		return showAsTable || optionKeys.size() >= 23;
+		return showAsTable || optionKeys.size() >= 17;
 	}
 
 	public AEditableSelectManyField setShowAsTable(boolean showAsTable) {
