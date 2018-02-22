@@ -69,6 +69,9 @@
 	<classpathentry exported="true" kind="lib" path="lib/xmlbeans-2.6.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xstream-1.4.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jbcrypt-0.3m.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/clojure-1.9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spec.alpha-0.1.143.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/core.specs.alpha-0.1.24.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
