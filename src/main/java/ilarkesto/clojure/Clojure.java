@@ -28,14 +28,10 @@ public class Clojure {
 		System.out.println(myFunction.invoke(Arrays.asList(1, 2, 3, 5, 8, 13)));
 	}
 
-	private static IFn evalExpectFn(String clojureCode) {
-		return (IFn) eval(clojureCode);
-	}
-
 	public static final IFn loadString = clojure.java.api.Clojure.var("clojure.core", "load-string");
 
-	public static Object read(String s) {
-		return clojure.java.api.Clojure.read(s);
+	public static IFn evalExpectFn(String clojureCode) {
+		return (IFn) eval(clojureCode);
 	}
 
 	public static Object eval(String clojureCode) {
