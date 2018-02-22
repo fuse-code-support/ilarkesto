@@ -468,4 +468,12 @@ public abstract class Reflect {
 		return ret;
 	}
 
+	public static Class getClass(String chartClassName) {
+		try {
+			return Class.forName(chartClassName);
+		} catch (ClassNotFoundException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
 }
