@@ -95,27 +95,34 @@ public abstract class AApplication {
 			}
 			Persistence.initialize(backend, tm);
 
-			if (Persistence.backend != null) {
+			if (isEnsureIntegrityForAllEntities()) {
 
-				Persistence.runInTransaction("persistence-init", new Runnable() {
+				if (Persistence.backend != null) {
 
-					@Override
-					public void run() {
-						DaoService ds = getDaoService();
-						if (ds != null) {
-							ds.ensureIntegrity();
-						} else {
-							EntityIntegrityEnsurer.runForAll();
+					Persistence.runInTransaction("persistence-init", new Runnable() {
+
+						@Override
+						public void run() {
+							DaoService ds = getDaoService();
+							if (ds != null) {
+								ds.ensureIntegrity();
+							} else {
+								EntityIntegrityEnsurer.runForAll();
+							}
 						}
-					}
 
-				});
+					});
 
+				}
 			}
 
 		} else {
 			log.debug("No persistence backend");
 		}
+	}
+
+	public boolean isEnsureIntegrityForAllEntities() {
+		return true;
 	}
 
 	protected void ensureIntegrity() {}
