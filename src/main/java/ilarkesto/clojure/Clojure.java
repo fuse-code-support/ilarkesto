@@ -14,21 +14,30 @@
  */
 package ilarkesto.clojure;
 
-import java.util.Arrays;
+import java.util.HashMap;
 
 import clojure.lang.IFn;
 
 public class Clojure {
 
 	public static void main(String[] args) {
-		System.out.println(eval("(+ 2 3)"));
-		System.out.println(eval("(defn doit [] (println \"hello from clojure\") (+ 3 4))\n" + "(doit)"));
+		// System.out.println(eval("(+ 2 3)"));
+		// System.out.println(eval("(defn doit [] (println \"hello from clojure\") (+ 3 4))\n" + "(doit)"));
+		//
+		// IFn myFunction = evalExpectFn("(ns my.stuff) *ns* (defn html [input] (str input))");
+		// System.out.println(myFunction.invoke(Arrays.asList(1, 2, 3, 5, 8, 13)));
 
-		IFn myFunction = evalExpectFn("(ns my.stuff) *ns* (defn html [input] (str input))");
-		System.out.println(myFunction.invoke(Arrays.asList(1, 2, 3, 5, 8, 13)));
+		HashMap<String, Object> m = new HashMap<String, Object>();
+		m.put("a", "b");
+		spit("/home/witek/inbox/test.edn", m);
 	}
 
 	public static final IFn loadString = clojure.java.api.Clojure.var("clojure.core", "load-string");
+	public static final IFn spit = clojure.java.api.Clojure.var("clojure.core", "spit");
+
+	public static void spit(String file, Object o) {
+		spit.invoke(file, o);
+	}
 
 	public static IFn evalExpectFn(String clojureCode) {
 		return (IFn) eval(clojureCode);

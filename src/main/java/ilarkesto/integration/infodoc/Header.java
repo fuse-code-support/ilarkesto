@@ -63,11 +63,11 @@ public class Header extends AInfoDocElement {
 		if (ref == null) {
 			ret.put("text", text);
 		} else {
-			ret.put("ref", ref);
 			String alternativeTitle = getAlternativeTitle();
 			String title = Str.isBlank(alternativeTitle) ? referenceResolver.getTitle(ref) : alternativeTitle;
 			if (Str.isBlank(title)) title = "@" + ref;
-			ret.put("refTitle", title);
+			ret.put("text", title);
+			ret.put("ref", ref);
 		}
 		return ret;
 	}

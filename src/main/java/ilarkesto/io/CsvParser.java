@@ -276,13 +276,13 @@ public final class CsvParser {
 		this.quoted = quoted;
 	}
 
-	public CsvParser(File file, String encoding, boolean quoted) throws FileNotFoundException,
-			UnsupportedEncodingException {
+	public CsvParser(File file, String encoding, boolean quoted)
+			throws FileNotFoundException, UnsupportedEncodingException {
 		this(new FileInputStream(file), encoding, quoted);
 	}
 
-	public CsvParser(InputStream in, String encoding, boolean quoted) throws FileNotFoundException,
-			UnsupportedEncodingException {
+	public CsvParser(InputStream in, String encoding, boolean quoted)
+			throws FileNotFoundException, UnsupportedEncodingException {
 		this(new InputStreamReader(in, encoding), quoted);
 	}
 
@@ -291,6 +291,14 @@ public final class CsvParser {
 	public CsvParser setSeparator(char separator) {
 		this.separator = separator;
 		return this;
+	}
+
+	public void close() {
+		try {
+			in.close();
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 }

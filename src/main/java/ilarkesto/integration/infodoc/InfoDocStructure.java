@@ -61,12 +61,12 @@ public class InfoDocStructure {
 		}
 	}
 
-	public JsonObject toJsonObject(AReferenceResolver referenceResolver) {
-		JsonObject json = new JsonObject();
+	public Object toJsonObject(AReferenceResolver referenceResolver) {
+		List<JsonObject> ret = new ArrayList<JsonObject>();
 		for (AInfoDocElement element : elements) {
-			json.addToArray("elements", element.toJson(referenceResolver));
+			ret.add(element.toJson(referenceResolver));
 		}
-		return json;
+		return ret;
 	}
 
 	public String toHtml(AHtmlContext context, AReferenceResolver resolver) {
