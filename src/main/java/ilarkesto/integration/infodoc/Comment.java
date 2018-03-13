@@ -15,6 +15,7 @@
 package ilarkesto.integration.infodoc;
 
 import ilarkesto.core.base.Str;
+import ilarkesto.json.JsonObject;
 
 public class Comment extends AInfoDocElement {
 
@@ -31,6 +32,14 @@ public class Comment extends AInfoDocElement {
 		sb.append("\n<p style='" + context.getElementDepthStyle(getDepth()) + context.getCommentStyle() + "'>")
 				.append(Str.toHtml(text, true)).append("</p>\n");
 		return sb.toString();
+	}
+
+	@Override
+	public JsonObject toJson(AReferenceResolver referenceResolver) {
+		JsonObject ret = new JsonObject();
+		ret.put("type", "comment");
+		ret.put("text", text);
+		return ret;
 	}
 
 	public String getText() {
