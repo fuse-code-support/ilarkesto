@@ -64,7 +64,9 @@ public class InfoDocStructure {
 	public Object toJsonObject(AReferenceResolver referenceResolver) {
 		List<JsonObject> ret = new ArrayList<JsonObject>();
 		for (AInfoDocElement element : elements) {
-			ret.add(element.toJson(referenceResolver));
+			JsonObject jElement = element.toJson(referenceResolver);
+			jElement.put("prefix", element.getPrefix());
+			ret.add(jElement);
 		}
 		return ret;
 	}

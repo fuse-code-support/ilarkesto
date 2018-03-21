@@ -56,4 +56,9 @@ public abstract class AInfoDocElement {
 		return structure;
 	}
 
+	public String getPrefix() {
+		if (!isPrefixed() || !getStructure().isPrefixingRequired()) return null;
+		return AItemCounter.get(getDepth()).getNumber(getIndexInDepth());
+	}
+
 }
