@@ -44,7 +44,7 @@ public class Reference extends AInfoDocElement {
 	@Override
 	public JsonObject toJson(AReferenceResolver referenceResolver) {
 		JsonObject ret = new JsonObject();
-		ret.put("type", "header");
+		ret.put("type", "reference");
 		ret.put("depth", getDepth());
 		String ref = getRef();
 		ret.put("ref", ref);

@@ -38,7 +38,7 @@ public class Paragraph extends AInfoDocElement {
 	@Override
 	public JsonObject toJson(AReferenceResolver referenceResolver) {
 		JsonObject ret = new JsonObject();
-		ret.put("type", "header");
+		ret.put("type", "paragraph");
 		ret.put("depth", getDepth());
 		ret.put("text", text);
 		return ret;
