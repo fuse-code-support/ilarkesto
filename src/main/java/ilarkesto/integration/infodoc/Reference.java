@@ -51,7 +51,7 @@ public class Reference extends AInfoDocElement {
 		String alternativeTitle = getAlternativeTitle();
 		String title = Str.isBlank(alternativeTitle) ? referenceResolver.getTitle(ref) : alternativeTitle;
 		if (Str.isBlank(title)) title = "@" + ref;
-		ret.put("refTitle", title);
+		ret.put("text", title);
 		return ret;
 	}
 
