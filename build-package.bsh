@@ -38,6 +38,23 @@ if [ $? != 0 ]; then exit 1; fi
 
 
 
+
+echo "building clj-boot Scripts"
+cd $SRC/src/main/boot-clj
+for file in $( find . -name '*.clj' )
+do
+    file=${file#./}
+    filename=${file%.clj}
+    echo " > ${filename}"
+    destfile=$DEST_BIN/$filename
+    cp $file $destfile
+    if [ $? != 0 ]; then exit 1; fi
+done
+chmod 555 $DEST_BIN/*
+if [ $? != 0 ]; then exit 1; fi
+
+
+
 echo "building additional bash-Scripts"
 DEST_TOOLS=$SRC/build/ilarkesto/tools
 mkdir -p $DEST_TOOLS

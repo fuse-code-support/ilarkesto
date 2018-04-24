@@ -55,10 +55,11 @@
 
 (defn create-rss-item [item]
   (let [title (get-in item [:snippet :title])
+        description (get-in item [:snippet :description])
         video-id (get-in item [:contentDetails :videoId])]
     {:tag :item
-     :content [{:tag :description :content [title]}
-               {:tag :title :content [(get-in item [:snippet :title])]}
+     :content [{:tag :title :content [title]}
+               {:tag :description :content [description]}
                {:tag :guid :content [(str "youtubepodcast-" video-id)]}
                {:tag :enclosure :attrs {:url (str "http://servisto.de/youtube-podcast/resrever/"
                                                   video-id
