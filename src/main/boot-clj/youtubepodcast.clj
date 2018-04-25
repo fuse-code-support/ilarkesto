@@ -93,8 +93,8 @@
                                           {:tag :description :content ["Witek's Youtube Podcast"]}
                                           {:tag :image :content [{:tag :url :content ["https://www.chirbit.com/images/learn-more-youtube-to-audio.png"]}
                                                                  {:tag :title :content ["Youtube Podcast"]}
-                                                                 {:tag :link :content ["https://www.chirbit.com/images/learn-more-youtube-to-audio.png"]}]}]
-                                         {:tag :link :content ["http://servisto.de/youtbe-podcast/resrever/"]}
+                                                                 {:tag :link :content ["https://www.chirbit.com/images/learn-more-youtube-to-audio.png"]}]}
+                                          {:tag :link :content ["http://servisto.de/youtbe-podcast/resrever/"]}]
                                          (map create-rss-item items))}]})))
 
 (defn write-feed [items]
