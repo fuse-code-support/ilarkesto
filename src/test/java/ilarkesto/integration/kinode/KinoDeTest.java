@@ -16,39 +16,36 @@ package ilarkesto.integration.kinode;
 
 import ilarkesto.core.time.Date;
 import ilarkesto.core.time.Time;
-import ilarkesto.integration.kinode.KinoDe.Movie;
 import ilarkesto.testng.ATest;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.testng.annotations.Test;
-
 public class KinoDeTest extends ATest {
-
-	@Test
-	public void loadMovie() {
-		Movie movie = KinoDe.loadMovie("star-wars-das-erwachen-der-macht-2015", observer);
-		assertEquals(movie.title, "Star Wars: Das Erwachen der Macht");
-		assertEquals(movie.posterUrl,
-			"http://www.kino.de/wp-content/uploads/2015/12/star-wars-das-erwachen-der-macht-2015-filmplakat-rcm236x336u.jpg");
-	}
-
-	@Test
-	public void loadShowsRinteln() {
-		Consumer consumer = new Consumer();
-		KinoDe.loadShows(KinoDe.CINEMA_ID_RINTELN, consumer, observer);
-		assertNotEmpty(consumer.movieIds);
-		assertTrue(consumer.dates.size() > 1);
-	}
-
-	@Test
-	public void loadShowsBueckeburg() {
-		Consumer consumer = new Consumer();
-		KinoDe.loadShows(KinoDe.CINEMA_ID_BUECKEBURG, consumer, observer);
-		assertNotEmpty(consumer.movieIds);
-	}
+	//
+	// @Test
+	// public void loadMovie() {
+	// Movie movie = KinoDe.loadMovie("star-wars-das-erwachen-der-macht-2015", observer);
+	// assertEquals(movie.title, "Star Wars: Das Erwachen der Macht");
+	// assertEquals(movie.posterUrl,
+	// "http://www.kino.de/wp-content/uploads/2015/12/star-wars-das-erwachen-der-macht-2015-filmplakat-rcm236x336u.jpg");
+	// }
+	//
+	// @Test
+	// public void loadShowsRinteln() {
+	// Consumer consumer = new Consumer();
+	// KinoDe.loadShows(KinoDe.CINEMA_ID_RINTELN, consumer, observer);
+	// assertNotEmpty(consumer.movieIds);
+	// assertTrue(consumer.dates.size() > 1);
+	// }
+	//
+	// @Test
+	// public void loadShowsBueckeburg() {
+	// Consumer consumer = new Consumer();
+	// KinoDe.loadShows(KinoDe.CINEMA_ID_BUECKEBURG, consumer, observer);
+	// assertNotEmpty(consumer.movieIds);
+	// }
 
 	class Consumer implements MovieShowConsumer {
 

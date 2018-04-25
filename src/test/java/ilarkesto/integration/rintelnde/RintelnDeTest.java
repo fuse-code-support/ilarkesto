@@ -96,28 +96,28 @@ public class RintelnDeTest extends ATest {
 		}
 	}
 
-	@Test
-	public void downloadCalendarEntryFields() throws ParseException {
-		Map<String, String> event = RintelnDe.downloadCalendarEntryFields(5644, observer);
-		assertEquals(event.get(RintelnDe.CALENDAR_ENTRY_FIELD_LABEL),
-			"Gottesdienst in der Ev.-luth. St. Nikolai-Kirche Rinteln");
-		assertEquals(
-			event.get(RintelnDe.CALENDAR_ENTRY_FIELD_IMAGE_URL),
-			"http://v2.cos.commercio.de/assets/1b33a22b-a3f8-424b-a994-84e7245f0f0a/_resampled/SetRatioSize320240-16a11a30-aaf5-4f4d-badf-c881817a118f.jpg");
-		assertEquals(event.get("Termine"), "Wöchentlich am Sonntag ab 10:00 Uhr.");
-		assertEquals(event.get("Treffpunkt"), "St. Nikolai-Kirche, Kirchplatz, 31737 Rinteln");
-		assertEquals(event.get("Ort"), "Rinteln");
-		assertEquals(event.get("Organisator"), "Ev.-luth. St. Nikolai-Kirche Rinteln");
-		assertContains(event.get(RintelnDe.CALENDAR_ENTRY_FIELD_DESCRIPTION),
-			"Weitere Gottesdiensttermine auch auf der Homepage");
-	}
-
-	@Test
-	public void downloadCalendarEventIds() throws ParseException {
-		Collection<Integer> ids = RintelnDe.downloadCalendarEventIds(new Date(2014, 8, 4), observer);
-		assertContains(ids, 8305);
-		// assertSize(ids, 3);
-	}
+	// @Test
+	// public void downloadCalendarEntryFields() throws ParseException {
+	// Map<String, String> event = RintelnDe.downloadCalendarEntryFields(5644, observer);
+	// assertEquals(event.get(RintelnDe.CALENDAR_ENTRY_FIELD_LABEL),
+	// "Gottesdienst in der Ev.-luth. St. Nikolai-Kirche Rinteln");
+	// assertEquals(
+	// event.get(RintelnDe.CALENDAR_ENTRY_FIELD_IMAGE_URL),
+	// "http://v2.cos.commercio.de/assets/1b33a22b-a3f8-424b-a994-84e7245f0f0a/_resampled/SetRatioSize320240-16a11a30-aaf5-4f4d-badf-c881817a118f.jpg");
+	// assertEquals(event.get("Termine"), "Wöchentlich am Sonntag ab 10:00 Uhr.");
+	// assertEquals(event.get("Treffpunkt"), "St. Nikolai-Kirche, Kirchplatz, 31737 Rinteln");
+	// assertEquals(event.get("Ort"), "Rinteln");
+	// assertEquals(event.get("Organisator"), "Ev.-luth. St. Nikolai-Kirche Rinteln");
+	// assertContains(event.get(RintelnDe.CALENDAR_ENTRY_FIELD_DESCRIPTION),
+	// "Weitere Gottesdiensttermine auch auf der Homepage");
+	// }
+	//
+	// @Test
+	// public void downloadCalendarEventIds() throws ParseException {
+	// Collection<Integer> ids = RintelnDe.downloadCalendarEventIds(new Date(2014, 8, 4), observer);
+	// assertContains(ids, 8305);
+	// // assertSize(ids, 3);
+	// }
 
 	@Test
 	public void extractPageContentBoxes() {

@@ -135,105 +135,107 @@ public class TestDeTest extends ATest {
 		assertContainsNot(html, "Sie benötigen den Flash-Player");
 	}
 
-	@Test
-	public void removeSpamEbook() throws ParseException {
-		String html = TestDe.downloadPageHtml("E-Book-Reader-Duell-der-Nachfolger-4661050-0", observer);
-		html = TestDe.removeSpamFromPageHtml(html);
-		assertContains(html, "Wenn Sie den Test frei");
-		assertContains(html, "Eine Tabelle verr");
-		assertContainsNot(html, "Themenseiten");
-		assertContainsNot(html, "Stiftung Warentest Abonnements");
-		assertContainsNot(html, "Kompletten Artikel freischalten");
-		assertContainsNot(html, "Kommentare");
-		assertContainsNot(html, "Lesen Sie auf der nächsten Seite");
-		assertContainsNot(html, "Liste schließen");
-	}
+	// @Test
+	// public void removeSpamEbook() throws ParseException {
+	// String html = TestDe.downloadPageHtml("E-Book-Reader-Duell-der-Nachfolger-4661050-0", observer);
+	// html = TestDe.removeSpamFromPageHtml(html);
+	// assertContains(html, "Wenn Sie den Test frei");
+	// assertContains(html, "Eine Tabelle verr");
+	// assertContainsNot(html, "Themenseiten");
+	// assertContainsNot(html, "Stiftung Warentest Abonnements");
+	// assertContainsNot(html, "Kompletten Artikel freischalten");
+	// assertContainsNot(html, "Kommentare");
+	// assertContainsNot(html, "Lesen Sie auf der nächsten Seite");
+	// assertContainsNot(html, "Liste schließen");
+	// }
 
-	@Test
-	public void spendenorganisationen() throws ParseException {
-		ArticleRef ref = new ArticleRef(new Date(2014, 10, 14),
-				"Spenden­organisationen von Prominenten: So spenden Sie mit Herz und Verstand",
-				"Spendenorganisationen-von-Prominenten-So-spenden-Sie-mit-Herz-und-Verstand-4763391-4763411");
-		Article article = TestDe.downloadArticle(ref, observer);
-		log.info(article);
+	// @Test
+	// public void spendenorganisationen() throws ParseException {
+	// ArticleRef ref = new ArticleRef(new Date(2014, 10, 14),
+	// "Spenden­organisationen von Prominenten: So spenden Sie mit Herz und Verstand",
+	// "Spendenorganisationen-von-Prominenten-So-spenden-Sie-mit-Herz-und-Verstand-4763391-4763411");
+	// Article article = TestDe.downloadArticle(ref, observer);
+	// log.info(article);
+	//
+	// String summary = article.getSummary();
+	// assertContains(summary, "Ob von Hirschhausen, Klinsmann oder Lahm");
+	// }
 
-		String summary = article.getSummary();
-		assertContains(summary, "Ob von Hirschhausen, Klinsmann oder Lahm");
-	}
+	// @Test
+	// public void kindermatratzen() throws ParseException {
+	// ArticleRef ref = new ArticleRef(new Date(2014, 3, 3), "Kinder­matratzen: Ganz schön ausgeschlafen",
+	// "Kindermatratzen-Ganz-schoen-ausgeschlafen-4673558-0");
+	// Article article = TestDe.downloadArticle(ref, observer);
+	// log.info(article);
+	//
+	// String summary = article.getSummary();
+	// assertContains(summary, "Alle Testergebnisse für 12 Kindermatratzen finden Sie im");
+	// }
 
-	@Test
-	public void kindermatratzen() throws ParseException {
-		ArticleRef ref = new ArticleRef(new Date(2014, 3, 3), "Kinder­matratzen: Ganz schön ausgeschlafen",
-				"Kindermatratzen-Ganz-schoen-ausgeschlafen-4673558-0");
-		Article article = TestDe.downloadArticle(ref, observer);
-		log.info(article);
+	// @Test
+	// public void abrufkredit() throws ParseException {
+	// ArticleRef ref = new ArticleRef(new Date(2014, 2, 18),
+	// "Abruf­kredit: Diese Banken bieten güns­tige und flexible Kredite",
+	// "Abrufkredit-Diese-Banken-bieten-guenstige-und-flexible-Kredite-4667323-0");
+	// Article article = TestDe.downloadArticle(ref, observer);
+	// log.info(article);
+	// List<SubArticleRef> subArticles = article.getSubArticles();
+	// assertNotEmpty(subArticles);
+	// for (SubArticleRef sub : subArticles) {
+	// log.info(" ", sub);
+	// }
+	//
+	// String summary = article.getSummary();
+	// System.out.println(summary);
+	// assertContains(summary, "Der Abruf- oder Rahmenkredit ist ein Nischen");
+	// assertContains(summary,
+	// "Eine Tabelle nennt unter anderem die Höhe des Kreditrahmens, die Mindestrückzahlungsraten und den
+	// Effektiven Jahreszins des jeweiligen Angebots.");
+	// }
 
-		String summary = article.getSummary();
-		assertContains(summary, "Alle Testergebnisse für 12 Kindermatratzen finden Sie im");
-	}
+	// @Test
+	// public void pdfKatzenfutter() throws ParseException {
+	// ArticleRef ref = new ArticleRef(new Date(2014, 2, 27), "Katzenfutter: Drei sind sehr gut, sechs
+	// mangelhaft",
+	// "Katzenfutter-Drei-sind-sehr-gut-sechs-mangelhaft-4672532-0");
+	// TestDe.login(loginData, observer);
+	// try {
+	// Article article = TestDe.downloadArticle(ref, observer);
+	// assertEquals(article.getRef().getTitle(), "Katzenfutter: Drei sind sehr gut, sechs mangelhaft");
+	// List<SubArticleRef> subArticles = article.getSubArticles();
+	//
+	// SubArticleRef subArticlePdf = subArticles.get(13);
+	// assertEquals(subArticlePdf.getTitle(), "Artikel als PDF (8 Seiten)");
+	// assertTrue(subArticlePdf.isPdf());
+	//
+	// assertEquals(subArticlePdf.getPageRef(), "4673855_t201403080.pdf");
+	//
+	// File file = getTestOutputFile(ref.getPageRef() + ".pdf");
+	// TestDe.downloadPdf(subArticlePdf, ref, file, observer);
+	// assertTrue(file.exists());
+	// assertTrue(file.length() > 23000);
+	// log.info(file.getAbsolutePath());
+	// } finally {
+	// TestDe.logout(observer);
+	// }
+	// }
 
-	@Test
-	public void abrufkredit() throws ParseException {
-		ArticleRef ref = new ArticleRef(new Date(2014, 2, 18),
-				"Abruf­kredit: Diese Banken bieten güns­tige und flexible Kredite",
-				"Abrufkredit-Diese-Banken-bieten-guenstige-und-flexible-Kredite-4667323-0");
-		Article article = TestDe.downloadArticle(ref, observer);
-		log.info(article);
-		List<SubArticleRef> subArticles = article.getSubArticles();
-		assertNotEmpty(subArticles);
-		for (SubArticleRef sub : subArticles) {
-			log.info("  ", sub);
-		}
-
-		String summary = article.getSummary();
-		System.out.println(summary);
-		assertContains(summary, "Der Abruf- oder Rahmenkredit ist ein Nischen");
-		assertContains(summary,
-			"Eine Tabelle nennt unter anderem die Höhe des Kreditrahmens, die Mindestrückzahlungsraten und den Effektiven Jahreszins des jeweiligen Angebots.");
-	}
-
-	@Test
-	public void pdfKatzenfutter() throws ParseException {
-		ArticleRef ref = new ArticleRef(new Date(2014, 2, 27), "Katzenfutter: Drei sind sehr gut, sechs mangelhaft",
-				"Katzenfutter-Drei-sind-sehr-gut-sechs-mangelhaft-4672532-0");
-		TestDe.login(loginData, observer);
-		try {
-			Article article = TestDe.downloadArticle(ref, observer);
-			assertEquals(article.getRef().getTitle(), "Katzenfutter: Drei sind sehr gut, sechs mangelhaft");
-			List<SubArticleRef> subArticles = article.getSubArticles();
-
-			SubArticleRef subArticlePdf = subArticles.get(13);
-			assertEquals(subArticlePdf.getTitle(), "Artikel als PDF (8 Seiten)");
-			assertTrue(subArticlePdf.isPdf());
-
-			assertEquals(subArticlePdf.getPageRef(), "4673855_t201403080.pdf");
-
-			File file = getTestOutputFile(ref.getPageRef() + ".pdf");
-			TestDe.downloadPdf(subArticlePdf, ref, file, observer);
-			assertTrue(file.exists());
-			assertTrue(file.length() > 23000);
-			log.info(file.getAbsolutePath());
-		} finally {
-			TestDe.logout(observer);
-		}
-	}
-
-	@Test
-	public void druckertinte() throws ParseException {
-		ArticleRef ref = new ArticleRef(new Date(2014, 02, 7), "Druckertinten: Bis zu 90 Prozent Ersparnis",
-				"Druckertinten-Bis-zu-90-Prozent-Ersparnis-4673398-0");
-		TestDe.login(loginData, observer);
-		try {
-			Article article = TestDe.downloadArticle(ref, observer);
-			List<SubArticleRef> subArticles = article.getSubArticles();
-			assertSize(subArticles, 9);
-
-			SubArticleRef subArticlePdf = subArticles.get(8);
-			assertEquals(subArticlePdf.getTitle(), "Artikel als PDF (7 Seiten)");
-		} finally {
-			TestDe.logout(observer);
-		}
-	}
+	// @Test
+	// public void druckertinte() throws ParseException {
+	// ArticleRef ref = new ArticleRef(new Date(2014, 02, 7), "Druckertinten: Bis zu 90 Prozent Ersparnis",
+	// "Druckertinten-Bis-zu-90-Prozent-Ersparnis-4673398-0");
+	// TestDe.login(loginData, observer);
+	// try {
+	// Article article = TestDe.downloadArticle(ref, observer);
+	// List<SubArticleRef> subArticles = article.getSubArticles();
+	// assertSize(subArticles, 9);
+	//
+	// SubArticleRef subArticlePdf = subArticles.get(8);
+	// assertEquals(subArticlePdf.getTitle(), "Artikel als PDF (7 Seiten)");
+	// } finally {
+	// TestDe.logout(observer);
+	// }
+	// }
 
 	@Test
 	public void multipageDruckertinten() throws ParseException {

@@ -46,7 +46,7 @@ public class RintelnDe {
 
 	private static final String charset = IO.UTF_8;
 
-	public static final String URL_BASE = "http://www.rinteln.de/";
+	public static final String URL_BASE = "https://www.rinteln.de/";
 	public static final String URL_WEBCAM_IMAGE = "http://adx-cache.de/webcam/webcam.jpg";
 
 	public static final String PAGE_HOME = "home";

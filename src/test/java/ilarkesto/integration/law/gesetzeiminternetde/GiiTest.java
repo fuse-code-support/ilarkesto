@@ -83,14 +83,14 @@ public class GiiTest extends ATest {
 		assertContains(consumer.norms, urhg10);
 	}
 
-	@Test
-	public void testRfbv() {
-		BookRef ref = getBookIndex().getBookByCode("RfBVerordnungRfBV");
-		Book book = getGii().loadBook(ref);
-		assertEquals(book.getRef().getCode(), "RfBVerordnungRfBV");
-		assertEquals(book.getRef().getTitle(),
-			"Verordnung über den kollektiven Teil der Rückstellung für Beitragsrückerstattung");
-	}
+	// @Test
+	// public void testRfbv() {
+	// BookRef ref = getBookIndex().getBookByCode("RfBVerordnungRfBV");
+	// Book book = getGii().loadBook(ref);
+	// assertEquals(book.getRef().getCode(), "RfBVerordnungRfBV");
+	// assertEquals(book.getRef().getTitle(),
+	// "Verordnung über den kollektiven Teil der Rückstellung für Beitragsrückerstattung");
+	// }
 
 	@Test
 	public void testSgb10Kap12() {
@@ -119,7 +119,7 @@ public class GiiTest extends ATest {
 		assertNotNull(book);
 
 		List<Norm> norms = book.getAllNorms();
-		assertSize(norms, 538);
+		assertSize(norms, 546);
 	}
 
 	@Test
@@ -129,7 +129,7 @@ public class GiiTest extends ATest {
 		assertNotNull(book);
 
 		List<Norm> norms = book.getAllNorms();
-		assertSize(norms, 70);
+		assertSize(norms, 84);
 	}
 
 	@Test
@@ -137,7 +137,7 @@ public class GiiTest extends ATest {
 		BookRef ref = getBookIndex().getBookByCode("GG");
 		Book book = getGii().loadBook(ref);
 		assertNotNull(book);
-		assertSize(book.getAllNorms(), 199);
+		assertSize(book.getAllNorms(), 203);
 
 		Norm n76 = book.getNormByCodeNumber("76");
 		assertNotNull(n76);
@@ -164,7 +164,7 @@ public class GiiTest extends ATest {
 		assertEquals(book.getRef().getTitle(), "Straßenverkehrsgesetz");
 
 		List<Norm> norms = book.getAllNorms();
-		assertSize(norms, 102);
+		assertSize(norms, 109);
 
 		Norm n1 = norms.get(0);
 		assertStartsWith(n1.getTextAsString(), "(1) Kraftfahrzeuge ");
