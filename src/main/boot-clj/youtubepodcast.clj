@@ -67,14 +67,18 @@
 (defn create-rss-item [item]
   (let [title (->ascii (get-in item [:snippet :title]))
         description (->ascii (get-in item [:snippet :description]))
-        video-id (get-in item [:contentDetails :videoId])]
+        video-id (get-in item [:contentDetails :videoId])
+        file (io/as-file (str video-id ".mp3"))
+        length (.length file)]
     {:tag :item
      :content [{:tag :title :content [title]}
                {:tag :description :content [description]}
-               {:tag :guid :content [(str "youtubepodcast-" video-id)]}
+               {:tag :guid :attrs {:isPermaLink false} :content [(str "youtubepodcast-" video-id)]}
                {:tag :enclosure :attrs {:url (str "http://servisto.de/youtube-podcast/resrever/"
                                                   video-id
-                                                  ".mp3")}}
+                                                  ".mp3")
+                                        :length length
+                                        :type "audio/mp3"}}
                {:tag "itunes:image" :attrs {:href (str "http://servisto.de/youtube-podcast/resrever/"
                                                         video-id
                                                         ".jpg")}}]}))
@@ -87,7 +91,10 @@
                :content [{:tag :channel
                           :content (into [{:tag :title :content ["Youtube Podcast"]}
                                           {:tag :description :content ["Witek's Youtube Podcast"]}
-                                          {:tag :image :content [{:tag :url :content ["https://www.chirbit.com/images/learn-more-youtube-to-audio.png"]}]}]
+                                          {:tag :image :content [{:tag :url :content ["https://www.chirbit.com/images/learn-more-youtube-to-audio.png"]}
+                                                                 {:tag :title :content ["Youtube Podcast"]}
+                                                                 {:tag :link :content ["https://www.chirbit.com/images/learn-more-youtube-to-audio.png"]}]}]
+                                         {:tag :link :content ["http://servisto.de/youtbe-podcast/resrever/"]}
                                          (map create-rss-item items))}]})))
 
 (defn write-feed [items]
