@@ -21,7 +21,7 @@
 
 
 (defn load-channel-videos []
-  (println "Loading Channel..." youtube-api-key)
+  (println "Loading Channel...")
   (-> youtube-channel-url
       slurp
       (json/parse-string true)
@@ -85,7 +85,7 @@
 
 (defn load! []
   (-> (load-channel-videos)
-      ;download-missing-files
+      download-missing-files
       write-feed))
 
 (load!)
