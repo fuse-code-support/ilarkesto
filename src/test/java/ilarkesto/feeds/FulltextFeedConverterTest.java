@@ -21,15 +21,6 @@ import org.testng.annotations.Test;
 public class FulltextFeedConverterTest extends ATest {
 
 	@Test
-	public void kinderverstehen() {
-		String text = FulltextFeedConverter
-				.downloadText("http://blog.kinder-verstehen.de/regretting-motherhood-und-der-bart/");
-		assertContains(text, "Regretting motherhood und der Bart");
-		assertContains(text, "Bart unter ihren Achseln");
-		assertContainsNot(text, "Kommentar auf eine selten");
-	}
-
-	@Test
 	public void engadget() {
 		String text = FulltextFeedConverter
 				.downloadText("http://de.engadget.com/2016/03/21/autoblog-wie-man-in-wurde-einen-baumstamm-fahrt/");

@@ -19,13 +19,13 @@ public class AwsSchaumburgDe {
 
 	private static Log log = Log.get(AwsSchaumburgDe.class);
 	private static final String CHARSET = IO.UTF_8;
-	public static final String BASE_URL = "http://aws-shg.de/";
-	private static final String LISTE_URL = BASE_URL + "abfuhr/Liste.php?ortid=17";
+	public static final String BASE_URL = "https://abfuhr.aws-shg.de/";
+	private static final String LISTE_URL = BASE_URL + "Liste.php?ortid=17";
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
 	private static final Date minDate = Date.beforeDays(14);
 
 	public static List<WastePickupArea> loadPickupAreas() throws ParseException {
-		String url = "http://abfuhr.aws-shg.de/getListe.php";
+		String url = "https://abfuhr.aws-shg.de/getListe.php";
 		HttpSession session = new HttpSession().setCharset(CHARSET);
 		session.postAndDownloadText(url,
 			new MapBuilder().put("ortid", "17").put("curJahr", String.valueOf(Tm.getCurrentYear())).getMap());

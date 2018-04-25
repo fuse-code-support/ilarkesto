@@ -7,8 +7,9 @@
 (require '[clojure.java.shell :as shell])
 (require '[clojure.java.io :as io])
 (require '[clojure.xml :as xml])
+(require '[clojure.edn :as edn])
 
-(def youtube-api-key (:youtube-api-key (slurp "/etc/youtube-podcast.edn")))
+(def youtube-api-key (get-in (edn/read-string (slurp "/etc/youtube-podcast.edn")) [:youtube :api-key]))
 (def youtube-channel-id "PL-cdM2c5tq3Inccp1d28lWWh3Jfdo9FrS")
 
 (def youtube-channel-max-results 50)
@@ -20,7 +21,7 @@
 
 
 (defn load-channel-videos []
-  (println "Loading Channel...")
+  (println "Loading Channel..." youtube-api-key)
   (-> youtube-channel-url
       slurp
       (json/parse-string true)
@@ -71,18 +72,20 @@
 (defn create-rss [items]
   (with-out-str
     (xml/emit {:tag :rss
-               :attrs {:version "2.0"}
+               :attrs {:version "2.0"
+                       "xmlns:itunes" "http://www.itunes.com/dtds/podcast-1.0.dtd"}
                :content [{:tag :channel
                           :content (into [{:tag :title :content ["Youtube Podcast"]}
                                           {:tag :description :content ["Witek's Youtube Podcast"]}]
                                          (map create-rss-item items))}]})))
 
 (defn write-feed [items]
+  (println "Writing RSS Feed...")
   (spit "feed.rss" (create-rss items)))
 
 (defn load! []
   (-> (load-channel-videos)
-      download-missing-files
+      ;download-missing-files
       write-feed))
 
 (load!)
