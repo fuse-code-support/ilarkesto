@@ -54,9 +54,19 @@
              (if-not file-exists (download-video video-id)))))
   items)
 
+(defn ->ascii [s]
+  (if s
+    (.trim
+     (apply str (filter #(and
+                          (not (= 38 (int %)))
+                          (or
+                           (<= 32 (int %) 126)
+                           (= 10 (int %))))
+                        s)))))
+
 (defn create-rss-item [item]
-  (let [title (get-in item [:snippet :title])
-        description (get-in item [:snippet :description])
+  (let [title (->ascii (get-in item [:snippet :title]))
+        description (->ascii (get-in item [:snippet :description]))
         video-id (get-in item [:contentDetails :videoId])]
     {:tag :item
      :content [{:tag :title :content [title]}
@@ -89,4 +99,5 @@
       download-missing-files
       write-feed))
 
+;(println (->ascii "hallo & welt\nx"))
 (load!)
