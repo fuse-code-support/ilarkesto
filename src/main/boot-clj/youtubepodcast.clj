@@ -76,7 +76,8 @@
                        "xmlns:itunes" "http://www.itunes.com/dtds/podcast-1.0.dtd"}
                :content [{:tag :channel
                           :content (into [{:tag :title :content ["Youtube Podcast"]}
-                                          {:tag :description :content ["Witek's Youtube Podcast"]}]
+                                          {:tag :description :content ["Witek's Youtube Podcast"]}
+                                          {:tag :image :content [{:tag :url :content ["https://www.chirbit.com/images/learn-more-youtube-to-audio.png"]}]}]
                                          (map create-rss-item items))}]})))
 
 (defn write-feed [items]
