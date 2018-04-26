@@ -9,8 +9,13 @@
 (require '[clojure.xml :as xml])
 (require '[clojure.edn :as edn])
 
-(def youtube-api-key (get-in (edn/read-string (slurp "/etc/youtube-podcast.edn")) [:youtube :api-key]))
+(def config (edn/read-string (slurp "/etc/youtube-podcast.edn")))
+(def youtube-api-key (get-in config [:youtube :api-key]))
 (def youtube-channel-id "PL-cdM2c5tq3Inccp1d28lWWh3Jfdo9FrS")
+(def podcast-title "Youtube Podcast")
+(def podcast-description "Witek's Youtube Podcast")
+(def podcast-image "https://www.chirbit.com/images/learn-more-youtube-to-audio.png")
+(def podcast-base-url "http://servisto.de/youtbe-podcast/resrever/")
 
 (def youtube-channel-max-results 50)
 (def youtube-channel-url (str "https://www.googleapis.com/youtube/v3/playlistItems"
@@ -74,14 +79,10 @@
      :content [{:tag :title :content [title]}
                {:tag :description :content [description]}
                {:tag :guid :attrs {:isPermaLink false} :content [(str "youtubepodcast-" video-id)]}
-               {:tag :enclosure :attrs {:url (str "http://servisto.de/youtube-podcast/resrever/"
-                                                  video-id
-                                                  ".mp3")
+               {:tag :enclosure :attrs {:url (str podcast-base-url video-id ".mp3")
                                         :length length
                                         :type "audio/mp3"}}
-               {:tag "itunes:image" :attrs {:href (str "http://servisto.de/youtube-podcast/resrever/"
-                                                        video-id
-                                                        ".jpg")}}]}))
+               {:tag "itunes:image" :attrs {:href (str podcast-base-url video-id ".jpg")}}]}))
 
 (defn create-rss [items]
   (with-out-str
@@ -89,12 +90,13 @@
                :attrs {:version "2.0"
                        "xmlns:itunes" "http://www.itunes.com/dtds/podcast-1.0.dtd"}
                :content [{:tag :channel
-                          :content (into [{:tag :title :content ["Youtube Podcast"]}
-                                          {:tag :description :content ["Witek's Youtube Podcast"]}
-                                          {:tag :image :content [{:tag :url :content ["https://www.chirbit.com/images/learn-more-youtube-to-audio.png"]}
-                                                                 {:tag :title :content ["Youtube Podcast"]}
-                                                                 {:tag :link :content ["https://www.chirbit.com/images/learn-more-youtube-to-audio.png"]}]}
-                                          {:tag :link :content ["http://servisto.de/youtbe-podcast/resrever/"]}]
+                          :content (into [{:tag :title :content [podcast-title]}
+                                          {:tag :description :content [podcast-description]}
+                                          {:tag "itunes:image" :attrs {:href podcast-image}}
+                                          {:tag :image :content [{:tag :url :content [podcast-image]}
+                                                                 {:tag :title :content [podcast-title]}
+                                                                 {:tag :link :content [podcast-image]}]}
+                                          {:tag :link :content [podcast-base-url]}]
                                          (map create-rss-item items))}]})))
 
 (defn write-feed [items]
