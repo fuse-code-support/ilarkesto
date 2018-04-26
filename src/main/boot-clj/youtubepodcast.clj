@@ -23,6 +23,7 @@
                               "&maxResults=" youtube-channel-max-results
                               "&key=" youtube-api-key
                               "&playlistId=" youtube-channel-id))
+(def podcast-rss-file "feed.rss.xml")
 
 
 (defn load-channel-videos []
@@ -101,7 +102,7 @@
 
 (defn write-feed [items]
   (println "Writing RSS Feed...")
-  (spit "feed.rss" (create-rss items)))
+  (spit podcast-rss-file (create-rss items)))
 
 (defn load! []
   (-> (load-channel-videos)

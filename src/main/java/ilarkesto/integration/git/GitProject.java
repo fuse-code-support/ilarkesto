@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -67,11 +67,11 @@ public class GitProject extends AScmProject {
 	}
 
 	private synchronized String exec(String... parameters) {
-		return getTool().exec(getDir(), parameters);
+		return exec(parameters);
 	}
 
 	private synchronized String exec(List<String> parameters) {
-		return getTool().exec(getDir(), parameters);
+		return exec(parameters);
 	}
 
 	@Override
@@ -85,16 +85,16 @@ public class GitProject extends AScmProject {
 		for (File file : files) {
 			params.add(file.getAbsolutePath());
 		}
-		getTool().exec(getDir(), params.toArray(new String[params.size()]));
+		exec(params.toArray(new String[params.size()]));
 	}
 
 	public void addAll() {
-		getTool().exec(getDir(), "add", "--all");
+		exec("add", "--all");
 	}
 
 	public void commit(String comment) {
 		Args.assertNotNull(comment, "comment");
-		getTool().exec(getDir(), "commit", "-m", comment);
+		exec("commit", "-m", comment);
 	}
 
 	public String status() {
@@ -103,6 +103,23 @@ public class GitProject extends AScmProject {
 
 	public void deleteIndexLock() {
 		new File(getGitDir().getPath() + "/index.lock").delete();
+	}
+
+	public void push(String repository, String branch) {
+		exec("push", repository, branch);
+	}
+
+	public void fetchAll() {
+		exec("fetch", "--all");
+	}
+
+	public void merge(String branch, boolean ffOnly) {
+		Args.assertNotNull(branch, "branch");
+		List<String> params = new ArrayList<String>();
+		params.add("merge");
+		params.add(branch);
+		if (ffOnly) params.add("--ff-only");
+		exec(params);
 	}
 
 }
