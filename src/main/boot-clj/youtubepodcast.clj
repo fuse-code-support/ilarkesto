@@ -15,7 +15,7 @@
 (def podcast-title "Youtube Podcast")
 (def podcast-description "Witek's Youtube Podcast")
 (def podcast-image "https://www.chirbit.com/images/learn-more-youtube-to-audio.png")
-(def podcast-base-url "http://servisto.de/youtbe-podcast/resrever/")
+  (def podcast-base-url "http://servisto.de/youtube-podcast/resrever/")
 
 (def youtube-channel-max-results 50)
 (def youtube-channel-url (str "https://www.googleapis.com/youtube/v3/playlistItems"
