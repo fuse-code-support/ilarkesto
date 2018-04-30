@@ -14,45 +14,33 @@
  */
 package ilarkesto.integration.testde;
 
-import ilarkesto.core.auth.LoginDataProvider;
-import ilarkesto.core.base.Parser.ParseException;
-import ilarkesto.core.time.Date;
-import ilarkesto.integration.testde.TestDe.ArticleRef;
-import ilarkesto.integration.testde.TestDe.ArticlesIndex;
-import ilarkesto.io.SimpleFileStorage;
-import ilarkesto.json.JsonMapper;
 import ilarkesto.testng.ATest;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import org.testng.annotations.Test;
 
 public class TestDeDatabaseTest extends ATest {
 
-	@Test
-	public void update() throws ParseException {
-		TestDeDatabase db = new TestDeDatabase(new SimpleFileStorage(getTestOutputFile("test.de")),
-				LoginDataProvider.NULL_PROVIDER);
-		db.updateIndex(observer);
-		ArticlesIndex index = db.getIndex(observer);
-		assertNotNull(index);
-		List<ArticleRef> articles = index.getArticles();
-		assertTrue(articles.size() >= 2770, articles.size() + " articles.");
-	}
-
-	@Test
-	public void mapping() throws IOException, ilarkesto.json.JsonSaxParser.ParseException {
-		ArticleRef ar = new ArticleRef(new Date(), "Supertest", "supertest-23-0");
-
-		ArticlesIndex index = new ArticlesIndex();
-		index.addNewArticles(Arrays.asList(ar));
-
-		String json = JsonMapper.serialize(index);
-
-		ArticlesIndex indexCopy = JsonMapper.deserialize(json, ArticlesIndex.class, TestDeDatabase.typeResolver);
-
-		assertEquals(index.getArticlesCount(), indexCopy.getArticlesCount());
-	}
+	// @Test
+	// public void update() throws ParseException {
+	// TestDeDatabase db = new TestDeDatabase(new SimpleFileStorage(getTestOutputFile("test.de")),
+	// LoginDataProvider.NULL_PROVIDER);
+	// db.updateIndex(observer);
+	// ArticlesIndex index = db.getIndex(observer);
+	// assertNotNull(index);
+	// List<ArticleRef> articles = index.getArticles();
+	// assertTrue(articles.size() >= 2770, articles.size() + " articles.");
+	// }
+	//
+	// @Test
+	// public void mapping() throws IOException, ilarkesto.json.JsonSaxParser.ParseException {
+	// ArticleRef ar = new ArticleRef(new Date(), "Supertest", "supertest-23-0");
+	//
+	// ArticlesIndex index = new ArticlesIndex();
+	// index.addNewArticles(Arrays.asList(ar));
+	//
+	// String json = JsonMapper.serialize(index);
+	//
+	// ArticlesIndex indexCopy = JsonMapper.deserialize(json, ArticlesIndex.class,
+	// TestDeDatabase.typeResolver);
+	//
+	// assertEquals(index.getArticlesCount(), indexCopy.getArticlesCount());
+	// }
 }
