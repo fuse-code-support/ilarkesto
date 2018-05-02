@@ -67,7 +67,7 @@ public class GitProject extends AScmProject {
 	}
 
 	private synchronized String exec(String... parameters) {
-		return exec(parameters);
+		return getTool().exec(getDir(), parameters);
 	}
 
 	private synchronized String exec(List<String> parameters) {
