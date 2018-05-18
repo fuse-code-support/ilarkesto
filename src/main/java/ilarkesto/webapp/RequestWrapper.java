@@ -149,6 +149,15 @@ public class RequestWrapper<S extends AWebSession> {
 		response.setContentType(type);
 	}
 
+	public void setCharacterEncoding(String charset) {
+		if (charset == null) return;
+		response.setCharacterEncoding(charset);
+	}
+
+	public void setCharacterEncodingUtf8() {
+		setCharacterEncoding(IO.UTF_8);
+	}
+
 	public void sendRedirect(String url) {
 		log.debug("Sending redirect:", url);
 		try {
