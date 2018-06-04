@@ -40,6 +40,7 @@ import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -73,6 +74,14 @@ public class Gwt {
 	private static DateTimeFormat dtfDay;
 	private static DateTimeFormat dtfWeekdayMonthDay;
 	private static DateTimeFormat dtfHourMinute;
+
+	public static int randomInt(int upperBound) {
+		if (isClient()) {
+			return Random.nextInt(upperBound);
+		} else {
+			return new java.util.Random().nextInt(upperBound);
+		}
+	}
 
 	public static LinkedHashMap<String, String> parseHistoryToken(String token) {
 		LinkedHashMap<String, String> ret = new LinkedHashMap<String, String>();
