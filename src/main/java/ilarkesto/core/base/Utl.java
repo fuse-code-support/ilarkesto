@@ -587,4 +587,13 @@ public class Utl {
 		return list;
 	}
 
+	public static BigDecimal sum(BigDecimal... values) {
+		BigDecimal sum = BigDecimal.ZERO;
+		for (BigDecimal value : values) {
+			if (value == null) continue;
+			sum = sum.add(value);
+		}
+		return sum;
+	}
+
 }
