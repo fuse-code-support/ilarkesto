@@ -37,6 +37,7 @@ import java.util.Map.Entry;
 public class Zeiterfassung {
 
 	private static final Date BEGIN_2018_06 = new Date(2017, 11, 16);
+	private static final Date BEGIN_2018_12 = new Date(2018, 5, 21);
 
 	private static List<DayAtWork> days = new ArrayList<DayAtWork>();
 	private static DayAtWork currentDay;
@@ -164,6 +165,12 @@ public class Zeiterfassung {
 	}
 
 	private static String convertAchievoPhaseId(String id, WorkActivity activity, DayAtWork day) {
+		if (day.getDate().isSameOrAfter(BEGIN_2018_12)) {
+			if (id.equals("FDU")) return "36036";
+			if (id.equals("ERW")) return "36030";
+			if (id.equals("QS")) return "36033";
+		}
+
 		if (day.getDate().isSameOrAfter(BEGIN_2018_06)) {
 			if (id.equals("FDU")) return "33181";
 			if (id.equals("ERW")) return "33093";
@@ -184,13 +191,13 @@ public class Zeiterfassung {
 		String text = activity.getText();
 
 		if (day.getDate().isSameOrAfter(BEGIN_2018_06)) {
-			if ("Sprint Retrospektive".equals(text)) return "8535";
+			if ("Sprint Retrospektive".equals(text)) return "P8535";
 		}
 
 		if ("Sprint Retrospektive".equals(text)) return "8444";
 		if ("29170".equals(activity.getAchievoPhaseId())) return "8444";
 
-		return "5461";
+		return "P5461";
 	}
 
 	private static String determineAchievoPackageId(WorkActivity activity, DayAtWork day) {
@@ -199,14 +206,17 @@ public class Zeiterfassung {
 		String text = activity.getText();
 
 		if (day.getDate().isSameOrAfter(BEGIN_2018_06)) {
-			if ("Sprint Retrospektive".equals(text)) return "11211";
+			if ("Sprint Retrospektive".equals(text)) return "AP11211";
 		}
 
 		if ("Sprint Retrospektive".equals(text)) return "10577";
 		if ("29170".equals(activity.getAchievoPhaseId())) return "10577";
 
 		if (day.getDate().isBefore(new Date(2017, 7, 24))) return "10282";
-		return "11025";
+
+		if (day.getDate().isBefore(BEGIN_2018_12)) return "11025";
+
+		return "AP11370";
 	}
 
 	private static String determineAchievoPhaseIdByText(String text, DayAtWork day) {
