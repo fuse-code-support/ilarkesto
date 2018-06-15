@@ -483,9 +483,8 @@ public class Utl {
 		}
 	}
 
-	public static final <T extends Comparable> List<T> sortReverse(List<T> list) {
-		Collections.sort(list, REVERSE_COMPARATOR);
-		return list;
+	public static final <T extends Comparable> List<T> sortReverse(Collection<T> col) {
+		return sort(col, REVERSE_COMPARATOR);
 	}
 
 	public static final Comparator REVERSE_COMPARATOR = new Comparator<Comparable>() {
