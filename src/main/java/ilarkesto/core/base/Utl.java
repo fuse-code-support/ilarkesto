@@ -558,6 +558,7 @@ public class Utl {
 	}
 
 	public static <T> boolean containsAny(Collection<T> collection, T... items) {
+		if (collection == null) return false;
 		for (T item : items) {
 			if (collection.contains(item)) return true;
 		}
@@ -573,6 +574,7 @@ public class Utl {
 	}
 
 	public static <T> boolean containsNoOtherExceptAny(Collection<T> collection, T... ofTheseItems) {
+		if (collection == null) return true;
 		if (!containsAny(collection, ofTheseItems)) return false;
 		Set<T> itemsSet = new HashSet<T>();
 		for (T item : ofTheseItems) {
