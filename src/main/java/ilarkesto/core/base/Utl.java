@@ -279,13 +279,13 @@ public class Utl {
 	}
 
 	public static <T> List<T> sort(Collection<T> collection, Comparator<T> comparator) {
-		List<T> result = new ArrayList<T>(collection);
+		List<T> result = collection instanceof List ? (List<T>) collection : new ArrayList<T>(collection);
 		Collections.sort(result, comparator);
 		return result;
 	}
 
 	public static <T> List<T> sortReverse(Collection<T> collection, Comparator<T> comparator) {
-		List<T> result = new ArrayList<T>(collection);
+		List<T> result = collection instanceof List ? (List<T>) collection : new ArrayList<T>(collection);
 		Collections.sort(result, reverseComparator(comparator));
 		return result;
 	}
