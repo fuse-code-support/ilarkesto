@@ -779,6 +779,17 @@ public abstract class IO {
 		return ret;
 	}
 
+	public static List<File> listDirs(File parent) {
+		List<File> ret = new ArrayList<File>();
+		if (parent == null) return ret;
+		File[] files = parent.listFiles();
+		if (files == null) return ret;
+		for (File file : files) {
+			if (file.isDirectory()) ret.add(file);
+		}
+		return ret;
+	}
+
 	public static List<File> listFiles(File parent, FileFilter filter) {
 		return filterFiles(parent.listFiles(), filter);
 	}
