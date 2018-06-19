@@ -85,7 +85,7 @@ public class RequestWrapper<S extends AWebSession> {
 		IO.copyData(file, getOutputStream());
 	}
 
-	public void writeWithAutContentType(File file) {
+	public void writeWithContentType(File file) {
 		setContentType(Servlet.getMimeType(file));
 		write(file);
 	}
