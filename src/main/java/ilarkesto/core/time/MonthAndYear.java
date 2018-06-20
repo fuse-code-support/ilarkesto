@@ -68,4 +68,23 @@ public class MonthAndYear implements Comparable<MonthAndYear>, Serializable {
 		return new DateRange(new Date(year, month, 1), new Date(year, month, Tm.getDaysInMonth(year, month)));
 	}
 
+	public boolean isCurrent() {
+		return equals(Date.today().getMonthAndYear());
+	}
+
+	public MonthAndYear addMonths(int months) {
+		int years = months / 12;
+		months = months - (years * 12);
+		int newMonth = month + months;
+		if (newMonth > 12) {
+			years++;
+			newMonth -= 12;
+		} else if (newMonth <= 0) {
+			years--;
+			newMonth += 12;
+		}
+		int newYear = year + years;
+		return new MonthAndYear(newYear, newMonth);
+	}
+
 }
