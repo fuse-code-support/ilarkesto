@@ -197,6 +197,14 @@ public class Date implements Comparable<Date>, Serializable, Formatable {
 		return addDays(1);
 	}
 
+	public Date prevMonth() {
+		return addMonths(-1);
+	}
+
+	public Date nextMonth() {
+		return addMonths(1);
+	}
+
 	public Date getMondayOfWeek() {
 		if (getWeekday() == Weekday.MONDAY) return this;
 		return addDays(-1).getMondayOfWeek();
