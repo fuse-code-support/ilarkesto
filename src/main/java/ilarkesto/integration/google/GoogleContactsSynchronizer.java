@@ -293,7 +293,7 @@ public class GoogleContactsSynchronizer {
 
 		private void appendList(MultilineBuilder mb, String label, Collection<SyncProtocolEntry> list) {
 			mb.ln("\n= " + label + " (" + list.size() + ") =");
-			for (SyncProtocolEntry contact : Utl.sort(list, comparator)) {
+			for (SyncProtocolEntry contact : Utl.sort(new ArrayList<SyncProtocolEntry>(list), comparator)) {
 				mb.ln("*", contact.toString());
 				mb.ln();
 			}
