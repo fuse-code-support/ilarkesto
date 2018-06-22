@@ -859,4 +859,9 @@ public class Google {
 		return false;
 	}
 
+	public static String getAnalyticsLink(String reportId) {
+		if (Str.isBlank(reportId)) return null;
+		return "https://analytics.google.com/analytics/web/#/report/trafficsources-all-traffic/" + reportId;
+	}
+
 }
