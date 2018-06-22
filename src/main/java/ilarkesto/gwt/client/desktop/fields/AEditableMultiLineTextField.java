@@ -4,6 +4,7 @@ import ilarkesto.gwt.client.desktop.Widgets;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -57,6 +58,7 @@ public abstract class AEditableMultiLineTextField extends AEditableField {
 		textArea.getElement().setId(getId() + "_textArea");
 		Style style = textArea.getElement().getStyle();
 		style.setWidth(getTextBoxWidth(), Unit.PX);
+		style.setProperty("maxWidth", getTextBoxMaxWidth());
 		style.setHeight(getTextBoxHeight(), Unit.PX);
 		style.setPadding(Widgets.defaultSpacing, Unit.PX);
 
@@ -95,8 +97,16 @@ public abstract class AEditableMultiLineTextField extends AEditableField {
 		return width;
 	}
 
+	protected String getTextBoxMaxWidth() {
+		return Window.getClientWidth() + "px";
+	}
+
 	protected int getTextBoxHeight() {
 		return 100;
+	}
+
+	protected String getDisplayMaxWidth() {
+		return Window.getClientWidth() + "px";
 	}
 
 	@Override
@@ -104,13 +114,17 @@ public abstract class AEditableMultiLineTextField extends AEditableField {
 		String text = getValue();
 
 		Label label = new Label();
+		Style style = label.getElement().getStyle();
 		if (text == null) {
 			text = getAlternateValueIfValueIsNull();
-			label.getElement().getStyle().setColor("#AAA");
+			style.setColor("#AAA");
 		}
 
 		label.setText(text);
-		label.getElement().getStyle().setWhiteSpace(WhiteSpace.PRE_WRAP);
+		style.setWhiteSpace(WhiteSpace.PRE_WRAP);
+		style.setProperty("maxWidth", getDisplayMaxWidth());
+		style.setOverflow(Overflow.SCROLL);
+
 		return label;
 	}
 
