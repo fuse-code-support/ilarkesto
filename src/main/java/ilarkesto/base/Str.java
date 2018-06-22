@@ -14,8 +14,6 @@
  */
 package ilarkesto.base;
 
-import ilarkesto.integration.links.LinkConverter;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -176,67 +174,6 @@ public class Str extends ilarkesto.core.base.Str {
 			if (s.indexOf(c) >= 0) return true;
 		}
 		return false;
-	}
-
-	public static String activateLinksInHtml(String html, LinkConverter linkConverter) {
-		return activateLinksInHtml(html, linkConverter, 640);
-	}
-
-	public static String activateLinksInHtml(String s, LinkConverter linkConverter, int maxWidth) {
-		if (s == null) return null;
-		int fromIndex = 0;
-		StringBuffer result = null;
-		int idx = -1;
-		while ((idx = firstIndexOf(s, fromIndex, "http://", "https://", "ftp://", "www.")) >= 0) {
-			char pre = idx == 0 ? ' ' : s.charAt(idx - 1);
-			if (pre == ' ' || pre == '\n' || pre == '>' || pre == ';') {
-				int endIdx = firstIndexOf(s, idx, " ", "<", "\n", pre == ';' ? "&gt;" : "\n");
-				if (endIdx <= 0 || !s.substring(endIdx).startsWith("</a>")) {
-					if (endIdx < 0) endIdx = s.length();
-					// activate
-					String url = s.substring(idx, endIdx);
-					if (result == null) result = new StringBuffer();
-					result.append(s.substring(fromIndex, idx));
-					result.append("<a href=\"");
-					result.append(url.startsWith("www.") ? "http://" + url : url);
-					result.append("\" target=\"_blank\">");
-
-					String convertedUrl = linkConverter == null ? url : linkConverter.convert(url, maxWidth);
-					if (url.equals(convertedUrl)) {
-						String label = url;
-						if (url.startsWith("http://")) url = url.substring(7);
-						if (url.startsWith("https://")) url = url.substring(8);
-						if (url.startsWith("www.")) url = url.substring(4);
-						label = cutRight(url, 30, "...");
-						result.append(label);
-					} else {
-						result.append(convertedUrl);
-					}
-
-					result.append("</a>");
-					fromIndex = endIdx;
-					continue;
-				}
-			}
-			// nothing to activate
-			if (result == null) result = new StringBuffer();
-			result.append(s.substring(fromIndex, idx));
-			result.append(s.charAt(idx));
-			fromIndex = idx + 1;
-		}
-		if (result == null) return s;
-		result.append(s.substring(fromIndex));
-		return result.toString();
-	}
-
-	public static int firstIndexOf(String s, int fromIndex, String... stringsToFind) {
-		int idx = Integer.MAX_VALUE;
-		for (String find : stringsToFind) {
-			int i = s.indexOf(find, fromIndex);
-			if (i >= 0) idx = Math.min(idx, i);
-		}
-		idx = idx == Integer.MAX_VALUE ? -1 : idx;
-		return idx;
 	}
 
 	public static boolean isUpperCase(String s) {

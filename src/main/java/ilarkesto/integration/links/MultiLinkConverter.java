@@ -14,6 +14,8 @@
  */
 package ilarkesto.integration.links;
 
+import ilarkesto.core.base.LinkConverter;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -14,6 +14,8 @@
  */
 package ilarkesto.integration.links;
 
+import ilarkesto.core.base.LinkConverter;
+
 public class ImageLinkConverter implements LinkConverter {
 
 	@Override
