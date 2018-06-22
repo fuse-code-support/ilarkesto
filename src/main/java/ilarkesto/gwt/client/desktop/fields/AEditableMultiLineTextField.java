@@ -123,7 +123,7 @@ public abstract class AEditableMultiLineTextField extends AEditableField {
 		label.setText(text);
 		style.setWhiteSpace(WhiteSpace.PRE_WRAP);
 		style.setProperty("maxWidth", getDisplayMaxWidth());
-		style.setOverflow(Overflow.SCROLL);
+		style.setOverflow(Overflow.AUTO);
 
 		return label;
 	}
