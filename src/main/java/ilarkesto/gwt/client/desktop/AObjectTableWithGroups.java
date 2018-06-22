@@ -739,7 +739,14 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			if (color != null) {
 				cellFormatter.getElement(row, index).getStyle().setColor(color);
 			}
+			String tooltip = getTooltip(o);
+			if (tooltip != null) {
+				cellFormatter.getElement(row, index).setTitle(tooltip);
+			}
+		}
 
+		public String getTooltip(O o) {
+			return null;
 		}
 
 		public String getColor(O o) {
