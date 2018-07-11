@@ -768,7 +768,9 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 		ln("        if (" + getFieldName(p) + " == null) return false;");
 		ln("        boolean removed = false;");
 		ln("        for (" + contentType + " _element: " + p.getName() + ") {");
-		ln("            removed = removed | " + getFieldName(p) + ".remove(_element);");
+		String elementValue = "_element";
+		if (p.isReference()) elementValue += ".getId()";
+		ln("            removed = removed | " + getFieldName(p) + ".remove(" + elementValue + ");");
 		ln("        }");
 		if (!isLegacyBean(bean) && p.isReference()) {
 			ln("        if (removed) " + p.getName() + "BackReferencesCache.clear(" + getFieldName(p) + ");");
