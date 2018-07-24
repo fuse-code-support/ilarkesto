@@ -11,7 +11,7 @@
 
 (def config (edn/read-string (slurp "youtube-podcast.edn")))
 (def youtube-api-key (get-in config [:youtube :api-key]))
-(def youtube-channel-id "PL-cdM2c5tq3Inccp1d28lWWh3Jfdo9FrS")
+(def youtube-channel-id (get-in config [:youtube :channel-id]))
 (def podcast-title "Youtube Podcast")
 (def podcast-description "Witek's Youtube Podcast")
 (def podcast-image "https://www.chirbit.com/images/learn-more-youtube-to-audio.png")
