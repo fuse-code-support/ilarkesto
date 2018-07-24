@@ -13,9 +13,9 @@
 (def youtube-api-key (get-in config [:youtube :api-key]))
 (def youtube-channel-id (get-in config [:youtube :channel-id]))
 (def podcast-title "Youtube Podcast")
-(def podcast-description "Witek's Youtube Podcast")
+(def podcast-description "Youtube Podcast")
 (def podcast-image "https://www.chirbit.com/images/learn-more-youtube-to-audio.png")
-  (def podcast-base-url "http://servisto.de/youtube-podcast/resrever/")
+(def podcast-base-url (get-in config [:base-url]))
 
 (def youtube-channel-max-results 50)
 (def youtube-channel-url (str "https://www.googleapis.com/youtube/v3/playlistItems"
