@@ -40,10 +40,10 @@ public class FulltextFeedConverterTest extends ATest {
 		assertContains(item.getDescription(), "Der Preis für das System wurde noch nicht genannt.");
 	}
 
-	@Test
-	public void feeds() {
-		assertNotEmpty(Feed.load("https://www.heise.de/newsticker/heise-atom.xml").getItems());
-		assertNotEmpty(Feed.load("http://newsfeed.zeit.de/index").getItems());
-	}
+	// @Test
+	// public void feeds() {
+	// assertNotEmpty(Feed.load("https://www.heise.de/newsticker/heise-atom.xml").getItems());
+	// assertNotEmpty(Feed.load("http://newsfeed.zeit.de/index").getItems());
+	// }
 
 }
