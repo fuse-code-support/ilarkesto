@@ -40,7 +40,7 @@
   (str "https://www.youtube.com/watch?v=" video-id))
 
 (defn tag-mp3 [file title]
-  (id3/write-tag! some-mp3
+  (id3/write-tag! file
                   :title title
                   :artist nil
                   :album "Youtube Podcast"
