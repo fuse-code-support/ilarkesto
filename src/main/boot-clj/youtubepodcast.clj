@@ -1,13 +1,15 @@
 #!/usr/bin/env boot
 
 (set-env! :dependencies '[[org.clojure/clojure "1.9.0"]
-                          [cheshire "5.8.0"]])
+                          [cheshire "5.8.0"]
+                          [claudio "0.1.3"]])
 
 (require '[cheshire.core :as json])
 (require '[clojure.java.shell :as shell])
 (require '[clojure.java.io :as io])
 (require '[clojure.xml :as xml])
 (require '[clojure.edn :as edn])
+(require '[claudio.id3 :as id3])
 
 (def config (edn/read-string (slurp "youtube-podcast.edn")))
 (def youtube-api-key (get-in config [:youtube :api-key]))
@@ -37,6 +39,13 @@
 (defn video-id->url [video-id]
   (str "https://www.youtube.com/watch?v=" video-id))
 
+(defn tag-mp3 [file title]
+  (id3/write-tag! some-mp3
+                  :title title
+                  :artist nil
+                  :album "Youtube Podcast"
+                  :genre "Youtube Video"))
+
 (defn download-video [video-id]
   (println "  -> Downloading video...")
   (let [ret (shell/sh "youtube-dl"
@@ -55,9 +64,13 @@
   (doall (for [item items]
            (let [video-id (get-in item [:contentDetails :videoId])
                  file (io/as-file (str video-id ".mp3"))
-                 file-exists (.exists file)]
-             (println "\n" (get-in item [:snippet :title]))
-             (if-not file-exists (download-video video-id)))))
+                 file-exists (.exists file)
+                 title (get-in item [:snippet :title])]
+             (println "\n" title)
+             (if-not file-exists
+               (do
+                 (download-video video-id)
+                 (tag-mp3 file title))))))
   items)
 
 (defn ->ascii [s]
