@@ -412,8 +412,8 @@ public abstract class IO {
 		if (!from.exists())
 			throw new RuntimeException("Moving file " + from + " to " + to + " failed. Source file does not exist.");
 		if (!to.isDirectory() && to.exists()) {
-			if (!overwrite && !to.getName().equals(MAC_SYS_FILENAME)) throw new RuntimeException("Moving file " + from
-					+ " to " + to + " failed. Destination file already exists and is no directory.");
+			if (!overwrite && !isSystemFile(to)) throw new RuntimeException("Moving file " + from + " to " + to
+					+ " failed. Destination file already exists and is no directory.");
 		}
 		createDirectory(to.getParentFile());
 		if (from.renameTo(to)) return;
@@ -846,19 +846,23 @@ public abstract class IO {
 		if (dir == null) return false;
 		if (!dir.isDirectory()) return false;
 		for (File file : dir.listFiles()) {
-			if (file.getName().equals(MAC_SYS_FILENAME)) {
+			if (isSystemFile(file)) {
 				continue;
 			}
 			if (!file.isDirectory()) return false;
 			if (!deleteDirectorysIfEmpty(file)) return false;
 		}
 		for (File file : dir.listFiles()) {
-			if (file.getName().equals(MAC_SYS_FILENAME)) {
+			if (isSystemFile(file)) {
 				delete(file);
 				continue;
 			}
 		}
 		return dir.delete();
+	}
+
+	public static boolean isSystemFile(File file) {
+		return MAC_SYS_FILENAME.equals(file.getName());
 	}
 
 	public static void delete(String file) {
@@ -1749,5 +1753,17 @@ public abstract class IO {
 		}
 		IO.delete(file);
 	}
+
+	public static List<File> listFilesIgnoreSystem(File dir) {
+		return listFiles(dir, FILE_FILTER_IGNORE_SYSTEM);
+	}
+
+	public static FileFilter FILE_FILTER_IGNORE_SYSTEM = new FileFilter() {
+
+		@Override
+		public boolean accept(File file) {
+			return !isSystemFile(file);
+		}
+	};
 
 }

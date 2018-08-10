@@ -180,6 +180,7 @@ public class Zeiterfassung {
 		if (id.equals("FDU")) return "32056";
 		if (id.equals("ERW")) return "32052";
 		if (id.equals("QS")) return "32054";
+		if (id.equals("QS-18.06")) return "33095";
 		if (id.equals("QS-17.12")) return "32054";
 		if (id.equals("QS-17.06")) return "32053";
 		return id;
