@@ -15,6 +15,7 @@
 package ilarkesto.gwt.client.desktop;
 
 import ilarkesto.core.base.Str;
+import ilarkesto.core.base.TextByTextFilter;
 import ilarkesto.core.base.Utl;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.persistance.AEntity;
@@ -708,12 +709,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		}
 
 		protected boolean matchesFilter(O object, String filterText) {
-			if (filterText == null) return true;
-			Object value = getFilterValue(object);
-			if (value == null) return false;
-
-			String s = value.toString().toLowerCase();
-			return s.contains(filterText);
+			return TextByTextFilter.matches(getFilterValue(object), filterText);
 		}
 
 		public Object getSortValue(O o) {
