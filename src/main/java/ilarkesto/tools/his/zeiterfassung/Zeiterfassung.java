@@ -164,26 +164,29 @@ public class Zeiterfassung {
 		}
 	}
 
-	private static String convertAchievoPhaseId(String id, WorkActivity activity, DayAtWork day) {
+	private static String convertAchievoPhaseId(String phaseId, WorkActivity activity, DayAtWork day) {
+
 		if (day.getDate().isSameOrAfter(BEGIN_2018_12)) {
-			if (id.equals("FDU")) return "36036";
-			if (id.equals("ERW")) return "36030";
-			if (id.equals("QS")) return "36033";
+			if (phaseId.equals("FDU")) return "36036";
+			if (phaseId.equals("ERW")) return "36030";
+			if (phaseId.equals("QS-DEV")) return "36034";
+			if (phaseId.equals("QS-PROD")) return "36033";
+			throw new RuntimeException("Illegal PhaseId: $" + phaseId);
 		}
 
 		if (day.getDate().isSameOrAfter(BEGIN_2018_06)) {
-			if (id.equals("FDU")) return "33181";
-			if (id.equals("ERW")) return "33093";
-			if (id.equals("QS")) return "33095";
+			if (phaseId.equals("FDU")) return "33181";
+			if (phaseId.equals("ERW")) return "33093";
+			if (phaseId.equals("QS")) return "33095";
 		}
 
-		if (id.equals("FDU")) return "32056";
-		if (id.equals("ERW")) return "32052";
-		if (id.equals("QS")) return "32054";
-		if (id.equals("QS-18.06")) return "33095";
-		if (id.equals("QS-17.12")) return "32054";
-		if (id.equals("QS-17.06")) return "32053";
-		return id;
+		if (phaseId.equals("FDU")) return "32056";
+		if (phaseId.equals("ERW")) return "32052";
+		if (phaseId.equals("QS")) return "32054";
+		if (phaseId.equals("QS-18.06")) return "33095";
+		if (phaseId.equals("QS-17.12")) return "32054";
+		if (phaseId.equals("QS-17.06")) return "32053";
+		return phaseId;
 	}
 
 	private static String determineAchievoProjectId(WorkActivity activity, DayAtWork day) {
