@@ -14,7 +14,7 @@
  */
 package ilarkesto.core.persistance;
 
-import ilarkesto.base.Utl;
+import ilarkesto.core.base.Utl;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.search.SearchText;
 import ilarkesto.core.search.Searchable;
