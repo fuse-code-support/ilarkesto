@@ -14,6 +14,7 @@
  */
 package ilarkesto.core.persistance;
 
+import ilarkesto.base.Utl;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.search.SearchText;
 import ilarkesto.core.search.Searchable;
@@ -62,6 +63,10 @@ public abstract class AEntity extends ABaseEntity implements Entity, Searchable,
 
 	public static List<AEntity> getByIds(Collection<String> ids) {
 		return Transaction.get().getByIdsAsList(ids);
+	}
+
+	public static List<AEntity> getByIds(String[] ids) {
+		return Transaction.get().getByIdsAsList(Utl.toList(ids));
 	}
 
 	public static Set<AEntity> getByIdsAsSet(Collection<String> ids) {
