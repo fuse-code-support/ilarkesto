@@ -171,8 +171,10 @@ public class Zeiterfassung {
 			if (phaseId.equals("ERW")) return "36030";
 			if (phaseId.equals("QS-DEV")) return "36034";
 			if (phaseId.equals("QS-PROD")) return "36033";
-			throw new RuntimeException("Illegal PhaseId: $" + phaseId);
+			return phaseId;
 		}
+
+		if (true) throw new RuntimeException("Illegal date: " + day.getDate());
 
 		if (day.getDate().isSameOrAfter(BEGIN_2018_06)) {
 			if (phaseId.equals("FDU")) return "33181";
@@ -272,6 +274,7 @@ public class Zeiterfassung {
 					continue;
 				}
 				currentDay = new DayAtWork(line);
+				if (currentDay.getDate().isBefore(Date.today().addDays(-60))) break;
 				days.add(currentDay);
 			} catch (Exception ex) {
 				throw new RuntimeException("Parsing failed at line " + lineCount, ex);
