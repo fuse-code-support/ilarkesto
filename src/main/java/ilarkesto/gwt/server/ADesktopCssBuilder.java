@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -59,13 +59,12 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 	}
 
 	private void dialog() {
-		style(
-			"#goon .gwt-DialogBox .dialogMiddleCenter" + ", #goon .gwt-DialogBox .dialogMiddleLeft"
-					+ ", #goon .gwt-DialogBox .dialogMiddleRight" + ", #goon .gwt-DialogBox .dialogTopLeft"
-					+ ", #goon .gwt-DialogBox .dialogTopCenter" + ", #goon .gwt-DialogBox .dialogTopRight"
-					+ ", #goon .gwt-DialogBox .dialogBottomLeft" + ", #goon .gwt-DialogBox .dialogBottomCenter"
-					+ ", #goon .gwt-DialogBox .dialogBottomRight" + ", #goon .gwt-DialogBox .Caption").background(
-			colBgDialog);
+		style("#goon .gwt-DialogBox .dialogMiddleCenter" + ", #goon .gwt-DialogBox .dialogMiddleLeft"
+				+ ", #goon .gwt-DialogBox .dialogMiddleRight" + ", #goon .gwt-DialogBox .dialogTopLeft"
+				+ ", #goon .gwt-DialogBox .dialogTopCenter" + ", #goon .gwt-DialogBox .dialogTopRight"
+				+ ", #goon .gwt-DialogBox .dialogBottomLeft" + ", #goon .gwt-DialogBox .dialogBottomCenter"
+				+ ", #goon .gwt-DialogBox .dialogBottomRight" + ", #goon .gwt-DialogBox .Caption")
+						.background(colBgDialog);
 		style("#goon .gwt-DialogBox .Caption").borderTopNone().borderBottomNone().fontWeightBold().paddingTop(15);
 	}
 
@@ -124,7 +123,7 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 		int headerHeight = 54;
 		int headerSpacing = 10;
 		style("#header").positionFixed(0, 0).displayTable().height(headerHeight).width100().background(colBgHeader)
-				.colorWhite().boxShadow(0, 1, 1, "#999");
+				.colorWhite().boxShadow(0, 1, 1, "#999").zIndex(42);
 		style("#header > div").displayTableCell().verticalAlignMiddle();
 		style("#logoContainer").width(42).backgroundUrl("img/header-navig.png").backgroundRepeatNoRepeat()
 				.backgroundAttachmentFixed().backgroundPosition(0, 13);
