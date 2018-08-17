@@ -413,6 +413,12 @@ public class Widgets {
 		return label;
 	}
 
+	public static Label textColored(Object object, String color) {
+		Label label = text(object);
+		if (label != null && color != null) label.getElement().getStyle().setColor(color);
+		return label;
+	}
+
 	public static SimplePanel wrapperFloatLeft(Widget child) {
 		if (child == null) return null;
 		SimplePanel wrapper = new SimplePanel(child);
