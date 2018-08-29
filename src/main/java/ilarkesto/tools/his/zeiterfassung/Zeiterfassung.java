@@ -167,10 +167,10 @@ public class Zeiterfassung {
 	private static String convertAchievoPhaseId(String phaseId, WorkActivity activity, DayAtWork day) {
 
 		if (day.getDate().isSameOrAfter(BEGIN_2018_12)) {
-			if (phaseId.equals("FDU")) return "36036";
-			if (phaseId.equals("ERW")) return "36030";
-			if (phaseId.equals("QS-DEV")) return "36034";
-			if (phaseId.equals("QS-PROD")) return "36033";
+			if (phaseId.equals("FDU")) return "A36036";
+			if (phaseId.equals("ERW")) return "A36030";
+			if (phaseId.equals("QS-DEV")) return "A36034";
+			if (phaseId.equals("QS-PROD")) return "A36033";
 			return phaseId;
 		}
 
