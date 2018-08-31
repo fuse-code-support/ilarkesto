@@ -391,7 +391,7 @@ public class RichTextToolbar extends Composite {
 																	var range;
 																	var parentElement;
 																	var container;
-																	
+
 																	if (elem.contentWindow.getSelection) {
 																	txt = elem.contentWindow.getSelection();
 																	pos = elem.contentWindow.getSelection().getRangeAt(0).startOffset;
@@ -587,7 +587,7 @@ public class RichTextToolbar extends Composite {
 
 	private static String beautifyHtml(String html) {
 		html = html.replace(" face=", " face-XXX=");
-		html = html.replace(" font-family:", " font-family-XXX:");
+		html = html.replace("font-family:", "font-family-XXX:");
 
 		html = html.replace(" style=\"\"", "");
 
