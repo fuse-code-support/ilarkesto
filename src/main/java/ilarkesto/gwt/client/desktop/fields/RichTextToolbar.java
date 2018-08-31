@@ -57,15 +57,16 @@ public class RichTextToolbar extends Composite {
 		GUI_COLORLIST.put("gelb", "yellow");
 		GUI_COLORLIST.put("blau", "blue");
 	}
-	public final static HashMap<String, String> GUI_FONTLIST = new HashMap<String, String>();
-	static {
-		GUI_FONTLIST.put("Times New Roman", "Times New Roman");
-		GUI_FONTLIST.put("Arial", "Arial");
-		GUI_FONTLIST.put("Courier New", "Courier New");
-		GUI_FONTLIST.put("Georgia", "Georgia");
-		GUI_FONTLIST.put("Trebuchet", "Trebuchet");
-		GUI_FONTLIST.put("Verdana", "Verdana");
-	}
+
+	// public final static HashMap<String, String> GUI_FONTLIST = new HashMap<String, String>();
+	// static {
+	// GUI_FONTLIST.put("Times New Roman", "Times New Roman");
+	// GUI_FONTLIST.put("Arial", "Arial");
+	// GUI_FONTLIST.put("Courier New", "Courier New");
+	// GUI_FONTLIST.put("Georgia", "Georgia");
+	// GUI_FONTLIST.put("Trebuchet", "Trebuchet");
+	// GUI_FONTLIST.put("Verdana", "Verdana");
+	// }
 
 	// HTML Related (styles made by SPAN and DIV)
 	private static final String HTML_STYLE_CLOSE_SPAN = "</span>";
@@ -338,8 +339,9 @@ public class RichTextToolbar extends Composite {
 					String html = beautifyHtml(styleText.getHTML());
 					styleText.setText(html);
 					styleTextFormatter.selectAll();
-					styleTextFormatter.setFontName("monospace");
+					// styleTextFormatter.setFontName("monospace");
 				} else {
+					// styleTextFormatter.removeFormat();
 					styleText.setHTML(styleText.getText());
 				}
 			} else if (event.getSource().equals(styleText)) {
@@ -389,7 +391,7 @@ public class RichTextToolbar extends Composite {
 																	var range;
 																	var parentElement;
 																	var container;
-
+																	
 																	if (elem.contentWindow.getSelection) {
 																	txt = elem.contentWindow.getSelection();
 																	pos = elem.contentWindow.getSelection().getRangeAt(0).startOffset;
@@ -543,19 +545,18 @@ public class RichTextToolbar extends Composite {
 		return button;
 	}
 
-	/** Method to create the fontlist for the toolbar **/
-	private ListBox createFontList() {
-		ListBox mylistBox = new ListBox();
-		mylistBox.addChangeHandler(evHandler);
-		mylistBox.setVisibleItemCount(1);
-
-		mylistBox.addItem(GUI_LISTNAME_FONTS);
-		for (String name : GUI_FONTLIST.keySet()) {
-			mylistBox.addItem(name, GUI_FONTLIST.get(name));
-		}
-
-		return mylistBox;
-	}
+	// private ListBox createFontList() {
+	// ListBox mylistBox = new ListBox();
+	// mylistBox.addChangeHandler(evHandler);
+	// mylistBox.setVisibleItemCount(1);
+	//
+	// mylistBox.addItem(GUI_LISTNAME_FONTS);
+	// for (String name : GUI_FONTLIST.keySet()) {
+	// mylistBox.addItem(name, GUI_FONTLIST.get(name));
+	// }
+	//
+	// return mylistBox;
+	// }
 
 	/** Method to create the colorlist for the toolbar **/
 	private ListBox createColorList() {
@@ -585,13 +586,20 @@ public class RichTextToolbar extends Composite {
 	}
 
 	private static String beautifyHtml(String html) {
+		html = html.replace(" face=", " face-XXX=");
+		html = html.replace(" font-family:", " font-family-XXX:");
+
+		html = html.replace(" style=\"\"", "");
+
 		html = html.replace("><div>", ">\n<div>");
 		html = html.replace("><br>", ">\n<br>");
-		html = html.replace("<br><", "<br>\n<");
-		html = html.replace("><ul>", ">\n<ul>");
+		html = html.replace("<br><", "<br>\n\n<");
+		html = html.replace("><ul>", ">\n\n<ul>");
 		html = html.replace("><ol>", ">\n<ol>");
 		html = html.replace("><li>", ">\n  <li>");
+		html = html.replace("><li ", ">\n  <li ");
 		html = html.replace("><img ", ">\n  <img ");
+		html = html.replace("><font ", ">\n<font ");
 		return html;
 	}
 }
