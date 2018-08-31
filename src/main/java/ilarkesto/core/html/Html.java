@@ -259,6 +259,37 @@ public class Html {
 		return sb.toString();
 	}
 
+	public static String removeTag(String s, String tag) {
+		s = s.replace("</" + tag + ">", "");
+
+		int idx;
+
+		while ((idx = s.indexOf("<" + tag)) >= 0) {
+			int endIdx = s.indexOf(">", idx + 2);
+			s = s.substring(0, idx) + s.substring(endIdx + 1, s.length());
+		}
+
+		return s;
+	}
+
+	public static String removeTags(String s, String... tags) {
+		for (String tag : tags) {
+			s = removeTag(s, tag);
+		}
+		return s;
+	}
+
+	public static String removeStyleAttribute(String s, String attribute) {
+		int idx;
+
+		while ((idx = s.indexOf(attribute)) >= 0) {
+			int endIdx = s.indexOf(";", idx + 1);
+			s = s.substring(0, idx) + s.substring(endIdx + 1, s.length());
+		}
+
+		return s;
+	}
+
 	// public static String removeSomeHtmlTags(String s, TagPredicate tagsToRemove) {
 	// if (s == null) return null;
 	// StringBuilder sb = new StringBuilder();

@@ -14,6 +14,8 @@
  */
 package ilarkesto.gwt.client.desktop.fields;
 
+import ilarkesto.core.html.Html;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -458,7 +460,7 @@ public class RichTextToolbar extends Composite {
 		topPanel.add(italic = createToggleButton("italic", GUI_HOVERTEXT_ITALIC));
 		topPanel.add(underline = createToggleButton("underline", GUI_HOVERTEXT_UNDERLINE));
 		topPanel.add(stroke = createToggleButton("stroke", GUI_HOVERTEXT_STROKE));
-		// topPanel.add(colorlist = createColorList());
+		topPanel.add(colorlist = createColorList());
 
 		// topPanel.add(subscript = createToggleButton("subscript", GUI_HOVERTEXT_SUBSCRIPT));
 		// topPanel.add(superscript = createToggleButton("superscript", GUI_HOVERTEXT_SUPERSCRIPT));
@@ -585,9 +587,14 @@ public class RichTextToolbar extends Composite {
 		return mylistBox;
 	}
 
+	private static String removeFontStyles(String html) {
+		html = Html.removeTags(html, "font");
+		html = Html.removeStyleAttribute(html, "font-family");
+		return html;
+	}
+
 	private static String beautifyHtml(String html) {
-		// html = html.replace(" face=", " face-XXX=");
-		// html = html.replace("font-family:", "font-family-XXX:");
+		html = removeFontStyles(html);
 
 		html = html.replace(" style=\"\"", "");
 
@@ -600,8 +607,6 @@ public class RichTextToolbar extends Composite {
 		html = html.replace("><li ", ">\n  <li ");
 		html = html.replace("><img ", ">\n  <img ");
 		html = html.replace("><font ", ">\n<font ");
-		html = html.replace("><", ">\n<");
-		html = html.replace("> <", ">\n<");
 		return html;
 	}
 }
