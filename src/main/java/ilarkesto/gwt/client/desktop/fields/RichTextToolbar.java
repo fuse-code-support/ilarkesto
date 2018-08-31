@@ -590,6 +590,10 @@ public class RichTextToolbar extends Composite {
 	private static String removeFontStyles(String html) {
 		html = Html.removeTags(html, "font");
 		html = Html.removeStyleAttribute(html, "font-family");
+		html = Html.removeStyleAttribute(html, "margin");
+		html = Html.removeStyleAttribute(html, "margin-bottom");
+		html = Html.removeStyleAttribute(html, "margin-top");
+		html = Html.removeStyleAttribute(html, "padding");
 		return html;
 	}
 
