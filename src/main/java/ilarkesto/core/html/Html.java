@@ -259,4 +259,50 @@ public class Html {
 		return sb.toString();
 	}
 
+	// public static String removeSomeHtmlTags(String s, TagPredicate tagsToRemove) {
+	// if (s == null) return null;
+	// StringBuilder sb = new StringBuilder();
+	// StringBuilder currentTagPartial = null;
+	// boolean currentTagFinished = true;
+	//
+	// boolean inside = false;
+	// int len = s.length();
+	// for (int i = 0; i < len; i++) {
+	// char c = s.charAt(i);
+	// if (inside) {
+	// // inside html tag
+	// if (c == '>') {
+	// inside = false;
+	// currentTagPartial = null;
+	// currentTagFinished = true;
+	// if (tagsToRemove.accept(currentTagPartial.toString())) {
+	// sb.append("<")
+	// }
+	// } else if (c == ' ') {
+	// currentTagFinished = true;
+	// } else {
+	// if (!currentTagFinished) currentTagPartial.append(c);
+	// }
+	// continue;
+	// } else {
+	// // outside html tag
+	// if (c == '<') {
+	// inside = true;
+	// currentTagPartial = new StringBuilder();
+	// currentTagFinished = false;
+	// continue;
+	// }
+	// sb.append(c);
+	// }
+	// }
+	//
+	// s = sb.toString();
+	// return s;
+	// }
+	//
+	// public static interface TagPredicate {
+	//
+	// boolean accept(String tag);
+	// }
+
 }
