@@ -21,6 +21,7 @@ import ilarkesto.core.persistance.Entity;
 import ilarkesto.gwt.client.AGwtApplication;
 import ilarkesto.gwt.client.Gwt;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
@@ -97,6 +98,22 @@ public abstract class AGwtNavigator implements ValueChangeHandler<String> {
 
 	public String getActivityNameForEntity(Entity entity) {
 		return Str.getSimpleName(entity.getClass());
+	}
+
+	public static String getActivityUrl(Class<? extends AActivity> type, ActivityParameters parameters,
+			boolean restart) {
+		String name = Str.removeSuffix(Str.getSimpleName(type), "Activity");
+		String servlet = restart ? "restart" : "desktop";
+		String ret = GWT.getHostPageBaseURL() + servlet + "#" + name;
+		if (parameters != null) ret += parameters.createToken();
+		return ret;
+	}
+
+	public static String getActivityHashtag(Class<? extends AActivity> type, ActivityParameters parameters,
+			boolean restart) {
+		String ret = Str.removeSuffix(Str.getSimpleName(type), "Activity");
+		if (parameters != null) ret += parameters.createToken();
+		return ret;
 	}
 
 	public void disable() {

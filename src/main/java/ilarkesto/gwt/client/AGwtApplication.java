@@ -19,6 +19,7 @@ import ilarkesto.core.logging.Log;
 import ilarkesto.core.persistance.AEntity;
 import ilarkesto.core.persistance.Entity;
 import ilarkesto.core.persistance.Persistence;
+import ilarkesto.gwt.client.desktop.AActivity;
 import ilarkesto.gwt.client.desktop.AActivityCatalog;
 import ilarkesto.gwt.client.desktop.AGwtNavigator;
 import ilarkesto.gwt.client.desktop.ActivityRuntimeStatistics;
@@ -209,6 +210,10 @@ public abstract class AGwtApplication<D extends ADataTransferObject> implements 
 	public String getEntityLabel(Entity entity) {
 		if (entity == null) return null;
 		return entity.toString();
+	}
+
+	public String getActivityLinkText(Class<? extends AActivity> activity) {
+		return activity.toString();
 	}
 
 }

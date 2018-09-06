@@ -35,7 +35,6 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class Workspace {
 
@@ -116,10 +115,10 @@ public class Workspace {
 		return windowTitlePostfix;
 	}
 
-	public void setBreadcrumb(List<? extends AEntity> entities) {
+	public void setBreadcrumb(List elements) {
 		breadcrumb.clear();
 		boolean first = true;
-		for (AEntity entity : entities) {
+		for (Object element : elements) {
 			if (first) {
 				first = false;
 			} else {
@@ -128,23 +127,37 @@ public class Workspace {
 				style.setFloat(Float.LEFT);
 				breadcrumb.add(separator);
 			}
-			breadcrumb.add(createBreadcrumbLink(entity));
+			addBreadcrumbLink(element);
 		}
 	}
 
-	private Widget createBreadcrumbLink(AEntity entity) {
-		String text;
-		try {
-			text = breadcrumbResolver.getBreadcrumbText(entity);
-		} catch (Exception ex) {
-			log.error(ex);
-			text = entity.getId();
+	private void addBreadcrumbLink(Object o) {
+		String text = "Startseite";
+		String hashtag = "#Home";
+
+		if (o instanceof AEntity) {
+			AEntity entity = (AEntity) o;
+			try {
+				text = breadcrumbResolver.getBreadcrumbText(entity);
+			} catch (Exception ex) {
+				log.error(ex);
+				text = entity.getId();
+			}
+			hashtag = AGwtApplication.get().getTokenForEntityActivity(entity);
+		} else if (o instanceof Class) {
+			Class<? extends AActivity> activity = (Class<? extends AActivity>) o;
+			text = AGwtApplication.get().getActivityLinkText(activity);
+			hashtag = AGwtNavigator.getActivityHashtag(activity, null, true);
 		}
 
-		Hyperlink link = new Hyperlink(text, AGwtApplication.get().getTokenForEntityActivity(entity));
+		addBreadcrumbLink(text, hashtag);
+	}
+
+	public void addBreadcrumbLink(String text, String href) {
+		Hyperlink link = new Hyperlink(text, href);
 		Style style = link.getElement().getStyle();
 		style.setFloat(Float.LEFT);
-		return link;
+		breadcrumb.add(link);
 	}
 
 	public Workspace setContent(IsWidget content) {
