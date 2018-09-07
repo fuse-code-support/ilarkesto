@@ -12,6 +12,7 @@ public class GoonTextBox extends AGoonTextBox {
 
 	public GoonTextBox(boolean password) {
 		textBox = password ? new PasswordTextBox() : new TextBox();
+		textBox.getElement().setAttribute("autocomplete", "off");
 	}
 
 	@Override
