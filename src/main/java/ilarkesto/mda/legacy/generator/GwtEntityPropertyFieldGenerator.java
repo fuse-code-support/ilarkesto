@@ -29,6 +29,7 @@ import ilarkesto.gwt.client.desktop.AEditableSetReferenceField;
 import ilarkesto.gwt.client.desktop.ActivityParameters;
 import ilarkesto.gwt.client.desktop.Widgets;
 import ilarkesto.gwt.client.desktop.fields.AEditableBooleanDropdownField;
+import ilarkesto.gwt.client.desktop.fields.AEditableCodemirrorTextField;
 import ilarkesto.gwt.client.desktop.fields.AEditableDateAndTimeField;
 import ilarkesto.gwt.client.desktop.fields.AEditableDateField;
 import ilarkesto.gwt.client.desktop.fields.AEditableDateRangeField;
@@ -140,10 +141,21 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 			writeGetSelectedEntities();
 		}
 
+		if (property instanceof StringPropertyModel && ((StringPropertyModel) property).getCodemirrorMode() != null) {
+			writeCodemirror();
+		}
+
 		writeCreateParametersForServer();
 
 		writeGetSuffix();
 		writeGetMaxLength();
+	}
+
+	private void writeCodemirror() {
+		ln();
+		ln("    protected String getMode() {");
+		ln("        return \"" + ((StringPropertyModel) property).getCodemirrorMode() + "\";");
+		ln("    }");
 	}
 
 	private void writeCreateParametersForServer() {
@@ -393,6 +405,8 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 		if (typeSetReference) return AEditableSetReferenceField.class.getName() + "<"
 				+ getBeanClass(((ReferenceSetPropertyModel) property)) + ">";
 		if (property.isString()) {
+			if (((StringPropertyModel) property).getCodemirrorMode() != null)
+				return AEditableCodemirrorTextField.class.getName();
 			if (((StringPropertyModel) property).isRichtext()) return AEditableRichTextField.class.getName();
 			if (((StringPropertyModel) property).isMultiline()) return AEditableMultiLineTextField.class.getName();
 			return AEditableTextField.class.getName();

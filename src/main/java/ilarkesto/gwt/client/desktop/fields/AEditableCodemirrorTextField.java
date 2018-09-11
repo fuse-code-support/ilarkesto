@@ -1,25 +1,18 @@
 package ilarkesto.gwt.client.desktop.fields;
 
+import ilarkesto.gwt.client.desktop.CodemirrorWidget;
+
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 public abstract class AEditableCodemirrorTextField extends AEditableField {
 
-	// private TextArea textArea;
-	private static int count = 0;
-
-	private final String wrapperId = "codemirror_" + ++count;
-	private SimplePanel wrapper;
+	private CodemirrorWidget codemirror;
 
 	public abstract void applyValue(String value);
 
@@ -29,39 +22,19 @@ public abstract class AEditableCodemirrorTextField extends AEditableField {
 
 	@Override
 	protected IsWidget createEditorWidget() {
-		wrapper = new SimplePanel();
-		wrapper.getElement().setId(wrapperId);
-		Style style = wrapper.getElement().getStyle();
-		style.setWidth(Window.getClientWidth() * 0.8, Unit.PX);
-		wrapper.addAttachHandler(new AttachEvent.Handler() {
-
-			@Override
-			public void onAttachOrDetach(AttachEvent ev) {
-				if (ev.isAttached()) {
-					insertCodemirror(wrapperId, getMode(), getValue());
-				}
-			}
-		});
-		return wrapper;
-	}
-
-	private native Object insertCodemirror(String wrapperId, String mode, String value)
-	/*-{
-	    if (mode === 'json') mode = {name: 'javascript', json: true};
-	    var wrapper = $wnd.document.getElementById(wrapperId);
-		var codemirror = $wnd.CodeMirror(wrapper, {
-			value: value,
-			mode:  mode
-		});
+		codemirror = new CodemirrorWidget(getMode(), getValue(), false);
+		Style style = codemirror.getElement().getStyle();
+		style.setWidth(getTextBoxWidth(), Unit.PX);
+		style.setHeight(getTextBoxHeight(), Unit.PX);
 		return codemirror;
-	}-*/;
+	}
 
 	@Override
 	public void trySubmit() throws RuntimeException {
-		// String text = prepareText(textArea.getText());
-		// String value = prepareValue(text);
-		// validateValue(value);
-		// applyValue(value);
+		String text = prepareText(codemirror.getValue());
+		String value = prepareValue(text);
+		validateValue(value);
+		applyValue(value);
 	}
 
 	@Override
@@ -85,18 +58,12 @@ public abstract class AEditableCodemirrorTextField extends AEditableField {
 			throw new RuntimeException("Eingabe erforderlich.");
 	}
 
-	private int getTextBoxWidth() {
-		int width = Window.getClientWidth();
-		if (width > 700) width = 700;
-		return width;
-	}
-
-	protected String getTextBoxMaxWidth() {
-		return Window.getClientWidth() + "px";
+	protected int getTextBoxWidth() {
+		return (int) (Window.getClientWidth() * 0.9);
 	}
 
 	protected int getTextBoxHeight() {
-		return 100;
+		return (int) (Window.getClientHeight() * 0.7);
 	}
 
 	protected String getDisplayMaxWidth() {
@@ -106,20 +73,12 @@ public abstract class AEditableCodemirrorTextField extends AEditableField {
 	@Override
 	public IsWidget createDisplayWidget() {
 		String text = getValue();
-
-		Label label = new Label();
-		Style style = label.getElement().getStyle();
 		if (text == null) {
 			text = getAlternateValueIfValueIsNull();
-			style.setColor("#AAA");
 		}
-
-		label.setText(text);
-		style.setWhiteSpace(WhiteSpace.PRE_WRAP);
-		style.setProperty("maxWidth", getDisplayMaxWidth());
-		style.setOverflow(Overflow.AUTO);
-
-		return label;
+		CodemirrorWidget codemirror = new CodemirrorWidget(getMode(), text, true);
+		// codemirror.getElement().getStyle().setCursor(Cursor.POINTER);
+		return codemirror;
 	}
 
 	public String getAlternateValueIfValueIsNull() {

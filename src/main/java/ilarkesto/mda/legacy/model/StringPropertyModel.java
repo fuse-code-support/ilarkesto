@@ -18,6 +18,7 @@ public class StringPropertyModel extends SimplePropertyModel {
 
 	private boolean richtext;
 	private boolean multiline;
+	private String codemirrorMode;
 	private Integer maxLenght;
 	private boolean templateAvailable;
 	private boolean masked;
@@ -57,12 +58,21 @@ public class StringPropertyModel extends SimplePropertyModel {
 		return this;
 	}
 
+	public StringPropertyModel setCodemirrorMode(String mode) {
+		this.codemirrorMode = mode;
+		return this;
+	}
+
 	public boolean isRichtext() {
 		return richtext;
 	}
 
 	public boolean isMultiline() {
 		return multiline;
+	}
+
+	public String getCodemirrorMode() {
+		return codemirrorMode;
 	}
 
 	public StringPropertyModel setMaxLenght(Integer maxLenght) {
