@@ -107,7 +107,7 @@ public class Json {
 
 	static void indent(PrintWriter out, int indentation) {
 		for (int i = 0; i < indentation; i++) {
-			out.print('\t');
+			out.print("  ");
 		}
 	}
 
