@@ -14,6 +14,9 @@
  */
 package ilarkesto.ui.web;
 
+import java.util.Collections;
+import java.util.List;
+
 public abstract class AHtmlPageBuilder {
 
 	protected abstract void bodyContent(HtmlBuilder html);
@@ -29,12 +32,26 @@ public abstract class AHtmlPageBuilder {
 		html.startHTML(lang);
 		html.startHEAD(getTitle());
 		headerContent(html);
+		for (String css : getCssHrefs()) {
+			html.LINKcss(css);
+		}
 		html.endHEAD();
 		html.startBODY(getBodyId());
 		bodyContent(html);
+		for (String js : getJsHrefs()) {
+			html.SCRIPTjavascript(js, null);
+		}
 		html.endBODY();
 		html.endHTML();
 		return html;
+	}
+
+	protected List<String> getJsHrefs() {
+		return Collections.emptyList();
+	}
+
+	protected List<String> getCssHrefs() {
+		return Collections.emptyList();
 	}
 
 	protected String getBodyId() {
