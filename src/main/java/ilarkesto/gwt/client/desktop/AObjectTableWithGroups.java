@@ -552,6 +552,10 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		return null;
 	}
 
+	protected String getRowBackgroundColor(O o) {
+		return null;
+	}
+
 	public Integer getIndentation(O o) {
 		return null;
 	}
@@ -796,13 +800,24 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		}
 
 		public void formatCell(int row, O o, CellFormatter cellFormatter) {
+			Element element = cellFormatter.getElement(row, index);
+			Style style = element.getStyle();
+
+			style.setVerticalAlign(VerticalAlign.TOP);
+
 			String color = getColor(o);
 			if (color != null) {
-				cellFormatter.getElement(row, index).getStyle().setColor(color);
+				style.setColor(color);
 			}
+
+			String backgroundColor = getBackgroundColor(o);
+			if (backgroundColor != null) {
+				style.setBackgroundColor(backgroundColor);
+			}
+
 			String tooltip = getTooltip(o);
 			if (tooltip != null) {
-				cellFormatter.getElement(row, index).setTitle(tooltip);
+				element.setTitle(tooltip);
 			}
 		}
 
@@ -812,6 +827,10 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 		public String getColor(O o) {
 			return AObjectTableWithGroups.this.getRowColor(o);
+		}
+
+		public String getBackgroundColor(O o) {
+			return AObjectTableWithGroups.this.getRowBackgroundColor(o);
 		}
 
 		public String getHref(O o, Widget cellWidget) {

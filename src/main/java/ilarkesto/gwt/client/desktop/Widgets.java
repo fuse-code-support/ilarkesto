@@ -186,6 +186,7 @@ public class Widgets {
 
 	public static HorizontalPanel horizontalPanel(int spacing, Iterable widgets) {
 		HorizontalPanel panel = new HorizontalPanel();
+		panel.setBorderWidth(0);
 		boolean first = true;
 		for (Object object : widgets) {
 			Widget widget = widget(object);
