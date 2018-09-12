@@ -22,6 +22,7 @@ import ilarkesto.core.persistance.AEntity;
 import ilarkesto.gwt.client.AAction;
 import ilarkesto.gwt.client.ADataTransferObject;
 import ilarkesto.gwt.client.ClientDataTransporter;
+import ilarkesto.gwt.client.Gwt;
 import ilarkesto.gwt.client.Updatable;
 
 import java.util.ArrayList;
@@ -38,12 +39,19 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.ScrollEvent;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
@@ -71,8 +79,35 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 	private int sortColumnIndex = -1;
 	private boolean reverseSort;
 	protected boolean extended;
+	private boolean stickyColumnTitles;
 
 	protected abstract Collection<O> getObjects();
+
+	private Element[] columnTitles;
+
+	public AObjectTableWithGroups() {
+		if (Gwt.isClient()) installStickyHeader();
+	}
+
+	private void installStickyHeader() {
+		Window.addWindowScrollHandler(new Window.ScrollHandler() {
+
+			@Override
+			public void onWindowScroll(ScrollEvent ev) {
+				if (!stickyColumnTitles) return;
+				if (columnTitles == null) return;
+				int top = ev.getScrollTop();
+				if (top > 57) {
+					top -= 57;
+				} else {
+					top = 0;
+				}
+				for (int i = 0; i < columnTitles.length; i++) {
+					columnTitles[i].getStyle().setTop(top, Unit.PX);
+				}
+			}
+		});
+	}
 
 	public boolean isExtended() {
 		return extended;
@@ -114,6 +149,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		int rowIndex = -1;
 
 		if (isColumnTitlesEnabled()) {
+			columnTitles = new Element[columns.size()];
 			Set<String> keys = new HashSet<String>();
 			rowIndex++;
 			for (AColumn column : columns) {
@@ -139,13 +175,29 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 								+ ". Override getKey() in column and provide a different key for the column.");
 						keys.add(key);
 
-						AAction selfdocAction = Widgets.selfdocAction(column.getSelfdocKey(), columnTitle,
+						final AAction selfdocAction = Widgets.selfdocAction(column.getSelfdocKey(), columnTitle,
 							columnDescription);
 						if (selfdocAction != null) {
-							ActionButton button = new ActionButton(selfdocAction);
-							button.setIconSize(16);
-							button.setIconOpacity(0.7f);
-							titleWidget = Widgets.flowPanel(titleWidget, button);
+
+							// ActionButton button = new ActionButton(selfdocAction);
+							// button.setIconSize(16);
+							// button.setIconOpacity(0.7f);
+
+							Anchor button = new Anchor("(?)");
+							button.addClickHandler(new ClickHandler() {
+
+								@Override
+								public void onClick(ClickEvent ev) {
+									selfdocAction.execute();
+								}
+
+							});
+							Style style = button.getElement().getStyle();
+							style.setColor("#999");
+							style.setFontSize(65, Unit.PCT);
+							style.setTextDecoration(TextDecoration.NONE);
+
+							titleWidget = Widgets.horizontalFlowPanel(4, titleWidget, button);
 						}
 					}
 
@@ -163,8 +215,16 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 					}
 				}
 
-				table.setWidget(rowIndex, column.index, Widgets.frame(titleWidget, Widgets.defaultSpacing, 0,
-					Widgets.defaultSpacing, Widgets.defaultSpacing / 2));
+				SimplePanel frame = Widgets.frame(titleWidget, Widgets.defaultSpacing, 0, Widgets.defaultSpacing,
+					Widgets.defaultSpacing / 2);
+				table.setWidget(rowIndex, column.index, frame);
+
+				Element element = table.getCellFormatter().getElement(rowIndex, column.index);
+				columnTitles[column.index] = element;
+				Style style = element.getStyle();
+				style.setPosition(Position.RELATIVE);
+				style.setBackgroundColor("#f9f9f9");
+				style.setVerticalAlign(VerticalAlign.TOP);
 
 				if (customSortingEnabled) {
 					for (int col = 0; col < columns.size(); col++) {
@@ -498,6 +558,11 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 	public String getSelfdocKey() {
 		return getClass().getSimpleName();
+	}
+
+	public AObjectTableWithGroups<O, G> setStickyColumnTitles(boolean stickyColumnTitles) {
+		this.stickyColumnTitles = stickyColumnTitles;
+		return this;
 	}
 
 	public List<Row> createRows(Collection<O> objects, int rowIndex) {
