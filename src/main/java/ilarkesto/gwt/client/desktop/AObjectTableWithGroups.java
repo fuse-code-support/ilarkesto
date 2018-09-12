@@ -145,7 +145,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 							ActionButton button = new ActionButton(selfdocAction);
 							button.setIconSize(16);
 							button.setIconOpacity(0.7f);
-							titleWidget = Widgets.horizontalFlowPanel(0, titleWidget, button);
+							titleWidget = Widgets.flowPanel(titleWidget, button);
 						}
 					}
 
