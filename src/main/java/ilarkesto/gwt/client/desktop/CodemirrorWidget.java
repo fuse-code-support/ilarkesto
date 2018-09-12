@@ -37,7 +37,7 @@ public class CodemirrorWidget extends SimplePanel {
 			@Override
 			public void onAttachOrDetach(AttachEvent ev) {
 				if (ev.isAttached()) {
-					codemirror = createCodemirror(id, mode, value, readonly);
+					codemirror = createCodemirror(id, mode, value == null ? "" : value, readonly);
 				}
 			}
 		});
@@ -50,7 +50,6 @@ public class CodemirrorWidget extends SimplePanel {
 
 	private native JavaScriptObject createCodemirror(String wrapperId, String mode, String value, boolean readonly)
 	/*-{
-	    if (mode === 'json') mode = {name: 'javascript', json: true};
 	    var wrapper = $wnd.document.getElementById(wrapperId);
 		var codemirror = $wnd.CodeMirror(wrapper, {
 			value: value,
