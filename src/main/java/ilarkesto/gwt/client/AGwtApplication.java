@@ -183,7 +183,7 @@ public abstract class AGwtApplication<D extends ADataTransferObject> implements 
 	}
 
 	public abstract void sendChangesToServer(Collection<AEntity> modified, Collection<String> deleted,
-			Map<String, Map<String, String>> modifiedProperties, Runnable callback);
+			Map<String, Map<String, String>> modifiedProperties, String transactionText, Runnable callback);
 
 	private class HistoryTokenChangedHandler implements ValueChangeHandler<String> {
 

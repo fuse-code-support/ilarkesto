@@ -38,7 +38,7 @@ public class GwtRpcDatabase extends ACachingEntitiesBackend {
 	@Override
 	protected void onUpdate(Collection<AEntity> modified, Collection<String> deleted,
 			Map<String, Map<String, String>> modifiedProperties, Runnable callback, String transactionText) {
-		AGwtApplication.get().sendChangesToServer(modified, deleted, modifiedProperties, callback);
+		AGwtApplication.get().sendChangesToServer(modified, deleted, modifiedProperties, transactionText, callback);
 	}
 
 	public Set<AEntity> updateFromServer(Collection<Map<String, String>> entityDatas) {
