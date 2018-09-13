@@ -56,6 +56,8 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 		style(".goon-ObjectTable .columnTitleWithSortToggle")
 				.background("url(img/ic_action_sort-toggle.png) left center no-repeat").backgroundSize(18)
 				.paddingLeft(16);
+
+		style(".CodeMirrorWidget .CodeMirror").heightAuto();
 	}
 
 	private void dialog() {
