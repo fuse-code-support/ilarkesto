@@ -40,9 +40,9 @@ import ilarkesto.gwt.client.desktop.fields.AEditableIntegerField;
 import ilarkesto.gwt.client.desktop.fields.AEditableLongField;
 import ilarkesto.gwt.client.desktop.fields.AEditableMoneyField;
 import ilarkesto.gwt.client.desktop.fields.AEditableMultiLineTextField;
-import ilarkesto.gwt.client.desktop.fields.AEditableRichTextField;
 import ilarkesto.gwt.client.desktop.fields.AEditableTextField;
 import ilarkesto.gwt.client.desktop.fields.AEditableTimeField;
+import ilarkesto.gwt.client.desktop.fields.AEditableTinyMceField;
 import ilarkesto.gwt.client.desktop.fields.AField;
 import ilarkesto.mda.legacy.model.ACollectionPropertyModel;
 import ilarkesto.mda.legacy.model.EntityModel;
@@ -407,7 +407,7 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 		if (property.isString()) {
 			if (((StringPropertyModel) property).getCodemirrorMode() != null)
 				return AEditableCodemirrorTextField.class.getName();
-			if (((StringPropertyModel) property).isRichtext()) return AEditableRichTextField.class.getName();
+			if (((StringPropertyModel) property).isRichtext()) return AEditableTinyMceField.class.getName();
 			if (((StringPropertyModel) property).isMultiline()) return AEditableMultiLineTextField.class.getName();
 			return AEditableTextField.class.getName();
 		}

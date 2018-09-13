@@ -91,6 +91,7 @@ public class FieldEditorDialogBox {
 
 	private void createDialog() {
 		dialog = Widgets.dialog(field.isEditorDialogAutohide(), field.getLabel(), createContent(), createFooter());
+		dialog.setModal(false);
 		if (selfdocPanel != null) selfdocPanel.setDialog(dialog);
 	}
 

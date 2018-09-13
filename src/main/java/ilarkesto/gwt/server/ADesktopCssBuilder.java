@@ -37,6 +37,11 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 		dialog();
 		desktop();
 		cards();
+		codeMirror();
+	}
+
+	private void codeMirror() {
+		style(".CodeMirrorWidget .CodeMirror").heightAuto();
 	}
 
 	protected void init() {}
@@ -57,7 +62,6 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 				.background("url(img/ic_action_sort-toggle.png) left center no-repeat").backgroundSize(18)
 				.paddingLeft(16);
 
-		style(".CodeMirrorWidget .CodeMirror").heightAuto();
 	}
 
 	private void dialog() {
