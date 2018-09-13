@@ -2,6 +2,7 @@ package ilarkesto.gwt.client.desktop.fields;
 
 import ilarkesto.gwt.client.desktop.TinyMceWidget;
 import ilarkesto.gwt.client.desktop.TinyMceWidget.TinyMceConfigurator;
+import ilarkesto.gwt.client.desktop.Widgets;
 
 import java.util.Collections;
 import java.util.List;
@@ -106,7 +107,7 @@ public abstract class AEditableTinyMceField extends AEditableField implements Ti
 
 	@Override
 	public IsWidget createDisplayWidget() {
-		return new TinyMceWidget(getValue(), new TinyMceConfigurator() {
+		TinyMceWidget tinyMce = new TinyMceWidget(getValue(), new TinyMceConfigurator() {
 
 			@Override
 			public void configureTinyMce(JSONObject conf) {
@@ -120,6 +121,14 @@ public abstract class AEditableTinyMceField extends AEditableField implements Ti
 			}
 
 		});
+
+		IsWidget editor = tinyMce;
+		if (getEditVetoMessage() == null) {
+			editor = Widgets.flowPanel(editor, Widgets.verticalSpacer(),
+				Widgets.textSecondary("Zum Bearbeiten hier klicken"));
+		}
+
+		return Widgets.frame(editor, Widgets.defaultSpacing);
 	}
 
 	public List<String> getToolbarInlineImages() {
