@@ -15,17 +15,18 @@
 package ilarkesto.core.persistance;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public abstract class AEntitySetBackReferenceHelper<E extends AEntity> {
 
-	private Map<String, Set<String>> cachesById = new HashMap<String, Set<String>>();
+	private Map<String, Set<String>> cachesById = Collections.synchronizedMap(new HashMap<String, Set<String>>());
 
 	protected abstract Set<E> loadById(String id);
 
-	public synchronized Set<E> getById(String id) {
+	public Set<E> getById(String id) {
 		// if (AEntityDatabase.instance.isPartial()) return loadById(id);
 		Set<String> cache = cachesById.get(id);
 
@@ -44,11 +45,11 @@ public abstract class AEntitySetBackReferenceHelper<E extends AEntity> {
 		return entities;
 	}
 
-	public synchronized void clear(String id) {
+	public void clear(String id) {
 		cachesById.remove(id);
 	}
 
-	public synchronized void clear(Collection<String> ids) {
+	public void clear(Collection<String> ids) {
 		for (String id : ids) {
 			clear(id);
 		}

@@ -37,17 +37,17 @@ public abstract class ACachingEntitiesBackend extends AEntitiesBackend {
 	}
 
 	@Override
-	public synchronized AEntity getById(String id) throws EntityDoesNotExistException {
+	public AEntity getById(String id) throws EntityDoesNotExistException {
 		return cache.getById(id);
 	}
 
 	@Override
-	public synchronized boolean containsWithId(String id) {
+	public boolean containsWithId(String id) {
 		return cache.containsWithId(id);
 	}
 
 	@Override
-	public synchronized Set<AEntity> getByIdsAsSet(Collection<String> ids) throws EntityDoesNotExistException {
+	public Set<AEntity> getByIdsAsSet(Collection<String> ids) throws EntityDoesNotExistException {
 		return cache.getByIdsAsSet(ids);
 	}
 
