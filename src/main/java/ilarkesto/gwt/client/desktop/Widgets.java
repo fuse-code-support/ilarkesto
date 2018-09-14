@@ -255,8 +255,6 @@ public class Widgets {
 		content.add(footerWidget);
 
 		DialogBox dialogBox = dialog(autoHide, title, content);
-		// dialogBox.getElement().getStyle().setPosition(Position.FIXED);
-		dialogBox.getElement().getStyle().setZIndex(100);
 		return dialogBox;
 
 	}

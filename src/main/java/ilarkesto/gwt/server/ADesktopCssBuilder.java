@@ -153,7 +153,7 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 				.verticalAlignTop();
 		style("#workspaceContainer").displayTableCell().width100().padding(12);
 
-		style("#goon .gwt-PopupPanel").borderNone().zIndex(1000);
+		// style("#goon .gwt-PopupPanel").borderNone().zIndex(100);
 	}
 
 	protected void cards() {
