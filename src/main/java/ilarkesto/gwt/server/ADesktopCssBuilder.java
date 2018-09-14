@@ -42,6 +42,11 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 
 	private void codeMirror() {
 		style(".CodeMirrorWidget .CodeMirror").heightAuto();
+		style(".CodeMirror-readonly .CodeMirror .CodeMirror-vscrollbar").zIndexAuto();
+		style(".CodeMirror-readonly .CodeMirror .CodeMirror-hscrollbar").zIndexAuto();
+		style(".CodeMirror-readonly .CodeMirror .CodeMirror-scrollbar-filler").zIndexAuto();
+		style(".CodeMirror-readonly .CodeMirror .CodeMirror-gutter-filler").zIndexAuto();
+		style(".CodeMirror-readonly .CodeMirror .CodeMirror-line").zIndexAuto();
 	}
 
 	protected void init() {}

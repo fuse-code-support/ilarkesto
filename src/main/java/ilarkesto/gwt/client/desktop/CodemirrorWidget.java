@@ -34,6 +34,7 @@ public class CodemirrorWidget extends SimplePanel {
 		this.readonly = readonly;
 
 		setStyleName("CodeMirrorWidget");
+		if (readonly) addStyleName("CodeMirror-readonly");
 		getElement().setId(id);
 		addAttachHandler(new AttachEvent.Handler() {
 
