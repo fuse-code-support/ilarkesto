@@ -15,14 +15,14 @@
 package ilarkesto.core.persistance;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public abstract class AEntitySetBackReferenceHelper<E extends AEntity> {
 
-	private Map<String, Set<String>> cachesById = Collections.synchronizedMap(new HashMap<String, Set<String>>());
+	private Map<String, Set<String>> cachesById = Persistence.transactionManager
+			.synchronizedMap(new HashMap<String, Set<String>>());
 
 	protected abstract Set<E> loadById(String id);
 

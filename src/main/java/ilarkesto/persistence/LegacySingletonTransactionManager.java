@@ -16,11 +16,19 @@ package ilarkesto.persistence;
 
 import ilarkesto.core.persistance.ASingletonTransactionManager;
 
+import java.util.Collections;
+import java.util.Map;
+
 public class LegacySingletonTransactionManager extends ASingletonTransactionManager<Transaction> {
 
 	@Override
 	protected Transaction newTransaction() {
 		return new Transaction("singleton", true, false, true);
+	}
+
+	@Override
+	public <K, V> Map<K, V> synchronizedMap(Map<K, V> map) {
+		return Collections.synchronizedMap(map);
 	}
 
 }

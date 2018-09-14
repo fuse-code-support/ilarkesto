@@ -14,11 +14,19 @@
  */
 package ilarkesto.persistence;
 
+import java.util.Collections;
+import java.util.Map;
+
 public class LegacyThreadlocalTransactionManager extends AThreadlocalTransactionManager<Transaction> {
 
 	@Override
 	protected Transaction newInstance(String name, boolean writable) {
 		return new Transaction(name, writable, false, true);
+	}
+
+	@Override
+	public <K, V> Map<K, V> synchronizedMap(Map<K, V> map) {
+		return Collections.synchronizedMap(map);
 	}
 
 }

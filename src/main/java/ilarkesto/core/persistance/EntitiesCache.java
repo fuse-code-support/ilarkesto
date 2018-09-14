@@ -16,7 +16,6 @@ package ilarkesto.core.persistance;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.Set;
 
 public class EntitiesCache<E extends Entity> implements EntitiesProvider<E> {
 
-	private Map<Class, Map<String, E>> entitiesByTypeById = Collections
+	private Map<Class, Map<String, E>> entitiesByTypeById = Persistence.transactionManager
 			.synchronizedMap(new HashMap<Class, Map<String, E>>());
 
 	@Override
