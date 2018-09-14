@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Map;
 
-import org.apache.tools.ant.filters.StringInputStream;
 import org.testng.annotations.Test;
 
 public class IOTest extends ATest {
@@ -58,7 +57,7 @@ public class IOTest extends ATest {
 
 	@Test
 	public void stringInputStream() {
-		assertEquals(IO.readToString(new StringInputStream("täst", IO.UTF_8), IO.UTF_8), "täst");
-		assertEquals(IO.readToString(new StringInputStream("täst", IO.ISO_LATIN_1), IO.ISO_LATIN_1), "täst");
+		assertEquals(IO.readToString(new IO.StringInputStream("täst", IO.UTF_8), IO.UTF_8), "täst");
+		assertEquals(IO.readToString(new IO.StringInputStream("täst", IO.ISO_LATIN_1), IO.ISO_LATIN_1), "täst");
 	}
 }
