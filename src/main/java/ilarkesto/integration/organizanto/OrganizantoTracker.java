@@ -21,6 +21,7 @@ import ilarkesto.core.time.DateAndTime;
 import ilarkesto.net.httpclient.HttpSession;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class OrganizantoTracker extends ATask {
 	private String propertyKey;
 
 	private HttpSession http = new HttpSession();
-	private List<Event> events = new ArrayList<Event>();
+	private List<Event> events = Collections.synchronizedList(new ArrayList<Event>());
 
 	public OrganizantoTracker(String propertyKey) {
 		this.propertyKey = propertyKey;
@@ -42,17 +43,10 @@ public class OrganizantoTracker extends ATask {
 		track(name, value, null, null, false);
 	}
 
-	public synchronized void track(String name, String value, String message, String info, boolean alert) {
+	public void track(String name, String value, String message, String info, boolean alert) {
 		if (Sys.isDevelopmentMode()) return;
 
 		Event event = new Event(DateAndTime.now(), name, value, message, info, alert);
-
-		if (alert) {
-			try {
-				postEvent(null);
-				return;
-			} catch (Exception ex) {}
-		}
 
 		events.add(event);
 	}
@@ -62,7 +56,7 @@ public class OrganizantoTracker extends ATask {
 		flush();
 	}
 
-	public synchronized void flush() {
+	public void flush() {
 		try {
 			for (Event event : new ArrayList<Event>(events)) {
 				postEvent(event);
