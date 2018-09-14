@@ -56,7 +56,7 @@ public class GwtSuperDevMode {
 			String name = file.getName();
 			if (!name.endsWith(".jar")) continue;
 			if (name.startsWith("gwt")) cp.add("ilarkesto/lib/" + name);
-			if (name.startsWith("asm")) cp.add("ilarkesto/lib/" + name);
+			if (name.startsWith("validation-api")) cp.add("ilarkesto/lib/" + name);
 		}
 		startCodeServerInSeparateProcess(workDir, cp);
 	}
