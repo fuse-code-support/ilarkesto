@@ -14,9 +14,11 @@
  */
 package ilarkesto.gwt.client;
 
+import ilarkesto.core.base.Factory;
 import ilarkesto.core.base.Str;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.persistance.AEntity;
+import ilarkesto.core.persistance.EntitiesBackend;
 import ilarkesto.core.persistance.Entity;
 import ilarkesto.core.persistance.Persistence;
 import ilarkesto.gwt.client.desktop.AActivity;
@@ -85,11 +87,14 @@ public abstract class AGwtApplication<D extends ADataTransferObject> implements 
 	@Override
 	public final void onModuleLoad() {
 		activityCatalog = createActivityCatalog();
-		AGwtEntityFactory entityFactory = createEntityFactory();
-		if (entityFactory != null) {
-			entitiesBackend = new GwtRpcDatabase(entityFactory);
-			Persistence.initialize(entitiesBackend, new GwtTransactionManager());
-		}
+		Persistence.initialize(new Factory<EntitiesBackend>() {
+
+			@Override
+			public EntitiesBackend newInstance() {
+				AGwtApplication.this.entitiesBackend = new GwtRpcDatabase(createEntityFactory());
+				return getEntitiesBackend();
+			}
+		}, new GwtTransactionManager());
 		init();
 	}
 

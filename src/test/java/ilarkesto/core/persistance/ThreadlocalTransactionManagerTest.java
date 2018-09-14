@@ -14,6 +14,7 @@
  */
 package ilarkesto.core.persistance;
 
+import ilarkesto.core.base.Factory;
 import ilarkesto.persistence.ThreadlocalTransactionManager;
 import ilarkesto.testng.ATest;
 
@@ -27,7 +28,13 @@ public class ThreadlocalTransactionManagerTest extends ATest {
 
 	@BeforeClass
 	public void init() {
-		Persistence.initialize(new InMemoryEntitiesBackend(), new ThreadlocalTransactionManager());
+		Persistence.initialize(new Factory<EntitiesBackend>() {
+
+			@Override
+			public EntitiesBackend newInstance() {
+				return new InMemoryEntitiesBackend();
+			}
+		}, new ThreadlocalTransactionManager());
 	}
 
 	@Test

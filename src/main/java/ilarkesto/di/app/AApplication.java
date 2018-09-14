@@ -21,6 +21,7 @@ import ilarkesto.base.Utl;
 import ilarkesto.concurrent.ATask;
 import ilarkesto.concurrent.DefaultSynchronizer;
 import ilarkesto.concurrent.TaskManager;
+import ilarkesto.core.base.Factory;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.persistance.ATransactionManager;
 import ilarkesto.core.persistance.EntitiesBackend;
@@ -42,8 +43,6 @@ import ilarkesto.persistence.DaoListener;
 import ilarkesto.persistence.DaoService;
 import ilarkesto.persistence.EntityStore;
 import ilarkesto.persistence.FileEntityStore;
-import ilarkesto.persistence.LegacySingletonTransactionManager;
-import ilarkesto.persistence.LegacyThreadlocalTransactionManager;
 import ilarkesto.persistence.Serializer;
 import ilarkesto.persistence.ThreadlocalTransactionManager;
 import ilarkesto.properties.FilePropertiesStore;
@@ -81,44 +80,40 @@ public abstract class AApplication {
 	protected Context context;
 	private String[] arguments = new String[0];
 
+	protected ATransactionManager createTransactionManager() {
+		return unitTestMode ? new SingletonTransactionManager() : new ThreadlocalTransactionManager();
+	}
+
 	protected void initializePersistence() {
-		EntitiesBackend backend = createEntitiesBackend();
-		if (backend != null) {
-			log.info("Entities backend:", backend.getClass().getSimpleName());
-			ATransactionManager tm;
-			if (unitTestMode) {
-				tm = backend instanceof FileEntityStore ? new LegacySingletonTransactionManager()
-						: new SingletonTransactionManager();
-			} else {
-				tm = backend instanceof FileEntityStore ? new LegacyThreadlocalTransactionManager()
-						: new ThreadlocalTransactionManager();
+		Persistence.initialize(new Factory<EntitiesBackend>() {
+
+			@Override
+			public EntitiesBackend newInstance() {
+				return createEntitiesBackend();
 			}
-			Persistence.initialize(backend, tm);
+		}, createTransactionManager());
 
-			if (isEnsureIntegrityForAllEntities()) {
+		if (isEnsureIntegrityForAllEntities()) {
 
-				if (Persistence.backend != null) {
+			if (Persistence.backend != null) {
 
-					Persistence.runInTransaction("persistence-init", new Runnable() {
+				Persistence.runInTransaction("persistence-init", new Runnable() {
 
-						@Override
-						public void run() {
-							DaoService ds = getDaoService();
-							if (ds != null) {
-								ds.ensureIntegrity();
-							} else {
-								EntityIntegrityEnsurer.runForAll();
-							}
+					@Override
+					public void run() {
+						DaoService ds = getDaoService();
+						if (ds != null) {
+							ds.ensureIntegrity();
+						} else {
+							EntityIntegrityEnsurer.runForAll();
 						}
+					}
 
-					});
+				});
 
-				}
 			}
-
-		} else {
-			log.debug("No persistence backend");
 		}
+
 	}
 
 	public boolean isEnsureIntegrityForAllEntities() {

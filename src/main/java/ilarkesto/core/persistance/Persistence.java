@@ -15,6 +15,7 @@
 package ilarkesto.core.persistance;
 
 import ilarkesto.core.base.Args;
+import ilarkesto.core.base.Factory;
 import ilarkesto.core.base.Str;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.money.Money;
@@ -42,11 +43,12 @@ public class Persistence {
 	public static ATransactionManager transactionManager;
 	public static Map<String, ValuesCache> valuesCachesById = new HashMap<String, ValuesCache>();
 
-	public static void initialize(EntitiesBackend backend, ATransactionManager transactionManager) {
-		Args.assertNotNull(backend, "backend");
+	public static void initialize(Factory<EntitiesBackend> backendFactory, ATransactionManager transactionManager) {
 		Args.assertNotNull(transactionManager, "transactionManager");
-		Persistence.backend = backend;
 		Persistence.transactionManager = transactionManager;
+		Persistence.backend = backendFactory.newInstance();
+		if (Persistence.backend == null) throw new RuntimeException("EntityBackend is null");
+		log.info("Entities backend:", backend.getClass().getSimpleName());
 	}
 
 	public static String loadOutsourcedString(Entity entity, String propertyName) {
