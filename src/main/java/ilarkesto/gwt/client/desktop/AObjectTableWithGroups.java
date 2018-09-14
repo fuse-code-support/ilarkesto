@@ -295,7 +295,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			try {
 				groupWidget = createGroupWidget(row.group);
 			} catch (Exception ex) {
-				throw new RuntimeException(Str.getSimpleName(getClass()) + "getGroupWidget() failed");
+				throw new RuntimeException(Str.getSimpleName(getClass()) + ".createGroupWidget() failed.", ex);
 			}
 			table.setWidget(row.tableRowIndex, 0, groupWidget);
 			table.getFlexCellFormatter().setColSpan(row.tableRowIndex, 0, columns.size());

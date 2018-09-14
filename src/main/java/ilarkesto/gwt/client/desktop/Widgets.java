@@ -230,15 +230,16 @@ public class Widgets {
 	}
 
 	public static DialogBox dialog(boolean autoHide, String title, IsWidget widget) {
-		DialogBox dialog = new ExtendedDialogBox(autoHide, true);
+		DialogBox dialog = new DialogBox(autoHide, true);
 		dialog.setText(title);
 		dialog.setWidget(widget);
+		dialog.setModal(false);
 		dialog.setGlassEnabled(true);
 		Style style = dialog.getElement().getStyle();
 		style.setProperty("maxWidth", "90%");
 		style.setPadding(0, Unit.PX);
 		dialog.center();
-		dialog.setPopupPosition(dialog.getPopupLeft(), (int) (Window.getClientHeight() * 0.05) + Window.getScrollTop());
+		// dialog.setPopupPosition(dialog.getPopupLeft(), 100 + Window.getScrollTop());
 
 		return dialog;
 	}

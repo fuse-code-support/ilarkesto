@@ -50,16 +50,19 @@ mavendownload org/slf4j slf4j-nop 1.7.25
 mavendownload com/google/guava guava 18.0
 mavendownload com/google/inject guice 4.0
 
-mavendownload com/google/gwt gwt-codeserver 2.7.0
-mavendownload com/google/gwt gwt-dev 2.7.0
-mavendownload com/google/gwt gwt-servlet 2.7.0
-mavendownload com/google/gwt gwt-user 2.7.0
-mavendownload org/ow2/asm asm 5.0.4
-mavendownload org/ow2/asm asm-commons 5.0.4
-mavendownload org/ow2/asm asm-util 5.0.4
-mavendownload javax/validation validation-api 1.1.0.Final
+servistodownload gwt-codeserver.jar
+servistodownload gwt-dev.jar
+servistodownload gwt-servlet.jar
+servistodownload gwt-user.jar
+servistodownload validation-api-1.0.0.GA.jar
+servistodownload validation-api-1.0.0.GA-sources.jar
+#mavendownload com/google/gwt gwt-codeserver 2.8.2
+#mavendownload com/google/gwt gwt-dev 2.8.2
+#mavendownload com/google/gwt gwt-servlet 2.8.2
+#mavendownload com/google/gwt gwt-user 2.8.2
 mavendownload com/allen-sauer/gwt/dnd gwt-dnd 3.3.0
 mavendownload com/googlecode/gwtupload gwtupload 1.0.3
+
 
 
 servistodownload httpunit-1.6.2.jar
