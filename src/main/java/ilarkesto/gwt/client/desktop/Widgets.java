@@ -75,6 +75,10 @@ public class Widgets {
 
 	public static int defaultSpacing = 8;
 
+	public static int defaultInputWidth() {
+		return Math.min(900, Window.getClientWidth() - (defaultSpacing * 6));
+	}
+
 	public static HTML link(String href) {
 		return link(href, Str.formatUrlAsLink(href));
 	}
@@ -229,35 +233,55 @@ public class Widgets {
 		return dialog;
 	}
 
-	public static DialogBox dialog(boolean autoHide, String title, IsWidget widget) {
+	public static Widget buttonRow(Object... buttons) {
+		BuilderPanel buttonRow = new BuilderPanel().setHorizontal().setSpacing(0);
+
+		buttonRow.setChildTextAlign(TextAlign.RIGHT);
+		buttonRow.add(Widgets.horizontalSpacer());
+		buttonRow.setChildWidth("1px");
+
+		buttonRow.addWithPadding(3, buttons);
+
+		return buttonRow.asWidget();
+	}
+
+	public static final int workspaceMarginTop = 56 + defaultSpacing;
+
+	public static DialogBox dialog(boolean autoHide, String title, IsWidget contentWidget, IsWidget footerWidget,
+			Integer customWidth) {
+
+		int width = customWidth == null ? defaultDialogWidth() : customWidth;
+		int height = Window.getClientHeight() - workspaceMarginTop - 150;
+		Widget scroller = scroller(contentWidget, width + "px", height + "px");
+
+		FlowPanel content = new FlowPanel();
+		content.add(scroller);
+		content.add(verticalLine(5));
+		if (footerWidget != null) content.add(footerWidget);
+
 		DialogBox dialog = new DialogBox(autoHide, true);
+		dialog.setWidget(content);
 		dialog.setText(title);
-		dialog.setWidget(widget);
 		dialog.setModal(false);
 		dialog.setGlassEnabled(true);
 		Style style = dialog.getElement().getStyle();
-		style.setProperty("maxWidth", "90%");
+		style.setProperty("maxWidth", "95%");
 		style.setPadding(0, Unit.PX);
 		dialog.center();
-		// dialog.setPopupPosition(dialog.getPopupLeft(), 100 + Window.getScrollTop());
 
 		return dialog;
 	}
 
+	public static int defaultDialogWidth() {
+		return Math.min(defaultInputWidth() + 50, (int) (Window.getClientWidth() * 0.9));
+	}
+
+	public static DialogBox dialog(boolean autoHide, String title, IsWidget contentWidget) {
+		return dialog(autoHide, title, contentWidget, null, null);
+	}
+
 	public static DialogBox dialog(boolean autoHide, String title, IsWidget contentWidget, IsWidget footerWidget) {
-		FlowPanel content = new FlowPanel();
-		Widget contentScroller = scrollerY(contentWidget);
-
-		content.add(contentScroller);
-		contentScroller.getElement().getStyle().setProperty("maxHeight",
-			String.valueOf((int) (Window.getClientHeight() * 0.7f)) + "px");
-
-		content.add(verticalLine(5));
-		content.add(footerWidget);
-
-		DialogBox dialogBox = dialog(autoHide, title, content);
-		return dialogBox;
-
+		return dialog(autoHide, title, contentWidget, footerWidget, null);
 	}
 
 	public static Widget scrollerY(IsWidget content) {
@@ -269,13 +293,15 @@ public class Widgets {
 		return panel;
 	}
 
-	public static Widget scroller(IsWidget content) {
+	public static Widget scroller(IsWidget content, String width, String height) {
 		SimplePanel panel = new SimplePanel(content.asWidget());
 		Style style = panel.getElement().getStyle();
-		style.setProperty("width", "auto");
-		style.setOverflowX(Overflow.HIDDEN);
+		style.setProperty("width", width);
+		style.setProperty("maxHeight", height);
+		style.setOverflowX(Overflow.AUTO);
 		style.setOverflowY(Overflow.SCROLL);
 		return panel;
+
 	}
 
 	public static SimplePanel frame(Object widget) {

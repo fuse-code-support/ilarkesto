@@ -284,11 +284,17 @@ public abstract class AEditableField extends AField {
 			event.stopPropagation();
 
 			String targetString = Gwt.getTargetString(event);
-			log.debug(AEditableField.this.getClass().getSimpleName() + ".onClick():", targetString);
 
 			if (targetString != null) {
-				if (isIgnoreClicksOnImageElements() && targetString.contains("[object HTMLImageElement]")) return;
-				if (targetString.contains("goon-AnchorButton")) return;
+				if (isIgnoreClicksOnImageElements() && targetString.contains("[object HTMLImageElement]")) {
+					log.debug(AEditableField.this.getClass().getSimpleName() + ".onClick(): Ignoring click on image.");
+					return;
+				}
+				if (targetString.contains("goon-AnchorButton")) {
+					log.debug(AEditableField.this.getClass().getSimpleName()
+							+ ".onClick(): Ignoring click on goon-AnchorButton.");
+					return;
+				}
 			}
 
 			onValueClicked(event);

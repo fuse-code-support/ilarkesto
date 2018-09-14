@@ -17,6 +17,7 @@ package ilarkesto.gwt.client;
 import ilarkesto.core.base.Str;
 import ilarkesto.core.html.Html;
 import ilarkesto.core.html.ToHtmlSupport;
+import ilarkesto.gwt.client.desktop.Widgets;
 import ilarkesto.gwt.client.editor.RichtextEditorWidget;
 import ilarkesto.gwt.client.undo.UndoManager;
 
@@ -130,6 +131,7 @@ public class Gwt {
 
 				int clientHeight = Window.getClientHeight();
 				if (y + popupHeight > clientHeight) y -= (y + popupHeight - clientHeight);
+				if (y < Widgets.workspaceMarginTop) y = Widgets.workspaceMarginTop;
 
 				y += Window.getScrollTop();
 				x += Window.getScrollLeft();

@@ -68,6 +68,11 @@ public abstract class AEditableMultiFieldField extends AEditableField {
 		return panel;
 	}
 
+	@Override
+	public FieldEditorDialogBox getFieldEditorDialogBox() {
+		return super.getFieldEditorDialogBox().setCustomWidth(Widgets.defaultDialogWidth() + 30);
+	}
+
 	protected Integer getMaxWidth() {
 		return null;
 	}

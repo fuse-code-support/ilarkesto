@@ -199,7 +199,11 @@ public class CssBuilder {
 		}
 
 		public Style boxShadow(int hShadow, int vShadow, int blur, String color) {
-			return attr("box-shadow", hShadow + "px " + vShadow + "px " + blur + "px " + color);
+			return boxShadow(hShadow + "px " + vShadow + "px " + blur + "px " + color);
+		}
+
+		public Style boxShadow(String s) {
+			return attr("box-shadow", s);
 		}
 
 		public Style zIndex(int value) {

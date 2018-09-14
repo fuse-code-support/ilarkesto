@@ -144,7 +144,7 @@ public abstract class AEditableSelectManyField extends AEditableField {
 				style.setProperty("minWidth", "100px");
 				style.setDisplay(Display.BLOCK);
 				style.setFloat(com.google.gwt.dom.client.Style.Float.LEFT);
-				style.setWidth(220, Unit.PX);
+				style.setWidth(Math.max(100, (Widgets.defaultInputWidth() / 3) - 3), Unit.PX);
 				style.setMarginRight(Widgets.defaultSpacing, Unit.PX);
 			}
 			checkboxes.put(key, checkBox);

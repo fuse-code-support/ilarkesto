@@ -192,8 +192,10 @@ public class BuilderPanel implements IsWidget {
 	public final BuilderPanel addWithPadding(int padding, Object... children) {
 		if (children == null) return this;
 		for (Object child : children) {
+			if (child == null) continue;
 			if (child instanceof Collection) {
 				for (Object o : (Collection) child) {
+					if (o == null) continue;
 					addWithPadding(padding, new Object[] { o });
 				}
 				continue;

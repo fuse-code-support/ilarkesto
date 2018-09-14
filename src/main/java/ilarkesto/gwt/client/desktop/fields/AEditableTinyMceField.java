@@ -15,7 +15,6 @@ import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -30,7 +29,7 @@ public abstract class AEditableTinyMceField extends AEditableField implements Ti
 	@Override
 	public Widget createEditorWidget() {
 		tinymce = new TinyMceWidget(getValue(), this);
-		tinymce.setWidth(getTextBoxWidth() + "px");
+		tinymce.setWidth(Widgets.defaultInputWidth() + "px");
 		tinymce.setHeight(getTextBoxHeight() + "px");
 		return tinymce;
 	}
@@ -90,11 +89,6 @@ public abstract class AEditableTinyMceField extends AEditableField implements Ti
 
 	public String getToolbarInlineImageUrlPrefix() {
 		return "";
-	}
-
-	protected int getTextBoxWidth() {
-		int width = (int) (Window.getClientWidth() * 0.7);
-		return width;
 	}
 
 	protected int getTextBoxHeight() {

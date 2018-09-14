@@ -48,7 +48,7 @@ public class ActionSelectionDialogBox {
 			bp.add(button);
 		}
 
-		dialogBox = Widgets.dialog(true, "Aktion wählen", Widgets.frame(bp));
+		dialogBox = Widgets.dialog(true, "Aktion wählen", Widgets.frame(bp), null, 300);
 		Gwt.setPopupPositionAndShow(dialogBox, event);
 	}
 

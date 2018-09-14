@@ -16,7 +16,6 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.logical.shared.InitializeHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RichTextArea;
@@ -68,7 +67,6 @@ public abstract class AEditableRichTextField extends AEditableField {
 		textArea.getElement().setId(getId() + "_textArea");
 		Style style = textArea.getElement().getStyle();
 		style.setFontSize(100, Unit.PX);
-		style.setProperty("minWidth", "1000px");
 		style.setProperty("minHeight", "400px");
 		style.setBackgroundColor("#fff");
 		style.setBorderWidth(1, Unit.PX);
@@ -86,7 +84,7 @@ public abstract class AEditableRichTextField extends AEditableField {
 				body.setAttribute("style", "font-family: OpenSans, Arial, sans-serif;");
 			}
 		});
-		style.setWidth(getTextBoxWidth(), Unit.PX);
+		style.setWidth(Widgets.defaultInputWidth(), Unit.PX);
 		style.setHeight(100, Unit.PX);
 		style.setPadding(Widgets.defaultSpacing, Unit.PX);
 
@@ -115,12 +113,6 @@ public abstract class AEditableRichTextField extends AEditableField {
 
 	public String getToolbarInlineImageUrlPrefix() {
 		return "";
-	}
-
-	private int getTextBoxWidth() {
-		int width = Window.getClientWidth();
-		if (width > 700) width = 700;
-		return width;
 	}
 
 	@Override

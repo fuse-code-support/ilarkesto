@@ -38,7 +38,6 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
@@ -195,11 +194,14 @@ public abstract class AEditableSelectOneField extends AEditableField {
 		}
 
 		Style style = radioButton.getElement().getStyle();
-		style.setProperty("minWidth", "100px");
 		style.setProperty("minHeight", "32px");
 		style.setDisplay(Display.BLOCK);
 		style.setFloat(com.google.gwt.dom.client.Style.Float.LEFT);
-		style.setWidth(horizontal ? getTextBoxWidth() / 2 : getTextBoxWidth(), Unit.PX);
+		if (horizontal) {
+			style.setWidth(Math.max(100, (Widgets.defaultInputWidth() / 2) + 2), Unit.PX);
+		} else {
+			style.setWidth(Math.max(100, Widgets.defaultInputWidth()), Unit.PX);
+		}
 		style.setMarginRight(Widgets.defaultSpacing, Unit.PX);
 		if (NULL_KEY.equals(key)) {
 			style.setColor(Colors.greyedText);
@@ -223,7 +225,7 @@ public abstract class AEditableSelectOneField extends AEditableField {
 		listBox = new ListBox();
 		listBox.getElement().setId(getId() + "_listBox");
 		Style style = listBox.getElement().getStyle();
-		style.setWidth(getTextBoxWidth(), Unit.PX);
+		style.setWidth(Widgets.defaultInputWidth(), Unit.PX);
 		style.setPadding(Widgets.defaultSpacing, Unit.PX);
 
 		int i = 0;
@@ -296,12 +298,6 @@ public abstract class AEditableSelectOneField extends AEditableField {
 	}
 
 	protected void onSelectionChanged() {}
-
-	private int getTextBoxWidth() {
-		int width = Window.getClientWidth();
-		if (width > 700) width = 700;
-		return width;
-	}
 
 	@Override
 	public IsWidget createDisplayWidget() {

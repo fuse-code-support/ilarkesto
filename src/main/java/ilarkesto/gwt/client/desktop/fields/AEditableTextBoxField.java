@@ -25,7 +25,6 @@ import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.datepicker.client.DateBox.Format;
@@ -82,7 +81,7 @@ public abstract class AEditableTextBoxField<T> extends AEditableField {
 	public AGoonTextBox createEditorWidget() {
 		textBox = createTextBox();
 		Style style = textBox.getElement().getStyle();
-		style.setWidth(getTextBoxWidth(), Unit.PX);
+		style.setWidth(Widgets.defaultInputWidth(), Unit.PX);
 		style.setPadding(Widgets.defaultSpacing, Unit.PX);
 		textBox.setMaxLength(getMaxLength());
 
@@ -126,12 +125,6 @@ public abstract class AEditableTextBoxField<T> extends AEditableField {
 
 	protected boolean isMaskedInEditMode() {
 		return isMasked();
-	}
-
-	private int getTextBoxWidth() {
-		int width = Window.getClientWidth();
-		if (width > 700) width = 700;
-		return width;
 	}
 
 	protected int getMaxLength() {

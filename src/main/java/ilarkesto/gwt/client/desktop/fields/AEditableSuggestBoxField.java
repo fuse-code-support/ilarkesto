@@ -8,7 +8,6 @@ import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -50,7 +49,7 @@ public abstract class AEditableSuggestBoxField<T> extends AEditableField {
 	public IsWidget createEditorWidget() {
 		suggestBox = new SuggestBox(getSuggestOracle());
 		Style style = suggestBox.getElement().getStyle();
-		style.setWidth(getTextBoxWidth(), Unit.PX);
+		style.setWidth(Widgets.defaultInputWidth(), Unit.PX);
 		style.setPadding(Widgets.defaultSpacing, Unit.PX);
 		// TODO
 		// suggestBox.setMaxLength(getMaxLength());
@@ -63,12 +62,6 @@ public abstract class AEditableSuggestBoxField<T> extends AEditableField {
 			suggestBox.setTitle(getEditVetoMessage());
 		}
 		return suggestBox;
-	}
-
-	private int getTextBoxWidth() {
-		int width = Window.getClientWidth();
-		if (width > 700) width = 700;
-		return width;
 	}
 
 	protected int getMaxLength() {

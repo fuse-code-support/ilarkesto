@@ -20,11 +20,11 @@ import ilarkesto.gwt.client.Updatable;
 import ilarkesto.gwt.client.desktop.BuilderPanel;
 import ilarkesto.gwt.client.desktop.Widgets;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -45,6 +45,7 @@ public class FieldEditorDialogBox {
 	private Label errorLabel;
 
 	private ASelfdocPanel selfdocPanel;
+	private Integer customWidth;
 
 	public FieldEditorDialogBox(AEditableField field) {
 		this.field = field;
@@ -90,7 +91,8 @@ public class FieldEditorDialogBox {
 	}
 
 	private void createDialog() {
-		dialog = Widgets.dialog(field.isEditorDialogAutohide(), field.getLabel(), createContent(), createFooter());
+		dialog = Widgets.dialog(field.isEditorDialogAutohide(), field.getLabel(), createContent(), createFooter(),
+			customWidth);
 		dialog.setModal(false);
 		if (selfdocPanel != null) selfdocPanel.setDialog(dialog);
 	}
@@ -137,18 +139,13 @@ public class FieldEditorDialogBox {
 		cancelButton.getElement().setId("cancelButton");
 		cancelButton.setStyleName("goon-Button");
 
-		BuilderPanel buttonRow = new BuilderPanel().setHorizontal().setSpacing(0);
-
-		buttonRow.setChildTextAlign(TextAlign.RIGHT);
-		buttonRow.add(Widgets.horizontalSpacer());
-		buttonRow.setChildWidth("1px");
-
 		List<? extends IsWidget> additionalButtons = field.getAdditionalDialogButtons(this);
-		buttonRow.addWithPadding(3, new Object[] { cancelButton });
-		buttonRow.addWithPadding(3, new Object[] { additionalButtons });
-		buttonRow.addWithPadding(3, new Object[] { applyButton });
 
-		return buttonRow.asWidget();
+		List buttons = new ArrayList();
+		buttons.add(cancelButton);
+		if (additionalButtons != null) buttons.addAll(additionalButtons);
+		buttons.add(applyButton);
+		return Widgets.buttonRow(buttons);
 	}
 
 	private Label createErrorLabel() {
@@ -163,6 +160,11 @@ public class FieldEditorDialogBox {
 
 	public boolean isField(AField f) {
 		return field == f;
+	}
+
+	public FieldEditorDialogBox setCustomWidth(Integer customWidth) {
+		this.customWidth = customWidth;
+		return this;
 	}
 
 	private class ApplyClickHandler implements ClickHandler {

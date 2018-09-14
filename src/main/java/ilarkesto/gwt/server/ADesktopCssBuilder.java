@@ -70,6 +70,7 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 	}
 
 	private void dialog() {
+		style("#goon .gwt-DialogBox").boxShadow("0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)");
 		style("#goon .gwt-DialogBox .dialogMiddleCenter" + ", #goon .gwt-DialogBox .dialogMiddleLeft"
 				+ ", #goon .gwt-DialogBox .dialogMiddleRight" + ", #goon .gwt-DialogBox .dialogTopLeft"
 				+ ", #goon .gwt-DialogBox .dialogTopCenter" + ", #goon .gwt-DialogBox .dialogTopRight"
