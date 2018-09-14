@@ -13,6 +13,7 @@ public class GoonDateBox extends AGoonTextBox {
 
 	public GoonDateBox(Format format) {
 		dateBox = new DateBox();
+		dateBox.getElement().setAttribute("autocomplete", "off");
 		dateBox.setFormat(format);
 		dateBox.getDatePicker().setYearAndMonthDropdownVisible(true);
 	}
