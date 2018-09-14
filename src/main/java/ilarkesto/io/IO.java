@@ -1684,6 +1684,10 @@ public abstract class IO {
 			super(s.getBytes(charset));
 		}
 
+		public StringInputStream(String s, String charset) {
+			this(s, Charset.forName(charset));
+		}
+
 		public StringInputStream(String s) {
 			this(s, Charset.defaultCharset());
 		}
