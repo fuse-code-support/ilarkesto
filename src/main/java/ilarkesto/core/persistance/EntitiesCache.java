@@ -60,14 +60,16 @@ public class EntitiesCache<E extends Entity> implements EntitiesProvider<E> {
 
 	@Override
 	public <C extends Collection<E>> C find(AEntityQuery<E> query, C resultCollection) {
-		for (Entry<Class, Map<String, E>> entry : entitiesByTypeById.entrySet()) {
+		HashMap<Class, Map<String, E>> localCopy = new HashMap<Class, Map<String, E>>(entitiesByTypeById);
+		for (Entry<Class, Map<String, E>> entry : localCopy.entrySet()) {
 			if (!query.testType(entry.getKey())) continue;
 
 			Map<String, E> entitiesById = entry.getValue();
 			if (query.getClass().equals(AllByTypeQuery.class)) {
 				resultCollection.addAll(entitiesById.values());
 			} else {
-				for (E entity : entitiesById.values()) {
+				Collection<E> entities = new ArrayList<E>(entitiesById.values());
+				for (E entity : entities) {
 					if (query.test(entity)) resultCollection.add(entity);
 				}
 			}
@@ -78,11 +80,13 @@ public class EntitiesCache<E extends Entity> implements EntitiesProvider<E> {
 
 	@Override
 	public E findFirst(AEntityQuery query) {
-		for (Entry<Class, Map<String, E>> entry : entitiesByTypeById.entrySet()) {
+		HashMap<Class, Map<String, E>> localCopy = new HashMap<Class, Map<String, E>>(entitiesByTypeById);
+		for (Entry<Class, Map<String, E>> entry : localCopy.entrySet()) {
 			if (!query.testType(entry.getKey())) continue;
 
 			Map<String, E> entitiesById = entry.getValue();
-			for (E entity : entitiesById.values()) {
+			Collection<E> entities = new ArrayList<E>(entitiesById.values());
+			for (E entity : entities) {
 				if (query.test(entity)) return entity;
 			}
 		}
