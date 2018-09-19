@@ -50,7 +50,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.nio.file.WatchService;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -297,13 +296,6 @@ public abstract class IO {
 		if (in == null) return;
 		try {
 			in.close();
-		} catch (IOException ex) {}
-	}
-
-	public static void closeQuiet(WatchService ws) {
-		if (ws == null) return;
-		try {
-			ws.close();
 		} catch (IOException ex) {}
 	}
 
