@@ -254,14 +254,23 @@ public class Widgets {
 		int height = Window.getClientHeight() - workspaceMarginTop - 150;
 		Widget scroller = scroller(contentWidget, width + "px", height + "px");
 
+		Label titleWidget = text(title);
+		titleWidget.setWidth(width + "px");
+		Style titleStyle = titleWidget.getElement().getStyle();
+		titleStyle.setFontWeight(FontWeight.BOLD);
+		titleStyle.setMarginLeft(defaultSpacing, Unit.PX);
+		titleStyle.setMarginRight(defaultSpacing, Unit.PX);
+		titleStyle.setMarginBottom(defaultSpacing, Unit.PX);
+
 		FlowPanel content = new FlowPanel();
+		content.add(titleWidget);
 		content.add(scroller);
 		content.add(verticalLine(5));
 		if (footerWidget != null) content.add(footerWidget);
 
 		DialogBox dialog = new DialogBox(autoHide, true);
 		dialog.setWidget(content);
-		dialog.setText(title);
+		// dialog.setText(title);
 		dialog.setModal(false);
 		dialog.setGlassEnabled(true);
 		Style style = dialog.getElement().getStyle();
