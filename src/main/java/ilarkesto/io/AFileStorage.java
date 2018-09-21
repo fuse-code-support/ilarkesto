@@ -142,7 +142,7 @@ public abstract class AFileStorage {
 
 	}
 
-	public void deleteAll() {
+	public void deleteAllFiles() {
 		IO.delete(getDir().listFiles());
 	}
 
