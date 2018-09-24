@@ -255,15 +255,17 @@ public class Widgets {
 		Widget scroller = scroller(contentWidget, width + "px", height + "px");
 
 		Label titleWidget = text(title);
-		titleWidget.setWidth(width + "px");
-		Style titleStyle = titleWidget.getElement().getStyle();
-		titleStyle.setFontWeight(FontWeight.BOLD);
-		titleStyle.setMarginLeft(defaultSpacing, Unit.PX);
-		titleStyle.setMarginRight(defaultSpacing, Unit.PX);
-		titleStyle.setMarginBottom(defaultSpacing, Unit.PX);
+		if (titleWidget != null) {
+			titleWidget.setWidth(width + "px");
+			Style titleStyle = titleWidget.getElement().getStyle();
+			titleStyle.setFontWeight(FontWeight.BOLD);
+			titleStyle.setMarginLeft(defaultSpacing, Unit.PX);
+			titleStyle.setMarginRight(defaultSpacing, Unit.PX);
+			titleStyle.setMarginBottom(defaultSpacing, Unit.PX);
+		}
 
 		FlowPanel content = new FlowPanel();
-		content.add(titleWidget);
+		if (titleWidget != null) content.add(titleWidget);
 		content.add(scroller);
 		content.add(verticalLine(5));
 		if (footerWidget != null) content.add(footerWidget);
