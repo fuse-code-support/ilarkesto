@@ -229,7 +229,7 @@ public class Zeiterfassung {
 		// Aufgabe Nr
 
 		if (day.getDate().isSameOrAfter(BEGIN_2018_06)) {
-			if ("Sprint Retrospektive".equals(text)) return "31890";
+			if ("Sprint Retrospektive".equals(text)) return "A31890";
 		}
 
 		if ("Sprint Retrospektive".equals(text)) return "29170";

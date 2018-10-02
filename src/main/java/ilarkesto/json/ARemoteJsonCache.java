@@ -1,14 +1,14 @@
 package ilarkesto.json;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import ilarkesto.core.base.Args;
 import ilarkesto.core.base.OperationObserver;
 import ilarkesto.core.base.RuntimeTracker;
 import ilarkesto.core.logging.Log;
 import ilarkesto.io.IO;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class ARemoteJsonCache<P extends AJsonWrapper> {
 
@@ -109,7 +109,11 @@ public abstract class ARemoteJsonCache<P extends AJsonWrapper> {
 
 	public void update(boolean force, OperationObserver observer) throws RemoteUpdateFailedException {
 		if (observer == null) observer = OperationObserver.DUMMY;
-		if (!force && !isInvalidated() && !isPotentialUpdateAvailable()) return;
+		log.info("Request for payload update");
+		if (!force && !isInvalidated() && !isPotentialUpdateAvailable()) {
+			log.info("- Update for payload not required.");
+			return;
+		}
 		synchronized (getLock()) {
 			P payload = getPayload();
 			log.info("Updating payload", force ? "(forced)" : "");
@@ -175,7 +179,7 @@ public abstract class ARemoteJsonCache<P extends AJsonWrapper> {
 	public void invalidatePayload() {
 		file.setLastModified(0);
 		IO.writeFile(getInvalidMarkerFile(), "invalid", IO.UTF_8);
-		log.info("Invalidated:", this);
+		log.info("Invalidated payload:", this);
 	}
 
 	private File getInvalidMarkerFile() {
