@@ -98,7 +98,7 @@ public class EntitiesCache<E extends Entity> implements EntitiesProvider<E> {
 		Class type = entity.getClass();
 		Map<String, E> entitiesById = entitiesByTypeById.get(type);
 		if (entitiesById == null) {
-			entitiesById = new HashMap<String, E>();
+			entitiesById = Persistence.transactionManager.synchronizedMap(new HashMap<String, E>());
 			entitiesByTypeById.put(type, entitiesById);
 		}
 		entitiesById.put(entity.getId(), entity);
