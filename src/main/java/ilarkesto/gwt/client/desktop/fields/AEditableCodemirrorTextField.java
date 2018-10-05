@@ -1,6 +1,7 @@
 package ilarkesto.gwt.client.desktop.fields;
 
 import ilarkesto.gwt.client.desktop.CodemirrorWidget;
+import ilarkesto.gwt.client.desktop.Widgets;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
@@ -59,7 +60,8 @@ public abstract class AEditableCodemirrorTextField extends AEditableField {
 	}
 
 	protected int getTextBoxWidth() {
-		return (int) (Window.getClientWidth() * 0.9);
+		// return (int) (Window.getClientWidth() * 0.9);
+		return (int) ((Widgets.defaultDialogWidth()) * 0.95);
 	}
 
 	protected int getTextBoxHeight() {

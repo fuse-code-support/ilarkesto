@@ -15,7 +15,6 @@
 package ilarkesto.gwt.client.desktop;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -42,7 +41,7 @@ public class CodemirrorWidget extends SimplePanel {
 			public void onAttachOrDetach(AttachEvent ev) {
 				if (ev.isAttached()) {
 					Element element = CodemirrorWidget.this.getElement();
-					element.getStyle().setWidth(element.getClientWidth(), Unit.PX);
+					// element.getStyle().setWidth(element.getClientWidth(), Unit.PX);
 					codemirror = createCodemirror(id, mode, value == null ? "" : value, readonly);
 				}
 			}
