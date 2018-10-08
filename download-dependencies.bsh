@@ -77,6 +77,7 @@ mavendownload com/itextpdf itext-xtra 5.5.6
 mavendownload org jaudiotagger 2.0.3
 
 #mavendownload javax/mail javax.mail-api 1.5.4
+mavendownload javax/activation activation 1.1.1
 servistodownload javax.mail.jar
 
 mavendownload net/jcip jcip-annotations 1.0
