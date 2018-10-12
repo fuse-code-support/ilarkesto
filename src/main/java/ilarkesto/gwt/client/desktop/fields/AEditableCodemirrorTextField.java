@@ -69,7 +69,7 @@ public abstract class AEditableCodemirrorTextField extends AEditableField {
 	}
 
 	protected String getDisplayMaxWidth() {
-		return Window.getClientWidth() + "px";
+		return Window.getClientWidth() / 2 + "px";
 	}
 
 	@Override
@@ -79,6 +79,7 @@ public abstract class AEditableCodemirrorTextField extends AEditableField {
 			text = getAlternateValueIfValueIsNull();
 		}
 		CodemirrorWidget codemirror = new CodemirrorWidget(getMode(), text, true);
+		codemirror.getElement().getStyle().setProperty("maxWidth", getDisplayMaxWidth());
 		// codemirror.getElement().getStyle().setCursor(Cursor.POINTER);
 		return codemirror;
 	}
