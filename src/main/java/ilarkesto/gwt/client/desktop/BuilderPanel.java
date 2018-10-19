@@ -173,7 +173,7 @@ public class BuilderPanel implements IsWidget {
 
 	public final BuilderPanel addWarningText(Object... children) {
 		for (Object child : children) {
-			add(Widgets.textWarning(child));
+			addWithPadding(Widgets.textWarning(child));
 		}
 		return this;
 	}
