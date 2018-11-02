@@ -171,6 +171,21 @@ public class TimePeriod implements Comparable<TimePeriod>, Serializable {
 		return sb.toString();
 	}
 
+	public String toHoursAndMinutesAndSecondsString() {
+		long hours = toHours();
+		long minutes = toMinutes() - (hours * 60);
+		long seconds = toSeconds() - (hours * 60 * 60) - (minutes * 60);
+		StringBuilder sb = new StringBuilder();
+		sb.append(hours);
+		sb.append(':');
+		if (minutes < 10) sb.append('0');
+		sb.append(minutes);
+		sb.append(':');
+		if (seconds < 10) sb.append('0');
+		sb.append(seconds);
+		return sb.toString();
+	}
+
 	public String toShortestString() {
 		return toShortestString(Utl.getLanguage());
 	}
