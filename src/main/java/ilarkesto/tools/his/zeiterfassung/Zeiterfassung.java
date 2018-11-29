@@ -38,6 +38,7 @@ public class Zeiterfassung {
 
 	private static final Date BEGIN_2018_06 = new Date(2017, 11, 16);
 	private static final Date BEGIN_2018_12 = new Date(2018, 5, 21);
+	private static final Date BEGIN_2019_06 = new Date(2018, 11, 19);
 
 	private static List<DayAtWork> days = new ArrayList<DayAtWork>();
 	private static DayAtWork currentDay;
@@ -165,6 +166,14 @@ public class Zeiterfassung {
 	}
 
 	private static String convertAchievoPhaseId(String phaseId, WorkActivity activity, DayAtWork day) {
+
+		if (day.getDate().isSameOrAfter(BEGIN_2019_06)) {
+			if (phaseId.equals("FDU")) return "A37375";
+			if (phaseId.equals("ERW")) return "A37367";
+			if (phaseId.equals("QS-DEV")) return "A37373";
+			if (phaseId.equals("QS-PROD")) return "A37372";
+			return phaseId;
+		}
 
 		if (day.getDate().isSameOrAfter(BEGIN_2018_12)) {
 			if (phaseId.equals("FDU")) return "A36036";
