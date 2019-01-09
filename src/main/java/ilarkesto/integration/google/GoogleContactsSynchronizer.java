@@ -259,13 +259,11 @@ public class GoogleContactsSynchronizer {
 		private String dump(ContactEntry gContact) {
 			MultilineBuilder mb = new MultilineBuilder();
 			mb.setLinePrefix("-- ");
-			if (false) {
-				for (Map.Entry<String, Object> entry : Google.getAllProperties(gContact).entrySet()) {
-					Object value = entry.getValue();
-					if (value == null) continue;
-					if ((value instanceof Collection) && ((Collection) value).isEmpty()) continue;
-					mb.ln(entry.getKey() + ":", value);
-				}
+			for (Map.Entry<String, Object> entry : Google.getAllProperties(gContact).entrySet()) {
+				Object value = entry.getValue();
+				if (value == null) continue;
+				if ((value instanceof Collection) && ((Collection) value).isEmpty()) continue;
+				mb.ln(entry.getKey() + ":", value);
 			}
 			return "\n" + mb.toString();
 		}
