@@ -14,6 +14,7 @@
  */
 package ilarkesto.core.html;
 
+import ilarkesto.core.html.Html.HrefReplacer;
 import ilarkesto.testng.ATest;
 
 import org.testng.annotations.Test;
@@ -33,5 +34,26 @@ public class HtmlTest extends ATest {
 	public void removeStyleAttribute() {
 		assertEquals(Html.removeStyleAttribute("<p style=\"color: blue;\">a<p>", "color"), "<p style=\"\">a<p>");
 	}
+
+	@Test
+	public void replaceHrefs() {
+		assertReplacedHref("<a href=\"http://koczewski.de\">koczewski.de</a>",
+			"<a href=\"http://koczewski.de/extra\">koczewski.de</a>");
+		assertReplacedHref(
+			"<a href=\"http://koczewski.de\">koczewski.de</a><a href=\"http://frankenburg.software\"><b>frankenburg</b></a>",
+			"<a href=\"http://koczewski.de/extra\">koczewski.de</a><a href=\"http://frankenburg.software/extra\"><b>frankenburg</b></a>");
+	}
+
+	private static void assertReplacedHref(String original, String expectedReplacement) {
+		assertEquals(Html.replaceHrefs(original, HREF_REPLACER), expectedReplacement);
+	}
+
+	private static HrefReplacer HREF_REPLACER = new HrefReplacer() {
+
+		@Override
+		public String replace(String href, String content) {
+			return href + "/extra";
+		}
+	};
 
 }

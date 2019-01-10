@@ -6,6 +6,43 @@ import java.util.Collection;
 
 public class Html {
 
+	public static String replaceHrefs(String html, HrefReplacer replacer) {
+		if (html == null) return null;
+
+		int offset = 0;
+		while (true) {
+			int startHref = html.indexOf("href=\"", offset);
+			if (startHref < 0) return html;
+			startHref += 6;
+
+			int endHref = html.indexOf("\"", startHref);
+			if (endHref < 0) return html;
+			String href = html.substring(startHref, endHref);
+
+			int startContent = html.indexOf(">", endHref);
+			if (startContent < 0) return html;
+			startContent += 1;
+
+			int endContent = html.indexOf("</a>", startContent);
+			if (endContent < 0) return html;
+			String content = html.substring(startContent, endContent);
+
+			String newHref = replacer.replace(href, content);
+			if (newHref == href) {
+				offset = endContent;
+			} else {
+				html = html.substring(0, startHref) + newHref + html.substring(endHref);
+				offset = endContent + (newHref.length() - href.length());
+			}
+		}
+	}
+
+	public static interface HrefReplacer {
+
+		String replace(String href, String content);
+
+	}
+
 	public static String convertHtmlToText(String html) {
 		if (html == null) return null;
 
