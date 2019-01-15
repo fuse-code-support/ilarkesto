@@ -44,7 +44,11 @@
 	<classpathentry exported="true" kind="lib" path="lib/jcommander-1.48.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jcommon-1.0.23.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdom2-2.0.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.19.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.19.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.jfree.org/jfreechart/api/javadoc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/junit-4.12.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mysql-connector-java-5.1.35.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/nekohtml-1.9.14.jar"/>
