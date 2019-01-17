@@ -597,4 +597,9 @@ public class Utl {
 		return sum;
 	}
 
+	public static boolean isTrue(Boolean value) {
+		if (value == null) return false;
+		return value.booleanValue();
+	}
+
 }

@@ -213,6 +213,10 @@ public class Persistence {
 		return value == null ? null : Integer.parseInt(value);
 	}
 
+	public static Boolean parsePropertyBoolean(String value) {
+		return value == null ? null : Str.isTrue(value);
+	}
+
 	public static Date parsePropertyDate(String value) {
 		return value == null ? null : new Date(value);
 	}

@@ -220,7 +220,7 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 		s("        super(template);").ln();
 		s("        if (template==null) return;").ln().ln();
 		for (PropertyModel p : bean.getProperties()) {
-			String getterMethodPrefix = p.isBoolean() ? "is" : "get";
+			String getterMethodPrefix = p.isBoolean() && p.isPrimitive() ? "is" : "get";
 			s("        set").sU(p.getName()).s("(template.").s(getterMethodPrefix).sU(p.getName()).s("());").ln();
 		}
 		s("    }").ln();
@@ -298,7 +298,7 @@ public class DatobGenerator<D extends DatobModel> extends ABeanGenerator<D> {
 			ln(";");
 		}
 
-		String getterMethodPrefix = p.isBoolean() ? "is" : "get";
+		String getterMethodPrefix = p.isBoolean() && p.isPrimitive() ? "is" : "get";
 
 		if (p.isReference()) {
 

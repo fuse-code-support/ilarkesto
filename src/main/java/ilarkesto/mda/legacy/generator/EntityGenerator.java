@@ -207,8 +207,8 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 		ln();
 		ln("    }");
 		ln();
-		ln("    public static transient final", bean.getName() + "Metadata metadata = new", bean.getName()
-				+ "Metadata();");
+		ln("    public static transient final", bean.getName() + "Metadata metadata = new",
+			bean.getName() + "Metadata();");
 		ln();
 		annotationOverride();
 		ln("    public", bean.getName() + "Metadata getMetadata() { return metadata; };");
@@ -227,7 +227,7 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 		ln("            public String getLabel() { return label; };");
 		ln();
 		ln("            public Object getValue(" + Entity.class.getName() + " entity) {");
-		String accessor = pm.isBoolean() ? "is" : "get";
+		String accessor = pm.isBoolean() && pm.isPrimitive() ? "is" : "get";
 		ln("                return ((" + bean.getName() + ")entity)." + accessor
 				+ Str.uppercaseFirstLetter(pm.getName()) + "();");
 		ln("            }");
@@ -258,11 +258,11 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 		}
 
 		ln();
-		ln("    protected abstract", cv.getReturnType(), "compute" + Str.uppercaseFirstLetter(cv.getName()) + "("
-				+ signature + ")" + throwsText + ";");
+		ln("    protected abstract", cv.getReturnType(),
+			"compute" + Str.uppercaseFirstLetter(cv.getName()) + "(" + signature + ")" + throwsText + ";");
 		ln();
-		ln("    public final", cv.getReturnType(), "get" + Str.uppercaseFirstLetter(cv.getName()) + "(" + signature
-				+ ")" + throwsText + " {");
+		ln("    public final", cv.getReturnType(),
+			"get" + Str.uppercaseFirstLetter(cv.getName()) + "(" + signature + ")" + throwsText + " {");
 		ln("        " + ValuesCache.class.getName(), "cache = getCache();");
 		ln("        Object cachedValue = cache.get(\"" + cv.getName() + "\""
 				+ (params.length() == 0 ? "" : ", " + params) + ");");
@@ -441,9 +441,9 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 			ln("    }");
 
 			// ln();
-			// ln("    protected", bean.getName(), "createSingleton() {");
-			// ln("        return new", bean.getName() + "();");
-			// ln("    }");
+			// ln(" protected", bean.getName(), "createSingleton() {");
+			// ln(" return new", bean.getName() + "();");
+			// ln(" }");
 		}
 
 		ln();
@@ -459,8 +459,8 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 
 	private void writeQueryBaseclass() {
 		ln();
-		ln("    public abstract static class A" + bean.getName() + "Query extends " + AEntityQuery.class.getName()
-				+ "<" + bean.getName() + "> {");
+		ln("    public abstract static class A" + bean.getName() + "Query extends " + AEntityQuery.class.getName() + "<"
+				+ bean.getName() + "> {");
 		annotationOverride();
 		ln("        public Class<" + bean.getName() + "> getType() {");
 		ln("            return " + bean.getName() + ".class;");
@@ -516,20 +516,20 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 		// ln();
 		// annotationOverride();
 		// String setClass = "Set<" + ilarkesto.core.persistance.AEntity.class.getName() + ">";
-		// ln("    public " + setClass + " getPassengers() {");
-		// ln("        " + setClass + " ret = new HashSet<" +
+		// ln(" public " + setClass + " getPassengers() {");
+		// ln(" " + setClass + " ret = new HashSet<" +
 		// ilarkesto.core.persistance.AEntity.class.getName() + ">();");
-		// ln("        ret.addAll(super.getPassengers());");
+		// ln(" ret.addAll(super.getPassengers());");
 		// for (PropertyModel p : bean.getSlaveProperties()) {
 		// if (p.isCollection()) {
-		// ln("        ret.addAll(get" + Str.uppercaseFirstLetter(p.getName()) + "());");
+		// ln(" ret.addAll(get" + Str.uppercaseFirstLetter(p.getName()) + "());");
 		// }
 		// if (!p.isCollection()) {
-		// ln("        ret.add(get" + Str.uppercaseFirstLetter(p.getName()) + "());");
+		// ln(" ret.add(get" + Str.uppercaseFirstLetter(p.getName()) + "());");
 		// }
 		// }
-		// ln("        return ret;");
-		// ln("    }");
+		// ln(" return ret;");
+		// ln(" }");
 	}
 
 	private void writeGetByListBy() {
@@ -542,8 +542,8 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 
 				if (p.isReference()) {
 					ln("    private static transient",
-						AEntityBackReferenceHelper.class.getName() + "<" + bean.getName() + ">", p.getName()
-								+ "BackReferencesCache = new",
+						AEntityBackReferenceHelper.class.getName() + "<" + bean.getName() + ">",
+						p.getName() + "BackReferencesCache = new",
 						AEntityBackReferenceHelper.class.getName() + "<" + bean.getName() + ">() {");
 					annotationOverride();
 					ln("        protected " + bean.getName() + " loadById(final String id) {");
@@ -607,9 +607,9 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 			if (!p.isUnique()) {
 				if (p.isReference()) {
 					ln("    private static transient",
-						AEntitySetBackReferenceHelper.class.getName() + "<" + bean.getName() + ">", p.getName()
-								+ "BackReferencesCache = new", AEntitySetBackReferenceHelper.class.getName() + "<"
-								+ bean.getName() + ">() {");
+						AEntitySetBackReferenceHelper.class.getName() + "<" + bean.getName() + ">",
+						p.getName() + "BackReferencesCache = new",
+						AEntitySetBackReferenceHelper.class.getName() + "<" + bean.getName() + ">() {");
 					annotationOverride();
 					ln("        protected Set<" + bean.getName() + "> loadById(final String id) {");
 					ln("        return new " + queryName + "() {");
@@ -643,15 +643,14 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 					byType = getBeanClass(((ReferencePropertyModel) p).getReferencedEntity());
 				if (p instanceof ReferenceSetPropertyModel)
 					byType = getBeanClass(((ReferenceSetPropertyModel) p).getReferencedEntity());
-				ln("    public static Set<",
-					bean.getName() + ">",
+				ln("    public static Set<", bean.getName() + ">",
 					"listBy" + Str.uppercaseFirstLetter(p.getNameSingular()) + "(final " + byType + " "
 							+ p.getNameSingular() + ") {");
 
 				if (p.isReference()) {
 					ln("        if (" + p.getNameSingular(), "== null) return new HashSet<" + bean.getName() + ">();");
-					ln("        return", p.getName() + "BackReferencesCache.getById(" + p.getNameSingular()
-							+ ".getId());");
+					ln("        return",
+						p.getName() + "BackReferencesCache.getById(" + p.getNameSingular() + ".getId());");
 				}
 
 				if (!p.isReference()) {
@@ -690,7 +689,8 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 		String by = Str.uppercaseFirstLetter(ref.getName());
 		if (ref.isCollection()) by = Str.removeSuffix(by, "s");
 		if (ref.isUnique()) {
-			ln("    public final " + getBeanClass(refEntity) + " get" + Str.uppercaseFirstLetter(br.getName()) + "() {");
+			ln("    public final " + getBeanClass(refEntity) + " get" + Str.uppercaseFirstLetter(br.getName())
+					+ "() {");
 			if (isLegacyBean(refEntity)) {
 				ln("        return " + Str.lowercaseFirstLetter(refEntity.getName()) + "Dao.get"
 						+ Str.uppercaseFirstLetter(br.getName()) + "By" + by + "((" + bean.getName() + ")this);");

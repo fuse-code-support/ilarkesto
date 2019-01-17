@@ -96,7 +96,8 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 		typeMoney = property.getType().equals(Money.class.getName());
 		typeSetReference = property instanceof ReferenceSetPropertyModel;
 		typeReference = property instanceof ReferencePropertyModel;
-		typeBoolean = property.getType().equals(boolean.class.getName());
+		typeBoolean = property.getType().equals(boolean.class.getName())
+				|| property.getType().equals(Boolean.class.getName());
 	}
 
 	@Override
@@ -337,6 +338,7 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 		type = type.replace("List<", "Collection<");
 		type = replaceServerWithClient(type);
 		if (type.equals(int.class.getName())) type = Integer.class.getName();
+		if (type.equals(boolean.class.getName())) type = Boolean.class.getName();
 		ln("    public void applyValue(" + type + " value) {");
 		ln("        entity.set" + Str.uppercaseFirstLetter(property.getName()) + "(value);");
 		ln("    }");
@@ -346,7 +348,7 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 		ln();
 		annotationOverride();
 		String retType = "String";
-		if (typeBoolean) retType = "boolean";
+		if (typeBoolean) retType = Boolean.class.getName();
 		if (typeMoney) retType = Money.class.getName();
 		if (typeDateRange) retType = DateRange.class.getName();
 		if (typeDecimal) retType = BigDecimal.class.getName();
@@ -355,8 +357,10 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 		if (typeDecimal) typePrefix = "BigDecimal";
 		ln("    public", retType, "get" + typePrefix + "Value()  {");
 
-		if (typeBoolean) {
+		if (typeBoolean && property.isPrimitive()) {
 			ln("       return entity.is" + Str.uppercaseFirstLetter(property.getName()) + "();");
+		} else if (typeBoolean && !property.isPrimitive()) {
+			ln("       return entity.get" + Str.uppercaseFirstLetter(property.getName()) + "();");
 		} else if (typeDecimal) {
 			ln("        return entity.get" + Str.uppercaseFirstLetter(property.getName()) + "();");
 		} else if (typeMoney) {
@@ -366,7 +370,8 @@ public class GwtEntityPropertyFieldGenerator extends AClassGenerator {
 		} else if (typeDateRange) {
 			ln("        return entity.get" + Str.uppercaseFirstLetter(property.getName()) + "();");
 		} else {
-			String getter = (property.isBoolean() ? "is" : "get") + Str.uppercaseFirstLetter(property.getName()) + "()";
+			String getter = (property.isBoolean() && property.isPrimitive() ? "is" : "get")
+					+ Str.uppercaseFirstLetter(property.getName()) + "()";
 			ln("        return " + Str.class.getName() + ".format(entity." + getter + ");");
 		}
 

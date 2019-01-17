@@ -25,13 +25,13 @@ public abstract class AEditableBooleanDropdownField extends AEditableSelectOneFi
 	private String trueLabel = "Ja";
 	private String falseLabel = "Nein";
 
-	protected abstract void applyValue(boolean value);
+	protected abstract void applyValue(Boolean value);
 
-	protected abstract boolean getValue();
+	protected abstract Boolean getValue();
 
 	@Override
 	public final void applyValue(String value) {
-		applyValue(Str.isTrue(value));
+		applyValue(value == null && !isMandatory() ? null : Str.isTrue(value));
 	}
 
 	@Override
