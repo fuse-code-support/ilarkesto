@@ -345,6 +345,10 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		return title;
 	}
 
+	protected int getGroupFootRowCount(G group) {
+		return 0;
+	}
+
 	@Override
 	public final Updatable update() {
 		log.debug("update()");
@@ -571,13 +575,16 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 	public List<Row> createRows(Collection<O> objects, int rowIndex) {
 		List<Row> ret;
+
 		if (!isGroupingEnabled()) {
+			// without groups
 			ret = new ArrayList<Row>(objects.size());
 			int count = addRows(ret, objects, rowIndex);
 			rowIndex += count;
 			return ret;
 		}
 
+		// with groups
 		ret = new ArrayList<Row>();
 
 		Map<G, List<O>> objectsByGroup = new HashMap<G, List<O>>();
@@ -599,6 +606,13 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			ret.add(new Row(group, null, ++rowIndex));
 			int count = addRows(ret, objectsByGroup.get(group), rowIndex);
 			rowIndex += count;
+
+			for (int i = 0; i < getGroupFootRowCount(group); i++) {
+				rowIndex++;
+				for (AColumn column : columns) {
+					table.setWidget(rowIndex, column.index, column.getGroupFootCellWidget(group, i));
+				}
+			}
 		}
 
 		return ret;
@@ -890,7 +904,23 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			try {
 				cellValue = getFootCellValue(index);
 			} catch (Exception ex) {
-				log.error(Str.getSimpleName(getClass()) + ".getCellValue() (for column " + index + ") failed.", ex);
+				log.error(Str.getSimpleName(getClass()) + ".getFootCellValue() (for column " + index + ") failed.", ex);
+				cellValue = "ERROR: " + Str.formatException(ex);
+			}
+			Widget cellWidget = Widgets.widget(cellValue);
+			if (cellWidget == null) return null;
+			if (isNoWrap()) cellWidget.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
+			cellWidget.getElement().getStyle().setColor(getFootCellColor(index));
+			return isPadded() ? Widgets.frame(cellWidget) : cellWidget;
+		}
+
+		public Widget getGroupFootCellWidget(G group, int index) {
+			Object cellValue;
+			try {
+				cellValue = getGroupFootCellValue(group, index);
+			} catch (Exception ex) {
+				log.error(Str.getSimpleName(getClass()) + ".getGroupFootCellValue() (for column " + index + ") failed.",
+					ex);
 				cellValue = "ERROR: " + Str.formatException(ex);
 			}
 			Widget cellWidget = Widgets.widget(cellValue);
@@ -905,6 +935,10 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		}
 
 		protected Object getFootCellValue(int index) {
+			return null;
+		}
+
+		protected Object getGroupFootCellValue(G group, int index) {
 			return null;
 		}
 
