@@ -75,6 +75,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 	private BuilderPanel wrapper;
 	private FlexTable table;
 	private List<Row> rows;
+	private Map<G, List<O>> objectsByGroup;
 	private List<AColumn> columns = new ArrayList<AColumn>();
 	private int sortColumnIndex = -1;
 	private boolean reverseSort;
@@ -244,7 +245,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		}
 
 		try {
-			rows = createRows(objects, rowIndex);
+			rowIndex = createRows(objects, rowIndex);
 		} catch (Exception ex) {
 			throw new RuntimeException(Str.getSimpleName(getClass()) + ".createRows() failed.", ex);
 		}
@@ -273,6 +274,10 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		if (isColumnTitlesEnabled()) rowIndex++;
 		if (isColumnFilteringEnabled()) rowIndex++;
 		rowIndex += rows.size();
+		for (G group : objectsByGroup.keySet()) {
+			rowIndex++;
+			rowIndex += getGroupFootRowCount(group);
+		}
 		for (int i = 0; i < getFootRowCount(); i++) {
 			rowIndex++;
 			for (AColumn column : columns) {
@@ -573,21 +578,22 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		return this;
 	}
 
-	public List<Row> createRows(Collection<O> objects, int rowIndex) {
-		List<Row> ret;
+	private int createRows(Collection<O> objects, int rowIndex) {
+		rows = null;
+		objectsByGroup = null;
 
 		if (!isGroupingEnabled()) {
 			// without groups
-			ret = new ArrayList<Row>(objects.size());
-			int count = addRows(ret, objects, rowIndex);
+			rows = new ArrayList<Row>(objects.size());
+			int count = addRows(rows, objects, rowIndex);
 			rowIndex += count;
-			return ret;
+			return rowIndex;
 		}
 
 		// with groups
-		ret = new ArrayList<Row>();
+		rows = new ArrayList<Row>();
 
-		Map<G, List<O>> objectsByGroup = new HashMap<G, List<O>>();
+		objectsByGroup = new HashMap<G, List<O>>();
 		for (O o : objects) {
 			G group = getGroup(o);
 			if (group == null) throw new IllegalStateException("getGroup() returned null for:" + o);
@@ -603,8 +609,8 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		Collections.sort(groups, groupComparator);
 
 		for (G group : groups) {
-			ret.add(new Row(group, null, ++rowIndex));
-			int count = addRows(ret, objectsByGroup.get(group), rowIndex);
+			rows.add(new Row(group, null, ++rowIndex));
+			int count = addRows(rows, objectsByGroup.get(group), rowIndex);
 			rowIndex += count;
 
 			for (int i = 0; i < getGroupFootRowCount(group); i++) {
@@ -615,7 +621,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			}
 		}
 
-		return ret;
+		return rowIndex;
 	}
 
 	protected boolean isReverseSort() {
