@@ -251,16 +251,14 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		}
 		table.setVisible(!rows.isEmpty());
 
-		for (Row row : rows) {
-			appendRow(row);
-			rowIndex++;
-		}
-
 		for (int i = 0; i < getFootRowCount(); i++) {
 			rowIndex++;
-			for (AColumn column : columns) {
-				table.setWidget(rowIndex, column.index, column.getFootCellWidget(i));
-			}
+			rows.add(new Row(null, null, rowIndex, i));
+		}
+
+		for (Row row : rows) {
+			updateRowWidgets(row);
+			rowIndex++;
 		}
 
 	}
@@ -269,20 +267,9 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		return false;
 	}
 
-	public void updateFootCells() {
-		int rowIndex = -1;
-		if (isColumnTitlesEnabled()) rowIndex++;
-		if (isColumnFilteringEnabled()) rowIndex++;
-		rowIndex += rows.size();
-		for (G group : objectsByGroup.keySet()) {
-			rowIndex++;
-			rowIndex += getGroupFootRowCount(group);
-		}
-		for (int i = 0; i < getFootRowCount(); i++) {
-			rowIndex++;
-			for (AColumn column : columns) {
-				table.setWidget(rowIndex, column.index, column.getFootCellWidget(i));
-			}
+	public final void updateFootCells() {
+		for (Row row : rows) {
+			if (row.isFinalFooter() || row.isGroupFooter()) updateRowWidgets(row);
 		}
 	}
 
@@ -294,8 +281,8 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		return false;
 	}
 
-	private void appendRow(Row row) {
-		if (row.object == null) {
+	private void updateRowWidgets(Row row) {
+		if (row.isGroupHeader()) {
 			Widget groupWidget;
 			try {
 				groupWidget = createGroupWidget(row.group);
@@ -304,7 +291,16 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			}
 			table.setWidget(row.tableRowIndex, 0, groupWidget);
 			table.getFlexCellFormatter().setColSpan(row.tableRowIndex, 0, columns.size());
-		} else {
+		} else if (row.isGroupFooter()) {
+			for (AColumn column : columns) {
+				table.setWidget(row.tableRowIndex, column.index,
+					column.getGroupFootCellWidget(row.group, row.footerIndex));
+			}
+		} else if (row.isFinalFooter()) {
+			for (AColumn column : columns) {
+				table.setWidget(row.tableRowIndex, column.index, column.getFootCellWidget(row.footerIndex));
+			}
+		} else if (row.object != null) {
 			for (AColumn column : columns) {
 				table.setWidget(row.tableRowIndex, column.index, column.getCellWidget(row.object));
 				column.formatCell(row.tableRowIndex, row.object, table.getCellFormatter());
@@ -585,7 +581,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		if (!isGroupingEnabled()) {
 			// without groups
 			rows = new ArrayList<Row>(objects.size());
-			int count = addRows(rows, objects, rowIndex);
+			int count = appendRows(rows, objects, rowIndex);
 			rowIndex += count;
 			return rowIndex;
 		}
@@ -609,15 +605,13 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		Collections.sort(groups, groupComparator);
 
 		for (G group : groups) {
-			rows.add(new Row(group, null, ++rowIndex));
-			int count = addRows(rows, objectsByGroup.get(group), rowIndex);
+			rows.add(new Row(group, null, ++rowIndex, -1));
+			int count = appendRows(rows, objectsByGroup.get(group), rowIndex);
 			rowIndex += count;
 
 			for (int i = 0; i < getGroupFootRowCount(group); i++) {
 				rowIndex++;
-				for (AColumn column : columns) {
-					table.setWidget(rowIndex, column.index, column.getGroupFootCellWidget(group, i));
-				}
+				rows.add(new Row(group, null, rowIndex, i));
 			}
 		}
 
@@ -636,7 +630,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		return getInitialSortColumnIndex() >= 0;
 	}
 
-	private int addRows(List<Row> ret, Collection<O> objects, int rowIndex) {
+	private int appendRows(List<Row> ret, Collection<O> objects, int rowIndex) {
 		List<O> list = new ArrayList<O>(objects);
 		if (isAutoSortingEnabled() || isCustomSortingEnabled()) {
 			try {
@@ -648,7 +642,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		int count = 0;
 		for (O o : list) {
 			if (isRowHidden(o)) continue;
-			ret.add(new Row(null, o, ++rowIndex));
+			ret.add(new Row(null, o, ++rowIndex, -1));
 			count++;
 		}
 		return count;
@@ -684,12 +678,26 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		private G group;
 		private O object;
 		private int tableRowIndex;
+		private int footerIndex;
 
-		public Row(G group, O object, int tableRowIndex) {
+		public Row(G group, O object, int tableRowIndex, int footerIndex) {
 			super();
 			this.group = group;
 			this.object = object;
 			this.tableRowIndex = tableRowIndex;
+			this.footerIndex = footerIndex;
+		}
+
+		public boolean isFinalFooter() {
+			return group == null && object == null && footerIndex >= 0;
+		}
+
+		public boolean isGroupHeader() {
+			return group != null && object == null && footerIndex < 0;
+		}
+
+		public boolean isGroupFooter() {
+			return group != null && object == null && footerIndex >= 0;
 		}
 
 		public boolean matchesColumnFilters() {
