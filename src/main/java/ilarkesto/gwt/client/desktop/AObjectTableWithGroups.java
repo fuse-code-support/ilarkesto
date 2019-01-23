@@ -932,12 +932,16 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			Widget cellWidget = Widgets.widget(cellValue);
 			if (cellWidget == null) return null;
 			if (isNoWrap()) cellWidget.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
-			cellWidget.getElement().getStyle().setColor(getFootCellColor(index));
+			cellWidget.getElement().getStyle().setColor(getGroupFootCellColor(group, index));
 			return isPadded() ? Widgets.frame(cellWidget) : cellWidget;
 		}
 
 		protected String getFootCellColor(int index) {
 			return Colors.googleBlue;
+		}
+
+		protected String getGroupFootCellColor(G group, int index) {
+			return Colors.googleLightBlue;
 		}
 
 		protected Object getFootCellValue(int index) {
