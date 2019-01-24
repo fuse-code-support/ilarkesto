@@ -283,7 +283,7 @@ public abstract class AEditableSelectManyField extends AEditableField {
 
 		@Override
 		protected boolean isColumnFilteringEnabled() {
-			return items.size() > 42;
+			return items.size() > 10;
 		}
 
 		public List<String> getSelectedKeys() {
