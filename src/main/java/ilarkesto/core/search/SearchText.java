@@ -22,6 +22,7 @@ import java.util.Collection;
 public class SearchText {
 
 	private Collection<String> words;
+	private boolean deep;
 
 	public SearchText(String text) {
 		words = new ArrayList<String>();
@@ -66,6 +67,15 @@ public class SearchText {
 			if (s.contains(word)) return true;
 		}
 		return false;
+	}
+
+	public boolean isDeep() {
+		return deep;
+	}
+
+	public SearchText setDeep(boolean deep) {
+		this.deep = deep;
+		return this;
 	}
 
 	@Override
