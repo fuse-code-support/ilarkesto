@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -38,7 +38,6 @@ public class ApplicationStatusInfoBuilder {
 	public void buildAll(HtmlBuilder html) {
 		sessions(html);
 		conversations(html);
-		errors(html);
 		runtime(html);
 		processes(html);
 		threads(html);
@@ -47,6 +46,7 @@ public class ApplicationStatusInfoBuilder {
 		// TODO: threadlocals
 		systemProperties(html);
 		environment(html);
+		errors(html);
 	}
 
 	private void errors(HtmlBuilder html) {
@@ -87,8 +87,8 @@ public class ApplicationStatusInfoBuilder {
 		sectionHeader(html, "Active Conversations");
 		startTABLE(html);
 		headersRow(html, "#", "User", "Project", "Last request");
-		List<AGwtConversation> conversations = new ArrayList<AGwtConversation>(AWebApplication.get()
-				.getGwtConversations());
+		List<AGwtConversation> conversations = new ArrayList<AGwtConversation>(
+				AWebApplication.get().getGwtConversations());
 		Collections.sort(conversations);
 		for (AGwtConversation conversation : conversations) {
 			valuesRow(html, conversation, conversation.getLastTouched().getPeriodToNow().toShortestString() + " ago");
@@ -103,8 +103,8 @@ public class ApplicationStatusInfoBuilder {
 		List<AWebSession> sessions = new ArrayList<AWebSession>((AWebApplication.get().getWebSessions()));
 		Collections.sort(sessions);
 		for (AWebSession session : sessions) {
-			valuesRow(html, session, session.getLastTouched().getPeriodToNow().toShortestString() + " ago", session
-					.getSessionStartedTime().getPeriodToNow().toShortestString(), session.getInitialRemoteHost(),
+			valuesRow(html, session, session.getLastTouched().getPeriodToNow().toShortestString() + " ago",
+				session.getSessionStartedTime().getPeriodToNow().toShortestString(), session.getInitialRemoteHost(),
 				session.getUserAgent());
 		}
 		endTABLE(html);
