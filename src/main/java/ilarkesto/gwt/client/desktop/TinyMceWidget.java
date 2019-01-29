@@ -57,7 +57,7 @@ public class TinyMceWidget extends TextArea {
 		conf.put("auto_focus", new JSONString(id));
 
 		conf.put("plugins", new JSONString(
-				"code lists image link textcolor colorpicker media table charmap fullscreen hr nonbreaking searchreplace visualblocks visualchars wordcount"));
+				"code lists image link textcolor colorpicker media table charmap fullscreen hr nonbreaking searchreplace visualblocks visualchars wordcount paste"));
 
 		conf.put("toolbar", new JSONString(
 				"undo redo | styleselect | bold italic forecolor | bullist outdent indent | link image image_list"));
@@ -73,6 +73,9 @@ public class TinyMceWidget extends TextArea {
 
 		// code
 		conf.put("code_dialog_width", new JSONNumber(1024));
+
+		// paste
+		conf.put("paste_as_text", JSONBoolean.getInstance(true));
 
 		return conf;
 	}
