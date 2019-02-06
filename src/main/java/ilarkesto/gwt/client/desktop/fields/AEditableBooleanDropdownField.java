@@ -41,7 +41,8 @@ public abstract class AEditableBooleanDropdownField extends AEditableSelectOneFi
 
 	@Override
 	public String getSelectedOptionKey() {
-		return String.valueOf(getValue());
+		Boolean value = getValue();
+		return value == null ? null : String.valueOf(value);
 	}
 
 	protected String getFalseLabel() {
