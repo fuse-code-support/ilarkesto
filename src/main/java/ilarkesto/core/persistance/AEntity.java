@@ -17,13 +17,13 @@ package ilarkesto.core.persistance;
 import ilarkesto.core.base.Utl;
 import ilarkesto.core.logging.Log;
 import ilarkesto.core.search.SearchText;
-import ilarkesto.core.search.Searchable;
+import ilarkesto.core.search.SearchableWithInvisibility;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AEntity extends ABaseEntity implements Entity, Searchable, TransferableEntity {
+public abstract class AEntity extends ABaseEntity implements Entity, SearchableWithInvisibility, TransferableEntity {
 
 	private static final transient Log log = Log.get(AEntity.class);
 
@@ -45,6 +45,11 @@ public abstract class AEntity extends ABaseEntity implements Entity, Searchable,
 	public final boolean isDeletable() {
 		if (!isPersisted()) return false;
 		return getDeleteVeto() == null;
+	}
+
+	@Override
+	public boolean isInvisibleForSearch() {
+		return false;
 	}
 
 	@Override

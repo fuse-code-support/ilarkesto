@@ -38,7 +38,11 @@ public class SearchQuery extends AEntityQuery<AEntity> {
 
 	@Override
 	public boolean test(AEntity entity) {
-		return acceptType(entity) && entity.matches(searchText);
+		if (acceptType(entity)) {
+			if (entity.isInvisibleForSearch()) return false;
+			return entity.matches(searchText);
+		}
+		return false;
 	}
 
 	private boolean acceptType(AEntity entity) {
