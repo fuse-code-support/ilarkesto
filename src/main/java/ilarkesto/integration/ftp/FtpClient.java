@@ -19,6 +19,7 @@ import ilarkesto.base.Utl;
 import ilarkesto.core.auth.LoginData;
 import ilarkesto.core.auth.LoginDataProvider;
 import ilarkesto.core.base.Filepath;
+import ilarkesto.core.base.MultilineBuilder;
 import ilarkesto.core.base.Str;
 import ilarkesto.core.logging.Log;
 import ilarkesto.io.IO;
@@ -70,10 +71,16 @@ public class FtpClient {
 	private String chmodForUploadedFiles;
 	private boolean ignoreChmodFailureForUploadedFiles;
 
+	private MultilineBuilder protocol = new MultilineBuilder();
+
 	public FtpClient(String server, LoginDataProvider login) {
 		super();
 		this.server = server;
 		this.login = login;
+	}
+
+	public String getProtocol() {
+		return protocol.toString();
 	}
 
 	public void deleteDir(String path) {
@@ -101,6 +108,8 @@ public class FtpClient {
 
 		if (!deleted)
 			throw new RuntimeException("Deleting remote file failed: " + path + " | " + client.getReplyString());
+
+		protocol.ln("DELETED", path);
 	}
 
 	public void setChmodForCreatedDirs(String chmodForCreatedDirs) {
@@ -203,6 +212,8 @@ public class FtpClient {
 		}
 		if (!success) throw new RuntimeException("Uploading failed: " + path + " -> " + client.getReplyString());
 
+		protocol.ln("UPLOADED", path);
+
 		chmodAfterUpload(path);
 	}
 
@@ -248,6 +259,7 @@ public class FtpClient {
 			} catch (IOException ex) {
 				throw new RuntimeException("Creating directory failed: " + path + " | " + client.getReplyString(), ex);
 			}
+			protocol.ln("DIR-CREATED", path);
 			return;
 		}
 
@@ -275,6 +287,8 @@ public class FtpClient {
 		}
 		if (!uploaded) throw new RuntimeException("Uploading failed: " + path + " | " + client.getReplyString());
 
+		protocol.ln("UPLOADED", path);
+
 		chmodAfterUpload(path);
 	}
 
@@ -301,6 +315,8 @@ public class FtpClient {
 		}
 		if (!executed)
 			throw new RuntimeException("Command execution failed: " + command + " | " + client.getReplyString());
+
+		protocol.ln("COMMAND-EXECUTED", command);
 	}
 
 	public void createDir(String path) {
@@ -331,6 +347,8 @@ public class FtpClient {
 			throw new RuntimeException(ex);
 		}
 		if (!created) throw new RuntimeException("Creating directory failed: " + path + ". " + client.getReplyString());
+
+		protocol.ln("DIR-CREATED", path);
 
 		chmod(chmodForCreatedDirs, path);
 	}
