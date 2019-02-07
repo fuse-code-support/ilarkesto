@@ -15,11 +15,11 @@
 package ilarkesto.integration.ftp;
 
 import ilarkesto.base.Sys;
+import ilarkesto.base.Utl;
 import ilarkesto.core.auth.LoginData;
 import ilarkesto.core.auth.LoginDataProvider;
 import ilarkesto.core.base.Filepath;
 import ilarkesto.core.base.Str;
-import ilarkesto.core.base.Utl;
 import ilarkesto.core.logging.Log;
 import ilarkesto.io.IO;
 import ilarkesto.io.IO.StringInputStream;
@@ -255,6 +255,16 @@ public class FtpClient {
 	}
 
 	private void upload(String path, File file) {
+		try {
+			upload_(path, file);
+		} catch (Exception ex) {
+			log.info("Uploading file failed:", path, ex, "\nRetrying....");
+			Utl.sleep(1000);
+			upload_(path, file);
+		}
+	}
+
+	private void upload_(String path, File file) {
 		boolean uploaded;
 		try {
 			uploaded = client.storeFile(path, new BufferedInputStream(new FileInputStream(file)));
@@ -294,6 +304,16 @@ public class FtpClient {
 	}
 
 	public void createDir(String path) {
+		try {
+			createDir_(path);
+		} catch (RuntimeException ex) {
+			log.info("Creating directory failed:", path, ex, "\nRetrying....");
+			ilarkesto.base.Utl.sleep(1000);
+			createDir_(path);
+		}
+	}
+
+	private void createDir_(String path) {
 		if (path == null) return;
 		if (existsDir(path)) return;
 
