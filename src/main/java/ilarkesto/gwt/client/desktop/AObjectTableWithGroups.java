@@ -38,7 +38,6 @@ import java.util.Set;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.FontStyle;
-import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
@@ -166,66 +165,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 				boolean customSortingEnabled = isCustomSortingEnabled();
 
-				Widget titleWidget = Widgets.textFieldlabel(columnTitle, false);
-
-				if (titleWidget != null) {
-					String key = column.getKey();
-					if (key != null) {
-						if (key.contains(",")) log.error("Character ',' not allowed in column selfdoc key: " + key);
-						if (keys.contains(key)) log.error("Column with same key already exists: " + key
-								+ ". Override getKey() in column and provide a different key for the column.");
-						keys.add(key);
-
-						final AAction selfdocAction = Widgets.selfdocAction(column.getSelfdocKey(), columnTitle,
-							columnDescription);
-						if (selfdocAction != null) {
-
-							// ActionButton button = new ActionButton(selfdocAction);
-							// button.setIconSize(16);
-							// button.setIconOpacity(0.7f);
-
-							Anchor button = new Anchor("(?)");
-							button.addClickHandler(new ClickHandler() {
-
-								@Override
-								public void onClick(ClickEvent ev) {
-									selfdocAction.execute();
-								}
-
-							});
-							Style style = button.getElement().getStyle();
-							style.setColor("#999");
-							style.setFontSize(65, Unit.PCT);
-							style.setTextDecoration(TextDecoration.NONE);
-
-							titleWidget = Widgets.horizontalFlowPanel(4, titleWidget, button);
-						}
-					}
-
-					if (columnDescription != null) titleWidget.setTitle(columnDescription);
-
-					if (customSortingEnabled && isShowColumnSortingToggleIcon())
-						titleWidget.addStyleName("columnTitleWithSortToggle");
-
-					if (sortColumnIndex == column.index) {
-						// Sortierte Spalte hervorheben
-						Style style = titleWidget.getElement().getStyle();
-						style.setColor("#444");
-						style.setFontWeight(FontWeight.BOLD);
-						if (reverseSort) style.setFontStyle(FontStyle.ITALIC);
-					}
-				}
-
-				SimplePanel frame = Widgets.frame(titleWidget, Widgets.defaultSpacing, 0, Widgets.defaultSpacing,
-					Widgets.defaultSpacing / 2);
-				table.setWidget(rowIndex, column.index, frame);
-
-				Element element = table.getCellFormatter().getElement(rowIndex, column.index);
-				columnTitles[column.index] = element;
-				Style style = element.getStyle();
-				style.setPosition(Position.RELATIVE);
-				style.setBackgroundColor("#f9f9f9");
-				style.setVerticalAlign(VerticalAlign.TOP);
+				updateColumnTitleWidget(rowIndex, keys, column, columnTitle, columnDescription, customSortingEnabled);
 
 				if (customSortingEnabled) {
 					for (int col = 0; col < columns.size(); col++) {
@@ -261,6 +201,81 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			rowIndex++;
 		}
 
+	}
+
+	protected void updateColumnTitleWidget(int rowIndex, Set<String> keys, AColumn column, String columnTitle,
+			String columnDescription, boolean customSortingEnabled) {
+		Widget titleWidget = Widgets.text(columnTitle);
+
+		String key = column.getKey();
+		if (key != null) {
+			if (key.contains(",")) log.error("Character ',' not allowed in column selfdoc key: " + key);
+			if (keys.contains(key)) log.error("Column with same key already exists: " + key
+					+ ". Override getKey() in column and provide a different key for the column.");
+			keys.add(key);
+
+			final AAction selfdocAction = Widgets.selfdocAction(column.getSelfdocKey(), columnTitle, columnDescription);
+			if (selfdocAction != null) {
+
+				// ActionButton button = new ActionButton(selfdocAction);
+				// button.setIconSize(16);
+				// button.setIconOpacity(0.7f);
+
+				Anchor button = new Anchor("(?)");
+				button.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent ev) {
+						selfdocAction.execute();
+					}
+
+				});
+				Style style = button.getElement().getStyle();
+				// style.setFontSize(65, Unit.PCT);
+				style.setTextDecoration(TextDecoration.NONE);
+				style.setColor("#bbb");
+
+				titleWidget = Widgets.horizontalFlowPanel(4, titleWidget, button);
+			}
+
+			if (columnDescription != null) titleWidget.setTitle(columnDescription);
+
+			if (customSortingEnabled && isShowColumnSortingToggleIcon())
+				titleWidget.addStyleName("columnTitleWithSortToggle");
+
+			titleWidget.getElement().getStyle().setMarginTop(5, Unit.PX);
+			titleWidget.getElement().getStyle().setColor("#666");
+			titleWidget.getElement().getStyle().setFontSize(65, Unit.PCT);
+
+			if (sortColumnIndex == column.index) {
+				// Sortierte Spalte hervorheben
+				Style style = titleWidget.getElement().getStyle();
+				style.setColor("#000");
+				if (reverseSort) style.setFontStyle(FontStyle.ITALIC);
+			}
+		}
+
+		SimplePanel frame = Widgets.frame(titleWidget, Widgets.defaultSpacing, 0, Widgets.defaultSpacing,
+			Widgets.defaultSpacing / 2);
+		table.setWidget(rowIndex, column.index, frame);
+
+		Element element = table.getCellFormatter().getElement(rowIndex, column.index);
+		columnTitles[column.index] = element;
+		Style style = element.getStyle();
+		style.setPosition(Position.RELATIVE);
+		style.setBackgroundColor("#fff");
+		style.setVerticalAlign(VerticalAlign.TOP);
+
+		// Label button = Widgets.text("title here - sometimes very long");
+		// Style buttonStyle = button.getElement().getStyle();
+		// buttonStyle.setBackgroundColor(Colors.darkGrey);
+		// buttonStyle.setColor("#ccc");
+		// buttonStyle.setMargin(2, Unit.PX);
+		// // buttonStyle.setWhiteSpace(WhiteSpace.NOWRAP);
+		// // buttonStyle.setOverflow(Overflow.HIDDEN);
+		//
+		// table.setWidget(rowIndex, column.index, button);
+		// table.getCellFormatter().getElement(rowIndex, column.index).getStyle().setHeight(1, Unit.PX);
 	}
 
 	protected boolean isShowColumnSortingToggleIcon() {
