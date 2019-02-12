@@ -32,6 +32,7 @@ public class MultiColumnPanel implements IsWidget {
 	private int skipCount;
 	private boolean responsive = true;
 	private Map<Integer, String> columnsWidthsByIndex = new HashMap<Integer, String>();
+	private int spacing = Widgets.defaultSpacing;
 
 	public MultiColumnPanel() {
 		super();
@@ -106,10 +107,10 @@ public class MultiColumnPanel implements IsWidget {
 		return (Panel) columnsPanel.getWidget(index);
 	}
 
-	private Panel createColumnPanel(boolean spacing, String width) {
+	private Panel createColumnPanel(boolean withSpacing, String width) {
 		FlowPanel ret = new FlowPanel();
-		if (spacing) {
-			ret.getElement().getStyle().setMarginLeft(Widgets.defaultSpacing, Unit.PX);
+		if (withSpacing) {
+			ret.getElement().getStyle().setMarginLeft(spacing, Unit.PX);
 		}
 		if (width != null) {
 			ret.getElement().getStyle().setProperty("minWidth", "300px");
@@ -124,6 +125,11 @@ public class MultiColumnPanel implements IsWidget {
 
 	public MultiColumnPanel setResponsive(boolean responsive) {
 		this.responsive = responsive;
+		return this;
+	}
+
+	public MultiColumnPanel setSpacing(int spacing) {
+		this.spacing = spacing;
 		return this;
 	}
 
