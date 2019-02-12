@@ -311,6 +311,10 @@ public class BuilderPanel implements IsWidget {
 		return this;
 	}
 
+	public Style getPanelStyle() {
+		return panel.getElement().getStyle();
+	}
+
 	@Override
 	public final Widget asWidget() {
 		return panel;

@@ -292,11 +292,13 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			table.setWidget(row.tableRowIndex, 0, groupWidget);
 			table.getFlexCellFormatter().setColSpan(row.tableRowIndex, 0, columns.size());
 		} else if (row.isGroupFooter()) {
+			// table.getRowFormatter().addStyleName(row.tableRowIndex, "with-separator");
 			for (AColumn column : columns) {
 				table.setWidget(row.tableRowIndex, column.index,
 					column.getGroupFootCellWidget(row.group, row.footerIndex));
 			}
 		} else if (row.isFinalFooter()) {
+			// table.getRowFormatter().addStyleName(row.tableRowIndex, "with-separator");
 			for (AColumn column : columns) {
 				table.setWidget(row.tableRowIndex, column.index, column.getFootCellWidget(row.footerIndex));
 			}
@@ -305,15 +307,18 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 				table.setWidget(row.tableRowIndex, column.index, column.getCellWidget(row.object));
 				column.formatCell(row.tableRowIndex, row.object, table.getCellFormatter());
 			}
+
+			table.getRowFormatter().addStyleName(row.tableRowIndex, "with-separator");
+
 			if (isClickable()) {
 				switch (getMouseover()) {
 					case ROW:
-						table.getRowFormatter().setStyleName(row.tableRowIndex, "clickable");
+						table.getRowFormatter().addStyleName(row.tableRowIndex, "clickable");
 						break;
 					case CELL:
 						for (int col = 0; col < columns.size(); col++) {
 							if (isColumnClickable(col)) {
-								table.getCellFormatter().setStyleName(row.tableRowIndex, col, "clickable");
+								table.getCellFormatter().addStyleName(row.tableRowIndex, col, "clickable");
 							}
 						}
 						break;
@@ -343,7 +348,12 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		style.setColor(textColor);
 		style.setBackgroundColor(backgroundColor);
 		style.setPadding(Widgets.defaultSpacing, Unit.PX);
+		style.setMarginTop(getGroupSpacing(text), Unit.PX);
 		return title;
+	}
+
+	protected int getGroupSpacing(Object group) {
+		return 15;
 	}
 
 	protected int getGroupFootRowCount(G group) {
@@ -366,6 +376,11 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		wrapper = new BuilderPanel();
 		if (isCardStyle()) {
 			wrapper.setStyleCard();
+
+			// Style style = wrapper.getPanelStyle();
+			// style.setBackgroundColor(Colors.greyedText);
+			// style.setPadding(10, Unit.PX);
+
 			String selfdocKey = getSelfdocKey();
 			if (selfdocKey != null) wrapper.prepareTitleAction(Widgets.selfdocAction(selfdocKey, null, null));
 
@@ -374,7 +389,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		// wrapper.setSpacing(0);
 		if (getColorForMarker() != null) wrapper.addColorMarker(getColorForMarker());
 		init(wrapper);
-		wrapper.add(table);
+		wrapper.add(Widgets.frame(table));
 		initWrapperAfterTable(wrapper);
 
 		for (AColumn column : columns) {
@@ -883,10 +898,6 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			return isTrimmed();
 		}
 
-		protected boolean isPadded() {
-			return true;
-		}
-
 		public Widget getCellWidget(O o) {
 			Object cellValue;
 			try {
@@ -898,7 +909,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			Widget cellWidget = Widgets.widget(cellValue);
 			if (cellWidget != null && isNoWrap()) cellWidget.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
 
-			Widget ret = isPadded() ? Widgets.frame(cellWidget) : cellWidget;
+			Widget ret = Widgets.frame(cellWidget);
 
 			if (index == 0) ret = Widgets.indent(ret, getIndentation(o));
 
@@ -925,7 +936,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			if (cellWidget == null) return null;
 			if (isNoWrap()) cellWidget.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
 			cellWidget.getElement().getStyle().setColor(getFootCellColor(index));
-			return isPadded() ? Widgets.frame(cellWidget) : cellWidget;
+			return Widgets.frame(cellWidget);
 		}
 
 		public Widget getGroupFootCellWidget(G group, int index) {
@@ -941,7 +952,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			if (cellWidget == null) return null;
 			if (isNoWrap()) cellWidget.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
 			cellWidget.getElement().getStyle().setColor(getGroupFootCellColor(group, index));
-			return isPadded() ? Widgets.frame(cellWidget) : cellWidget;
+			return Widgets.frame(cellWidget);
 		}
 
 		protected String getFootCellColor(int index) {

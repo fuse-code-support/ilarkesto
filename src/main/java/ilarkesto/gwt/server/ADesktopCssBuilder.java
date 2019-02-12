@@ -168,9 +168,6 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 		style(".goon-CardPanel .title").color("#222222").fontWeightBold().fontSize("105%");
 		style(".goon-CardPanel .clickable:hover").background("#f8f8ff");
 
-		// style(".goon-ObjectTable").border(5, "white");
-		style(".goon-ObjectTable td, .goon-Object-table th").border(1, colSeparatorLine);
-		style(".goon-ObjectTable .trimmedCell").whiteSpaceNowrap();
 	}
 
 }
