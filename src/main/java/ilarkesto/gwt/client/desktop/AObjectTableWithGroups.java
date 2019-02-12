@@ -38,6 +38,7 @@ import java.util.Set;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.FontStyle;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
@@ -350,7 +351,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 	protected Widget createGroupWidget(G group) {
 		if (group instanceof IsWidget) return ((IsWidget) group).asWidget();
-		return createGroupHeader(group, "white", getGroupHeaderColor());
+		return createGroupHeader(group, "#eee", getGroupHeaderColor());
 	}
 
 	protected String getGroupHeaderColor() {
@@ -364,6 +365,9 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		style.setBackgroundColor(backgroundColor);
 		style.setPadding(Widgets.defaultSpacing, Unit.PX);
 		style.setMarginTop(getGroupSpacing(text), Unit.PX);
+		style.setPaddingLeft(10, Unit.PX);
+		style.setFontWeight(FontWeight.BOLD);
+		style.setFontSize(90, Unit.PCT);
 		return title;
 	}
 
