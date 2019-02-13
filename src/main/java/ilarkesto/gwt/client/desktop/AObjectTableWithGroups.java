@@ -316,7 +316,9 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		} else if (row.isFinalFooter()) {
 			// table.getRowFormatter().addStyleName(row.tableRowIndex, "with-separator");
 			for (AColumn column : columns) {
-				table.setWidget(row.tableRowIndex, column.index, column.getFootCellWidget(row.footerIndex));
+				Widget cellWidget = column.getFootCellWidget(row.footerIndex);
+				// if (true) cellWidget = Widgets.flowPanel("final:", cellWidget);
+				table.setWidget(row.tableRowIndex, column.index, cellWidget);
 			}
 		} else if (row.object != null) {
 			for (AColumn column : columns) {
@@ -735,7 +737,10 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		}
 
 		public boolean matchesColumnFilters() {
-			if (group != null) return true;
+			if (isGroupHeader()) return true;
+			if (isGroupFooter()) return true;
+			if (isFinalFooter()) return true;
+
 			if (object == null) return false;
 			for (AColumn column : columns) {
 				if (!column.matchesFilter(object)) return false;
