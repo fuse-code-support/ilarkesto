@@ -14,7 +14,9 @@
  */
 package ilarkesto.tools.enhavo;
 
+import ilarkesto.core.base.Str;
 import ilarkesto.integration.ftp.FtpClient;
+import ilarkesto.io.IO;
 
 import java.io.File;
 import java.util.HashMap;
@@ -30,10 +32,13 @@ public class FtpContentPackage extends AContentPackage {
 
 	private Set<String> createdDirs = new HashSet<String>();
 
-	public FtpContentPackage(FtpClient ftp, String basePath) {
+	private File cacheDir;
+
+	public FtpContentPackage(FtpClient ftp, String basePath, File cacheDir) {
 		super();
 		this.ftp = ftp;
 		this.remotePath = basePath;
+		this.cacheDir = cacheDir;
 	}
 
 	@Override
@@ -49,11 +54,34 @@ public class FtpContentPackage extends AContentPackage {
 			createDirForFile(path);
 			ftp.uploadFileIfNotThere(path, (File) object);
 		} else {
-			ftp.uploadText(path, object.toString());
+			uploadText(path, object);
 		}
 
 		long runtime = System.currentTimeMillis() - start;
 		timings.put(path, runtime);
+	}
+
+	protected void uploadText(String path, Object object) {
+		String text = object.toString();
+
+		if (cacheDir == null) {
+			ftp.uploadText(path, text);
+			return;
+		}
+
+		File cacheFile = new File(cacheDir.getPath() + "/" + Str.toFileCompatibleString(ftp.getIdentifier()) + "/"
+				+ remotePath + "/" + path);
+		if (!isTextSameAsCache(text, cacheFile)) {
+			IO.writeFile(cacheFile, text, IO.UTF_8);
+		}
+
+		ftp.uploadFileIfNotThere(path, cacheFile);
+	}
+
+	private boolean isTextSameAsCache(String text, File cacheFile) {
+		if (!cacheFile.exists()) return false;
+		String cachedText = IO.readFile(cacheFile, IO.UTF_8);
+		return text.equals(cachedText);
 	}
 
 	private void createDirForFile(String path) {

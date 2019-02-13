@@ -79,6 +79,22 @@ public class FtpClient {
 		this.login = login;
 	}
 
+	public String getIdentifier() {
+		StringBuilder sb = new StringBuilder();
+
+		LoginData loginData = login.getLoginData();
+		if (loginData != null) {
+			String loginName = loginData.getLogin();
+			if (loginName != null) sb.append(loginName).append("@");
+		}
+
+		sb.append(server);
+
+		if (port != null) sb.append(":").append(port);
+
+		return sb.toString();
+	}
+
 	public String getProtocol() {
 		return protocol.toString();
 	}
