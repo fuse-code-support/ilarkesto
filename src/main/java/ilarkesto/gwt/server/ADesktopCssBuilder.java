@@ -21,8 +21,10 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 
 	public String colBg = "#eeeeee";
 	public String colBgHeader = Colors.googleLightGreen;
+	public String colHeader = "#fff";
 	public String colBgDialog = "#f5f5f5";
 	public String colBgButton = Colors.googleBlue;
+	public String colBgButtonHover = Colors.googleLightBlue;
 	public String colSeparatorLine = "#eeeeee";
 
 	public ADesktopCssBuilder() {
@@ -103,9 +105,9 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 	}
 
 	protected void goonButton() {
-		style("#goon .goon-Button").background(colBgButton).colorWhite().border(1, Colors.googleLightBlue)
-				.fontSize("75%").whiteSpaceNowrap();
-		style("#goon .goon-Button:hover").background(Colors.googleLightBlue);
+		style("#goon .goon-Button").background(colBgButton).colorWhite().borderNone().fontWeightBold().fontSize("75%")
+				.whiteSpaceNowrap().padding(4, 10);
+		style("#goon .goon-Button:hover").background(colBgButtonHover);
 		int iconSize = 24;
 		style("#goon .goon-Button > img").padding(0).margin(0).width(iconSize).height(iconSize);
 		style("#goon .goon-Button-iconOnly").backgroundNone().width(iconSize).height(iconSize).padding(0).borderNone();
@@ -135,19 +137,19 @@ public abstract class ADesktopCssBuilder extends CssBuilder {
 		int headerHeight = 54;
 		int headerSpacing = 10;
 		style("#header").positionFixed(0, 0).displayTable().height(headerHeight).width100().background(colBgHeader)
-				.colorWhite().boxShadow(0, 1, 1, "#999").zIndex(42);
+				.color(colHeader).boxShadow(0, 1, 1, "#999").zIndex(42);
 		style("#header > div").displayTableCell().verticalAlignMiddle();
 		style("#logoContainer").width(42).backgroundUrl("img/header-navig.png").backgroundRepeatNoRepeat()
 				.backgroundAttachmentFixed().backgroundPosition(0, 13);
-		style("#titleContainer").width(99, "%").marginRight(headerSpacing).fontSize("110%").fontWeightBold()
-				.textShadow(1, 1, 1, "#666");
+		style("#titleContainer").width(99, "%").marginRight(headerSpacing).fontSize("110%").fontWeightBold();
 		style("#titleContainer .breadcrumb").fontSize("75%").boxShadow(0, 0, 0, "#999");
-		style("#titleContainer .breadcrumb .gwt-Label").color("#999");
-		style("#titleContainer .breadcrumb a, #titleContainer .breadcrumb a:visited").color("#EEE")
+		style("#titleContainer .breadcrumb .gwt-Label").color(Colors.darkGrey);
+		style("#titleContainer .breadcrumb a, #titleContainer .breadcrumb a:visited").color(Colors.darkGrey)
 				.textDecorationNone();
-		style("#titleContainer .breadcrumb a:hover").color(Colors.googleLightBlue);
+		style("#titleContainer .breadcrumb a:hover").color(colBgButton);
 		style("#commandContainer").width(1, "%");
-		style("#commandContainer input").background("#D3E992").border(1, Colors.googleGreen).padding(5);
+		style("#commandContainer input, #commandContainer input:focus").borderTopNone().borderRightNone()
+				.borderLeftNone().borderBottom(1, Colors.greyedText).padding(2).outlineNone();
 		style("#actionbarContainer").width(1, "%");
 		style("#gwtSuperDevModeContainer").width(100);
 		style("#gwtSuperDevModeContainer a").displayBlock().floatLeft().margin(headerSpacing).padding(5)

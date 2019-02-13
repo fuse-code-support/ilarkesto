@@ -62,7 +62,9 @@ public class Workspace {
 		this.windowTitlePostfix = windowTitlePostfix;
 
 		titleLabel = new InlineLabel();
+		titleLabel.addStyleName("titleLabel");
 		titleLabel.getElement().getStyle().setMarginRight(Widgets.defaultSpacing, Unit.PX);
+
 		titleContentLabel = new InlineLabel();
 		// titleContentLabel.getElement().getStyle().setColor("#ff7");
 		titleContentLabel.setStyleName("titleContentLabel");
@@ -111,7 +113,7 @@ public class Workspace {
 		return titleText;
 	}
 
-	public String getWindowTitlePostfix() {
+	public final String getWindowTitlePostfix() {
 		return windowTitlePostfix;
 	}
 
@@ -125,6 +127,7 @@ public class Workspace {
 				Label separator = new Label(" > ");
 				Style style = separator.getElement().getStyle();
 				style.setFloat(Float.LEFT);
+				style.setColor(Colors.greyedText);
 				breadcrumb.add(separator);
 			}
 			addBreadcrumbLink(element);

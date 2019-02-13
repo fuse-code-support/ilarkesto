@@ -280,6 +280,14 @@ public class CssBuilder {
 			return borderTop("none");
 		}
 
+		public Style borderLeftNone() {
+			return borderLeft("none");
+		}
+
+		public Style borderRightNone() {
+			return borderRight("none");
+		}
+
 		public Style borderTop(int width, String color) {
 			return borderTop(width, "solid", color);
 		}

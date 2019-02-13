@@ -355,7 +355,7 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 	}
 
 	protected String getGroupHeaderColor() {
-		return Colors.googleBlue;
+		return Colors.darkGrey;
 	}
 
 	protected Widget createGroupHeader(Object text, String textColor, String backgroundColor) {
