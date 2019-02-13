@@ -176,6 +176,31 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			}
 		}
 
+		if (isColumnClustersEnabled()) {
+			rowIndex++;
+
+			int totalColspan = 0;
+
+			Object previousClusterValue = "INIT!";
+			int colspanColumn = 0;
+			int colspan = 1;
+
+			for (AColumn column : columns) {
+				Object clusterValue = column.getClusterValue();
+				if (Utl.equals(previousClusterValue, clusterValue)) {
+					colspan++;
+					totalColspan++;
+					table.getFlexCellFormatter().setColSpan(rowIndex, colspanColumn, colspan);
+				} else {
+					int colIdx = column.index - totalColspan;
+					table.setWidget(rowIndex, colIdx, column.getClusterWidget(clusterValue));
+					colspanColumn = colIdx;
+					colspan = 1;
+				}
+				previousClusterValue = clusterValue;
+			}
+		}
+
 		if (isColumnFilteringEnabled()) {
 			rowIndex++;
 			for (AColumn column : columns) {
@@ -997,6 +1022,16 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 		protected Object getGroupFootCellValue(G group, int index) {
 			return null;
+		}
+
+		protected Object getClusterValue() {
+			return null;
+		}
+
+		public Widget getClusterWidget(Object clusterValue) {
+			Widget cellWidget = Widgets.widget(clusterValue);
+			if (cellWidget == null) return null;
+			return Widgets.frame(cellWidget);
 		}
 
 		@Override
