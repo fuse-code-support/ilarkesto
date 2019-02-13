@@ -448,6 +448,10 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 		return false;
 	}
 
+	protected boolean isColumnClustersEnabled() {
+		return false;
+	}
+
 	protected String getId() {
 		return Str.getSimpleName(getClass()).replace('$', '_');
 	}
