@@ -15,6 +15,7 @@
 package ilarkesto.core.money;
 
 import ilarkesto.core.base.Str.Formatable;
+import ilarkesto.core.base.ValueExtractor;
 
 public class MoneySumBuilder implements Formatable {
 
@@ -22,6 +23,14 @@ public class MoneySumBuilder implements Formatable {
 	private Money min;
 	private Money max;
 	private int count;
+
+	public MoneySumBuilder() {}
+
+	public <T> MoneySumBuilder(Iterable<T> objects, ValueExtractor<Money, T> valueExtractor) {
+		for (T o : objects) {
+			add(valueExtractor.getValue(o));
+		}
+	}
 
 	public MoneySumBuilder add(Money value) throws MultipleCurrenciesException {
 		count++;

@@ -35,6 +35,7 @@ public abstract class ADataTransferObject implements Serializable, IsSerializabl
 	private ArrayList<ErrorWrapper> errors;
 	public Integer conversationNumber;
 	private String returnValue;
+	private DataTranserObjectPayload payload;
 
 	private String userId;
 	private Set<String> deletedEntities;
@@ -112,6 +113,18 @@ public abstract class ADataTransferObject implements Serializable, IsSerializabl
 	public synchronized final Set<String> getDeletedEntities() {
 		if (deletedEntities == null) return Collections.emptySet();
 		return deletedEntities;
+	}
+
+	public void setPayload(DataTranserObjectPayload payload) {
+		this.payload = payload;
+	}
+
+	public DataTranserObjectPayload getPayload() {
+		return payload;
+	}
+
+	public <P extends DataTranserObjectPayload> P getPayload(Class<P> type) {
+		return (P) payload;
 	}
 
 }

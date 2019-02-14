@@ -597,6 +597,16 @@ public class Utl {
 		return sum;
 	}
 
+	public static BigDecimal sumBigDecimal(Iterator<BigDecimal> values) {
+		BigDecimal sum = BigDecimal.ZERO;
+		while (values.hasNext()) {
+			BigDecimal value = values.next();
+			if (value == null) continue;
+			sum = sum.add(value);
+		}
+		return sum;
+	}
+
 	public static boolean isTrue(Boolean value) {
 		if (value == null) return false;
 		return value.booleanValue();
