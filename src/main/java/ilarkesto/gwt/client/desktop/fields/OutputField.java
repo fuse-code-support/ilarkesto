@@ -15,8 +15,11 @@
 package ilarkesto.gwt.client.desktop.fields;
 
 import ilarkesto.core.base.Str;
+import ilarkesto.core.localization.Localizer;
+import ilarkesto.core.money.Money;
 import ilarkesto.gwt.client.desktop.Widgets;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 
@@ -28,6 +31,7 @@ public class OutputField extends AField {
 	private String href;
 	private boolean mandatory = false;
 	private String color;
+	private Boolean alignRight;
 
 	public OutputField(String label, Object value) {
 		super();
@@ -58,11 +62,32 @@ public class OutputField extends AField {
 	public IsWidget createDisplayWidget() {
 		if (value == null) return Widgets.widget(value);
 
-		String text = Str.format(value);
+		String text = valueAsString();
 		if (suffix != null) text += " " + suffix;
+
 		Label ret = Widgets.text(text);
-		if (color != null) ret.getElement().getStyle().setColor(color);
+		Style style = ret.getElement().getStyle();
+		if (color != null) style.setColor(color);
+		if (isAlignRight()) style.setTextAlign(com.google.gwt.dom.client.Style.TextAlign.RIGHT);
 		return ret;
+	}
+
+	protected boolean isAlignRight() {
+		if (alignRight != null) return alignRight.booleanValue();
+
+		if (value instanceof Money) return true;
+		if (value instanceof Number) return true;
+		return false;
+	}
+
+	@Override
+	protected boolean isLabelAlignRight() {
+		return isAlignRight();
+	}
+
+	protected String valueAsString() {
+		if (value instanceof Number) return Localizer.get().format((Number) value, true, 2, true);
+		return Str.format(value);
 	}
 
 	@Override
@@ -85,6 +110,11 @@ public class OutputField extends AField {
 
 	public OutputField setColor(String color) {
 		this.color = color;
+		return this;
+	}
+
+	public OutputField setAlignRight(Boolean alignRight) {
+		this.alignRight = alignRight;
 		return this;
 	}
 
