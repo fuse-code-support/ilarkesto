@@ -536,7 +536,7 @@ public class Eml {
 		int i = 0;
 		for (String address : addresses) {
 			try {
-				ret[i] = InternetAddress.parse(address)[0];
+				ret[i] = InternetAddress.parse(address.trim())[0];
 			} catch (AddressException ex) {
 				throw new RuntimeException("Parsing email address failed: " + address, ex);
 			}
