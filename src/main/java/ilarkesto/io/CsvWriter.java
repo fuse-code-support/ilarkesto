@@ -26,6 +26,8 @@ public class CsvWriter {
 
 	private List<String> headers;
 
+	private char separator = ',';
+
 	public CsvWriter(PrintWriter out) {
 		this.out = out;
 	}
@@ -79,6 +81,14 @@ public class CsvWriter {
 		nl = true;
 	}
 
+	public void writeSepHeader() {
+		out.print("sep=");
+		out.print(separator);
+		out.print("\r\n");
+		out.flush();
+		nl = true;
+	}
+
 	public static String escape(String value) {
 		if (value == null) return null;
 		value = value.replace("\"", "\"\"");
@@ -90,8 +100,6 @@ public class CsvWriter {
 	}
 
 	// --- dependencies ---
-
-	private char separator = ',';
 
 	public CsvWriter setSeparator(char separator) {
 		this.separator = separator;
