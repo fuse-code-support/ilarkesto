@@ -335,22 +335,23 @@ public class EntityGenerator extends DatobGenerator<EntityModel> {
 		}
 
 		List<BackReferenceModel> backReferences = bean.getBackReferences();
-		for (BackReferenceModel br : backReferences) {
-			PropertyModel reference = br.getReference();
-			if (isLegacyBean(bean) && reference.getBean().isAbstract()) continue;
-			if (reference.isUnique()) {
-				ln("        " + getBeanClass(br.getReference().getBean()), br.getName(), "=",
-					"get" + Str.uppercaseFirstLetter(br.getName()) + "();");
-			} else {
-				ln("        Collection<" + getBeanClass(reference.getBean()) + ">", br.getName(), "=",
-					"get" + Str.uppercaseFirstLetter(br.getName()) + "s();");
-			}
-		}
-
 		if (!bean.isSelfcontained()) {
 			Set<ReferencePropertyModel> masterReferences = bean.getMasterReferences();
 			if (masterReferences.isEmpty()) {
 				if (!backReferences.isEmpty()) {
+
+					for (BackReferenceModel br : backReferences) {
+						PropertyModel reference = br.getReference();
+						if (isLegacyBean(bean) && reference.getBean().isAbstract()) continue;
+						if (reference.isUnique()) {
+							ln(" " + getBeanClass(br.getReference().getBean()), br.getName(), "=",
+								"get" + Str.uppercaseFirstLetter(br.getName()) + "();");
+						} else {
+							ln(" Collection<" + getBeanClass(reference.getBean()) + ">", br.getName(), "=",
+								"get" + Str.uppercaseFirstLetter(br.getName()) + "s();");
+						}
+					}
+
 					boolean first = true;
 					s("        if (");
 					for (BackReferenceModel br : backReferences) {
