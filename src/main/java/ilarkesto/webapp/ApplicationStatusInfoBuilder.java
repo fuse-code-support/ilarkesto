@@ -115,8 +115,8 @@ public class ApplicationStatusInfoBuilder {
 		startTABLE(html);
 		headersRow(html, "Name", "Prio", "State", "Group", "Stack trace");
 		for (Thread thread : Utl.getAllThreads()) {
-			StackTraceElement[] stackTrace = thread.getStackTrace();
 			String groupName = thread.getThreadGroup().getName();
+			StackTraceElement[] stackTrace = thread.getStackTrace();
 			valuesRow(html, thread.getName(), thread.getPriority(), thread.getState(), groupName,
 				Utl.formatStackTrace(stackTrace, " -> "));
 		}
