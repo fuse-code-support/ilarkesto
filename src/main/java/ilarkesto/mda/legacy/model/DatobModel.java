@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>, Artjom Kochtchi
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -103,7 +103,8 @@ public class DatobModel extends BeanModel {
 	public SimplePropertyModel addProperty(String name, Class type) {
 		SimplePropertyModel propertyModel = new SimplePropertyModel(this, name, false, false, type.getName());
 		if (type.equals(boolean.class) || type.equals(int.class) || type.equals(long.class) || type.equals(float.class)
-				|| type.equals(double.class)) propertyModel.setMandatory(true);
+				|| type.equals(double.class))
+			propertyModel.setMandatory(true);
 		properties.add(propertyModel);
 		return propertyModel;
 	}
@@ -122,8 +123,8 @@ public class DatobModel extends BeanModel {
 
 	public SetPropertyModel addSetProperty(String name, BeanModel type) {
 		boolean valueObject = type.isValueObject();
-		SetPropertyModel propertyModel = new SetPropertyModel(this, name, false, valueObject, type.getPackageName()
-				+ "." + type.getName());
+		SetPropertyModel propertyModel = new SetPropertyModel(this, name, false, valueObject,
+				type.getPackageName() + "." + type.getName());
 		propertyModel.setSearchable(true);
 		properties.add(propertyModel);
 		return propertyModel;
@@ -142,7 +143,7 @@ public class DatobModel extends BeanModel {
 	}
 
 	public ReferenceSetPropertyModel addSetReference(String name, EntityModel type) {
-		return addSetReference(name, type, true);
+		return addSetReference(name, type, false);
 	}
 
 	public ReferenceSetPropertyModel addSetReference(String name, EntityModel type, boolean createBackReference) {
