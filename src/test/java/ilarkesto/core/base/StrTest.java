@@ -43,6 +43,12 @@ public class StrTest extends ATest {
 	}
 
 	@Test
+	public void emailSimilarity() {
+		assertEquals(Str.getEmailSimilarity("witoslaw.koczewsiX@gmail.com", "witoslaw.koczewski@gmail.com"), 0.9, 0.1);
+		assertEquals(Str.getEmailSimilarity("witoslaw.koczewsiX@gmail.com", "witoslaw.koczewski@posteo.de"), 0.6, 0.1);
+	}
+
+	@Test
 	public void parseCommaSeparatedString() {
 		List<String> ret = Str.parseCommaSeparatedString("a,b, c", true);
 		assertSize(ret, 3);

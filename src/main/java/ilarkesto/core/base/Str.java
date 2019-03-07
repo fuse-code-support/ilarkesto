@@ -1012,6 +1012,26 @@ public class Str {
 		return trimAllWhitespace(a).equalsIgnoreCase(trimAllWhitespace(b));
 	}
 
+	public static double getEmailSimilarity(String a, String b) {
+		if (a == null && b == null) return 1.0;
+		if (a == null || b == null) return 0.0;
+
+		a = a.toLowerCase().trim();
+		b = b.toLowerCase().trim();
+
+		for (String domain : KNOWN_EMAIL_DOMAINS) {
+			String suffix = "@" + domain;
+			if (a.endsWith(suffix) && b.endsWith(suffix))
+				return getSimilarity(removeSuffix(a, suffix), removeSuffix(b, suffix));
+		}
+
+		return getSimilarity(a, b);
+	}
+
+	private static final String[] KNOWN_EMAIL_DOMAINS = new String[] { "aol.com", "facebook.com", "freenet.de",
+			"hotmail.com", "hotmail.de", "gmail.com", "gmx.de", "googlemail.com", "msn.com", "online.de", "t-online.de",
+			"web.de", "yahoo.com", "yahoo.de" };
+
 	public static double getSimilarity(String a, String b) {
 		if (a == null && b == null) return 1.0;
 		if (a == null || b == null) return 0.0;
