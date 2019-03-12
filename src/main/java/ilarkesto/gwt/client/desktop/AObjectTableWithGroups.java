@@ -97,14 +97,18 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 			public void onWindowScroll(ScrollEvent ev) {
 				if (!stickyColumnTitles) return;
 				if (columnTitles == null) return;
-				int top = ev.getScrollTop();
-				if (top > 57) {
-					top -= 57;
-				} else {
-					top = 0;
-				}
-				for (int i = 0; i < columnTitles.length; i++) {
-					columnTitles[i].getStyle().setTop(top, Unit.PX);
+				try {
+					int top = ev.getScrollTop();
+					if (top > 57) {
+						top -= 57;
+					} else {
+						top = 0;
+					}
+					for (int i = 0; i < columnTitles.length; i++) {
+						columnTitles[i].getStyle().setTop(top, Unit.PX);
+					}
+				} catch (Throwable ex) {
+					log.error(ex);
 				}
 			}
 		});
