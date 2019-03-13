@@ -45,6 +45,7 @@ public abstract class AServiceCall<D extends ADataTransferObject> {
 	private RuntimeTracker rtCall;
 	private long runtimeLastServicecall = -1;
 	private long runtimeClientHandler = -1;
+	private String contextInfo;
 
 	protected abstract void onExecute(int conversationNumber, AsyncCallback<D> callback);
 
@@ -168,7 +169,8 @@ public abstract class AServiceCall<D extends ADataTransferObject> {
 	protected void onCallbackError(List<ErrorWrapper> errors) {}
 
 	private void callbackError(List<ErrorWrapper> errors) {
-		log.error("callbackError()", errors);
+		log.error("callbackError()", contextInfo, runnablesAfterAllFinished, Utl.getClassName(listener),
+			Utl.getClassName(returnHandler), errors);
 		onCallbackError(errors);
 		long timeFromLastSuccess = Tm.getCurrentTimeMillis() - lastSuccessfullServiceCallTime;
 
@@ -177,9 +179,9 @@ public abstract class AServiceCall<D extends ADataTransferObject> {
 		}
 
 		if (isDispensable() && timeFromLastSuccess < AServiceCall.MAX_FAILURE_TIME) {
-			log.warn("Dispensable service call failed:", getName(), errors);
+			log.warn("Dispensable service call failed:", getName(), contextInfo, errors);
 		} else {
-			AGwtApplication.get().handleServiceCallError(getName(), errors);
+			AGwtApplication.get().handleServiceCallError(getName(), contextInfo, errors);
 		}
 	}
 
@@ -198,6 +200,11 @@ public abstract class AServiceCall<D extends ADataTransferObject> {
 			runtimeClientHandler = rtHandler.getRuntime();
 		}
 		AGwtApplication.get().onServiceCallSuccessfullyProcessed(this);
+	}
+
+	public AServiceCall<D> setContextInfo(String contextInfo) {
+		this.contextInfo = contextInfo;
+		return this;
 	}
 
 	protected class ServiceCallback implements AsyncCallback<D> {

@@ -612,4 +612,9 @@ public class Utl {
 		return value.booleanValue();
 	}
 
+	public static String getClassName(Object o) {
+		if (o == null) return null;
+		return o.getClass().getName();
+	}
+
 }

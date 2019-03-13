@@ -56,7 +56,7 @@ public abstract class AGwtApplication<D extends ADataTransferObject> implements 
 
 	protected abstract void init();
 
-	public abstract void handleServiceCallError(String serviceCall, List<ErrorWrapper> errors);
+	public abstract void handleServiceCallError(String serviceCall, String contextInfo, List<ErrorWrapper> errors);
 
 	protected abstract void handleUnexpectedError(Throwable ex);
 
