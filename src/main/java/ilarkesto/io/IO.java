@@ -1342,7 +1342,10 @@ public abstract class IO {
 
 	public static String readFile(File file, String encoding) {
 		try {
-			return readToString(new FileInputStream(file), encoding);
+			FileInputStream fis = new FileInputStream(file);
+			String s = readToString(fis, encoding);
+			close(fis);
+			return s;
 		} catch (FileNotFoundException ex) {
 			throw new RuntimeException(ex);
 		}
