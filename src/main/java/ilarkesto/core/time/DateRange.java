@@ -231,6 +231,12 @@ public class DateRange implements Comparable<DateRange>, Serializable, Formatabl
 		return new DateRange(start, end);
 	}
 
+	public DateRange fit(DateRange other) {
+		Date start = other.getStart().isAfter(getStart()) ? other.getStart() : getStart();
+		Date end = other.getEnd().isBefore(getEnd()) ? other.getEnd() : getEnd();
+		return new DateRange(start, end);
+	}
+
 	/**
 	 * @return true, if this DateRange contains at least one day of the given DateRange
 	 */
