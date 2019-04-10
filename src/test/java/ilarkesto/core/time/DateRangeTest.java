@@ -1,14 +1,14 @@
 /*
  * Copyright 2011 Witoslaw Koczewsi <wi@koczewski.de>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero
  * General Public License as published by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
@@ -18,6 +18,7 @@ import ilarkesto.core.base.Utl;
 import ilarkesto.testng.ATest;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.testng.annotations.Test;
 
@@ -32,12 +33,28 @@ public class DateRangeTest extends ATest {
 	private static final DateRange lateAprilEarlyMay = new DateRange("2015-04-29 - 2015-05-02");
 
 	@Test
+	public void compare() {
+		DateRange fullYear = new DateRange("2019-01-01 - 2019-12-31");
+		DateRange jan = new DateRange("2019-01-01 - 2019-01-31");
+		DateRange firstQuater = new DateRange("2019-01-01 - 2019-03-31");
+		DateRange firstHalf = new DateRange("2019-01-01 - 2019-06-31");
+
+		assertEquals(jan.compareTo(fullYear), -1);
+		assertEquals(jan.compareTo(firstQuater), -1);
+		assertEquals(jan.compareTo(firstHalf), -1);
+		assertEquals(firstQuater.compareTo(firstHalf), -1);
+
+		List<DateRange> sorted = Utl.sort(Arrays.asList(fullYear, jan, firstQuater, firstHalf));
+		assertEquals(sorted, Arrays.asList(jan, firstQuater, firstHalf, fullYear));
+	}
+
+	@Test
 	public void splitIntoYears() {
 		assertEquals(new DateRange("2015-01-01 - 2015-12-31").splitIntoYears(),
 			Utl.toList(new DateRange("2015-01-01 - 2015-12-31")));
-		assertEquals(new DateRange("2015-01-05 - 2017-12-25").splitIntoYears(), Utl.toList(new DateRange(
-				"2015-01-05 - 2015-12-31"), new DateRange("2016-01-01 - 2016-12-31"), new DateRange(
-				"2017-01-01 - 2017-12-25")));
+		assertEquals(new DateRange("2015-01-05 - 2017-12-25").splitIntoYears(),
+			Utl.toList(new DateRange("2015-01-05 - 2015-12-31"), new DateRange("2016-01-01 - 2016-12-31"),
+				new DateRange("2017-01-01 - 2017-12-25")));
 	}
 
 	@Test
@@ -68,8 +85,8 @@ public class DateRangeTest extends ATest {
 				.contains(march));
 		assertTrue(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(april, january, lateAprilEarlyMay, march))
 				.contains(new DateRange("2015-03-01 - 2015-05-02")));
-		assertTrue(DateRange.mergeOverlappingAndAdjacent(Arrays.asList(april, january, lateAprilEarlyMay, march))
-				.size() == 2);
+		assertTrue(
+			DateRange.mergeOverlappingAndAdjacent(Arrays.asList(april, january, lateAprilEarlyMay, march)).size() == 2);
 
 	}
 
@@ -130,14 +147,14 @@ public class DateRangeTest extends ATest {
 	@Test
 	public void getTimePeriodBetweenStartAndEnd() {
 		assertEquals(new DateRange("2014-01-01 - 2014-01-01").getTimePeriodBetweenStartAndEnd(), new TimePeriod(0));
-		assertEquals(new DateRange("2014-01-01 - 2014-01-02").getTimePeriodBetweenStartAndEnd(), new TimePeriod(
-				Tm.HOUR * 24));
+		assertEquals(new DateRange("2014-01-01 - 2014-01-02").getTimePeriodBetweenStartAndEnd(),
+			new TimePeriod(Tm.HOUR * 24));
 	}
 
 	@Test
 	public void constructionAndToString() {
-		assertEquals(new DateRange(new Date(2014, 1, 1), new Date(2015, 1, 1)).toString(), new DateRange(
-				"2014-01-01 - 2015-01-01").toString());
+		assertEquals(new DateRange(new Date(2014, 1, 1), new Date(2015, 1, 1)).toString(),
+			new DateRange("2014-01-01 - 2015-01-01").toString());
 	}
 
 	@Test
