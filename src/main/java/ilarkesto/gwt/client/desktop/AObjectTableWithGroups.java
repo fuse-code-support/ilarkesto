@@ -233,6 +233,12 @@ public abstract class AObjectTableWithGroups<O, G> implements IsWidget, Updatabl
 
 	}
 
+	public void updateCells() {
+		for (Row row : rows) {
+			updateRowWidgets(row);
+		}
+	}
+
 	protected void updateColumnTitleWidget(int rowIndex, Set<String> keys, AColumn column, String columnTitle,
 			String columnDescription, boolean customSortingEnabled) {
 		Widget titleWidget = Widgets.text(columnTitle);

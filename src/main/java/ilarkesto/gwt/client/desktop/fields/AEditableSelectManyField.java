@@ -273,7 +273,7 @@ public abstract class AEditableSelectManyField extends AEditableField {
 		protected void onClick(Item object, int column) {
 			if (getEditVetoMessage() != null) return;
 			object.selected = !object.selected;
-			update();
+			updateCells();
 		}
 
 		@Override
