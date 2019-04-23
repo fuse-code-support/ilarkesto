@@ -400,7 +400,7 @@ public abstract class AEditableSelectOneField extends AEditableField {
 
 		@Override
 		protected boolean isColumnFilteringEnabled() {
-			return items.size() > 42;
+			return items.size() > 9;
 		}
 
 		public String getSelectedKey() {
