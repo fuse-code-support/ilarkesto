@@ -52,7 +52,7 @@ public class FtpContentPackage extends AContentPackage {
 			ftp.createDir(path);
 		} else if (object instanceof File) {
 			createDirForFile(path);
-			ftp.uploadFileIfNotThere(path, (File) object);
+			ftp.uploadFileIfNotUpToDate(path, (File) object);
 		} else {
 			uploadText(path, object);
 		}
@@ -75,7 +75,7 @@ public class FtpContentPackage extends AContentPackage {
 			IO.writeFile(cacheFile, text, IO.UTF_8);
 		}
 
-		ftp.uploadFileIfNotThere(path, cacheFile);
+		ftp.uploadFileIfNotUpToDate(path, cacheFile);
 	}
 
 	private boolean isTextSameAsCache(String text, File cacheFile) {

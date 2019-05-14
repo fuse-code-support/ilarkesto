@@ -246,22 +246,25 @@ public class FtpClient {
 		}
 	}
 
-	public void uploadFileIfNotThere(String path, File file) {
+	public void uploadFileIfNotUpToDate(String path, File file) {
 		log.debug("Upload:", path);
 		if (file == null || !file.exists()) return;
 
 		FTPFile ftpFile = getFile(path);
-		if (isSame(ftpFile, file)) {
-			log.debug("  Skipping upload, already there:", path);
+		if (isUpToDate(ftpFile, file)) {
+			log.info("  Skipping upload, already there:", path);
 			return;
 		}
 
 		upload(path, file);
 	}
 
-	private boolean isSame(FTPFile ftpFile, File file) {
+	private boolean isUpToDate(FTPFile ftpFile, File file) {
 		if (ftpFile == null) return file == null;
 		if (ftpFile.getSize() != file.length()) return false;
+
+		if (file.lastModified() > ftpFile.getTimestamp().getTimeInMillis()) return false;
+
 		return true;
 	}
 
