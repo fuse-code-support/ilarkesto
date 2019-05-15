@@ -554,4 +554,13 @@ public class Date implements Comparable<Date>, Serializable, Formatable {
 		return from.formatDayMonthYear() + " - " + to.formatDayMonthYear();
 	}
 
+	public int getCompletedYearsTo(Date to) {
+		int ret = -1;
+		while (isBeforeOrSame(to)) {
+			ret++;
+			to = to.addYears(-1);
+		}
+		return ret;
+	}
+
 }
