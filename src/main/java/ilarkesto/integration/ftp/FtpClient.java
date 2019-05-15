@@ -427,6 +427,9 @@ public class FtpClient {
 		if (client != null && client.isConnected()) return;
 
 		client = new FTPClient();
+		client.setAutodetectUTF8(false);
+		client.setCharset(Charset.forName(IO.UTF_8));
+		client.setControlEncoding(IO.UTF_8);
 
 		log.info("Connecting", server);
 		try {
@@ -452,8 +455,6 @@ public class FtpClient {
 			throw new RuntimeException(ex);
 		}
 		client.enterLocalPassiveMode();
-		client.setAutodetectUTF8(false);
-		client.setCharset(Charset.forName(IO.UTF_8));
 	}
 
 	public static Comparator<FTPFile> FILES_BY_TIME_COMPARATOR = new Comparator<FTPFile>() {
