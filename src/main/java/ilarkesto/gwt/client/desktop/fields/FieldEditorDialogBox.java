@@ -162,6 +162,19 @@ public class FieldEditorDialogBox {
 		return field == f;
 	}
 
+	public AEditableField getField() {
+		return field;
+	}
+
+	public void setFieldValue(String value) {
+		if (field instanceof AEditableTextBoxField) {
+			((AEditableTextBoxField) field).setTextBoxValue(value);
+		} else {
+			throw new RuntimeException(
+					"Unsupported field type for FieldEditorDialogBox.setFieldValue(): " + field.getClass());
+		}
+	}
+
 	public FieldEditorDialogBox setCustomWidth(Integer customWidth) {
 		this.customWidth = customWidth;
 		return this;
