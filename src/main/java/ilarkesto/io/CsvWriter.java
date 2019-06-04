@@ -61,6 +61,8 @@ public class CsvWriter {
 
 	private boolean nl = true;
 
+	private Character autoAppendFormatPreventionChar = null;
+
 	public void writeField(Object value) {
 		if (!nl) {
 			out.print(separator);
@@ -72,6 +74,7 @@ public class CsvWriter {
 		}
 		out.print('"');
 		out.print(escape(value.toString()));
+		if (autoAppendFormatPreventionChar != null) out.print(autoAppendFormatPreventionChar);
 		out.print('"');
 	}
 
@@ -97,6 +100,14 @@ public class CsvWriter {
 
 	public void close() {
 		out.close();
+	}
+
+	public void setAutoAppendFormatPreventionChar(Character c) {
+		autoAppendFormatPreventionChar = c;
+	}
+
+	public void setAutoAppendFormatPreventionCharToTab() {
+		setAutoAppendFormatPreventionChar('\t');
 	}
 
 	// --- dependencies ---
