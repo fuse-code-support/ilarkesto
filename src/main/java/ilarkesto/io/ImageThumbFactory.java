@@ -27,6 +27,7 @@ public class ImageThumbFactory {
 
 	private File thumbDir;
 	private ThumbCreator thumbCreator;
+	private long thumbMaxAgeMillis = -1;
 
 	public ImageThumbFactory(File thumbDir, ThumbCreator thumbCreator) {
 		super();
@@ -50,16 +51,28 @@ public class ImageThumbFactory {
 			id += "." + suffix;
 		}
 		File thumbFile = new File(thumbDir.getPath() + "/" + folder + "/" + size + "/" + id);
-		if (thumbFile.exists() && thumbFile.lastModified() > imageFile.lastModified()) return thumbFile;
+		if (isThumbFileUpToDate(thumbFile, imageFile)) return thumbFile;
 		log.info("Creating thumb:", imageFile, "->", thumbFile);
 		IO.createDirectory(thumbFile.getParentFile());
 		thumbCreator.createThumb(imageFile, thumbFile, size);
 		return thumbFile;
 	}
 
+	protected boolean isThumbFileUpToDate(File thumbFile, File imageFile) {
+		if (!thumbFile.exists()) return false;
+		if (thumbMaxAgeMillis > 0 && thumbFile.lastModified() + thumbMaxAgeMillis < System.currentTimeMillis())
+			return false;
+		return thumbFile.lastModified() > imageFile.lastModified();
+	}
+
 	public static interface ThumbCreator {
 
 		void createThumb(File imageFile, File thumbFile, int size);
+	}
+
+	public ImageThumbFactory setThumbMaxAgeMillis(long thumbMaxAgeMillis) {
+		this.thumbMaxAgeMillis = thumbMaxAgeMillis;
+		return this;
 	}
 
 	public static class AwtQuadratizeAndLimitSizeThumbCreator implements ThumbCreator {
