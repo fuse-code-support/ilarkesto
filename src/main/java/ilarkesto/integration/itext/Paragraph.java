@@ -15,9 +15,9 @@
 package ilarkesto.integration.itext;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Set;
 
-import com.google.gwt.dev.util.collect.HashSet;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
