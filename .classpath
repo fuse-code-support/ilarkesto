@@ -34,9 +34,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/httpcore-4.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/httpunit-1.6.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/itext-asian-5.2.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/itext-pdfa-5.5.6-1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/itext-xtra-5.5.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/itextpdf-5.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jaudiotagger-2.0.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/javax.mail.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/javax.servlet-api-3.1.0.jar"/>
@@ -75,6 +72,9 @@
 	<classpathentry exported="true" kind="lib" path="lib/gwt-servlet.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gwt-user.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/validation-api-1.0.0.GA.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/itext-pdfa-5.5.13.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/itext-xtra-5.5.13.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/itextpdf-5.5.13.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

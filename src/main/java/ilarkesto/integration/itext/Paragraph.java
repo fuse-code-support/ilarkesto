@@ -14,16 +14,10 @@
  */
 package ilarkesto.integration.itext;
 
-import ilarkesto.core.logging.Log;
-import ilarkesto.pdf.AImage;
-import ilarkesto.pdf.AParagraph;
-import ilarkesto.pdf.AParagraphElement;
-import ilarkesto.pdf.APdfElement;
-import ilarkesto.pdf.FontStyle;
-import ilarkesto.pdf.TextChunk;
-
 import java.io.File;
+import java.util.Set;
 
+import com.google.gwt.dev.util.collect.HashSet;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -34,7 +28,17 @@ import com.itextpdf.text.pdf.FontSelector;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 
+import ilarkesto.core.logging.Log;
+import ilarkesto.pdf.AImage;
+import ilarkesto.pdf.AParagraph;
+import ilarkesto.pdf.AParagraphElement;
+import ilarkesto.pdf.APdfElement;
+import ilarkesto.pdf.FontStyle;
+import ilarkesto.pdf.TextChunk;
+
 public class Paragraph extends AParagraph implements ItextElement {
+
+	public static boolean embedInternationalFonts = false;
 
 	private static Log log = Log.get(Paragraph.class);
 
@@ -46,12 +50,19 @@ public class Paragraph extends AParagraph implements ItextElement {
 	public Element[] createITextElements(Document document) {
 		com.itextpdf.text.Paragraph p = new com.itextpdf.text.Paragraph();
 		float maxSize = 0;
+		FontSelector fontSelector = new FontSelector();
+		Set<String> fontsAddedToSelector = new HashSet<String>();
 		for (AParagraphElement element : getElements()) {
 			if (element instanceof TextChunk) {
 				TextChunk textChunk = (TextChunk) element;
 				FontStyle fontStyle = textChunk.getFontStyle();
 
-				FontSelector fontSelector = createFontSelector(fontStyle.getFont(), fontStyle);
+				String fontIdentifier = fontStyle.getFont() + fontStyle.getSize() + fontStyle.getColor()
+						+ fontStyle.isItalic() + fontStyle.isBold();
+				if (!fontsAddedToSelector.contains(fontIdentifier)) {
+					addFont(fontSelector, fontStyle);
+					fontsAddedToSelector.add(fontIdentifier);
+				}
 
 				String text = textChunk.getText();
 				Phrase phrase = fontSelector.process(text);
@@ -112,23 +123,30 @@ public class Paragraph extends AParagraph implements ItextElement {
 		return style;
 	}
 
-	public FontSelector createFontSelector(String preferredFont, FontStyle fontStyle) {
-		FontSelector selector = new FontSelector();
-		selector.addFont(createFont(preferredFont, BaseFont.IDENTITY_H, fontStyle));
+	public void addFont(FontSelector selector, FontStyle fontStyle) {
+		log.info("creating new font:", fontStyle);
 
-		// fallback from ilarkesto.jar
-		selector.addFont(createFont("fonts/HDZB_36.ttf", BaseFont.IDENTITY_H, fontStyle)); // embeddable
-																							// chinese
+		selector.addFont(createFont(fontStyle.getFont(), BaseFont.IDENTITY_H, fontStyle));
 
-		// fallback from iTextAsian.jar
-		selector.addFont(createFont("STSong-Light", "UniGB-UCS2-H", fontStyle)); // simplified chinese
-		// selector.addFont(createFont("STSong-Light", BaseFont.IDENTITY_H, fontStyle)); // simplified chinese
-		selector.addFont(createFont("MHei-Medium", BaseFont.IDENTITY_H, fontStyle)); // traditional chinese
-		selector.addFont(createFont("HeiseiMin-W3", BaseFont.IDENTITY_H, fontStyle)); // japanese
-		selector.addFont(createFont("KozMinPro-Regular", BaseFont.IDENTITY_H, fontStyle)); // japanese
-		selector.addFont(createFont("HYGoThic-Medium", BaseFont.IDENTITY_H, fontStyle)); // korean
+		if (embedInternationalFonts) {
+			// embeddable chinese
+			selector.addFont(createFont("fonts/HDZB_36.ttf", BaseFont.IDENTITY_H, fontStyle));
 
-		return selector;
+			// fallback from iTextAsian.jar
+			selector.addFont(createFont("STSong-Light", "UniGB-UCS2-H", fontStyle)); // simplified chinese
+
+			// traditional chinese
+			selector.addFont(createFont("MHei-Medium", BaseFont.IDENTITY_H, fontStyle));
+
+			// japanese
+			selector.addFont(createFont("HeiseiMin-W3", BaseFont.IDENTITY_H, fontStyle));
+
+			// japanese
+			selector.addFont(createFont("KozMinPro-Regular", BaseFont.IDENTITY_H, fontStyle));
+
+			// korean
+			selector.addFont(createFont("HYGoThic-Medium", BaseFont.IDENTITY_H, fontStyle));
+		}
 	}
 
 	private Font createFont(String name, String encoding, FontStyle fontStyle) {

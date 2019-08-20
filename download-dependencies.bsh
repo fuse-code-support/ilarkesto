@@ -69,10 +69,10 @@ servistodownload httpunit-1.6.2.jar
 servistodownload nekohtml-1.9.14.jar
 servistodownload tidy.jar
 
-mavendownload com/itextpdf itextpdf 5.5.6
+mavendownload com/itextpdf itextpdf 5.5.13.1
 mavendownload com/itextpdf itext-asian 5.2.0
-mavendownload com/itextpdf itext-pdfa 5.5.6-1
-mavendownload com/itextpdf itext-xtra 5.5.6
+mavendownload com/itextpdf itext-pdfa 5.5.13.1
+mavendownload com/itextpdf itext-xtra 5.5.13.1
 
 mavendownload org jaudiotagger 2.0.3
 
