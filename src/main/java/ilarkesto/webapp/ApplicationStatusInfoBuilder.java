@@ -14,6 +14,16 @@
  */
 package ilarkesto.webapp;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import ilarkesto.base.Proc;
 import ilarkesto.base.Sys;
 import ilarkesto.base.Utl;
@@ -24,14 +34,6 @@ import ilarkesto.core.time.TimePeriod;
 import ilarkesto.gwt.server.AGwtConversation;
 import ilarkesto.logging.DefaultLogRecordHandler;
 import ilarkesto.ui.web.HtmlBuilder;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
 
 public class ApplicationStatusInfoBuilder {
 
@@ -110,16 +112,33 @@ public class ApplicationStatusInfoBuilder {
 		endTABLE(html);
 	}
 
+	private static Map<String, Long> threadStartTimes = new HashMap<String, Long>();
+
 	private void threads(HtmlBuilder html) {
+		long now = System.currentTimeMillis();
+		Set<Thread> threads = Utl.getAllThreads();
+		Map<String, Long> newThreadStartTimes = new HashMap<String, Long>();
+
 		sectionHeader(html, "Threads");
 		startTABLE(html);
-		headersRow(html, "Name", "Prio", "State", "Group", "Stack trace");
-		for (Thread thread : Utl.getAllThreads()) {
+		headersRow(html, "Name", "Runtime", "Prio", "State", "Group", "Stack trace");
+		for (Thread thread : threads) {
 			String groupName = thread.getThreadGroup().getName();
 			StackTraceElement[] stackTrace = thread.getStackTrace();
-			valuesRow(html, thread.getName(), thread.getPriority(), thread.getState(), groupName,
-				Utl.formatStackTrace(stackTrace, " -> "));
+			String stack = Utl.formatStackTrace(stackTrace, " -> ");
+			String threadIdent = groupName + thread.getName() + stack;
+			Long start = threadStartTimes.get(threadIdent);
+			Long runtime = null;
+			if (start == null) {
+				newThreadStartTimes.put(threadIdent, now);
+			} else {
+				runtime = now - start;
+				newThreadStartTimes.put(threadIdent, start);
+			}
+
+			valuesRow(html, thread.getName(), runtime, thread.getPriority(), thread.getState(), groupName, stack);
 		}
+		threadStartTimes = newThreadStartTimes;
 		endTABLE(html);
 	}
 
