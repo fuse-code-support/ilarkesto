@@ -14,19 +14,6 @@
  */
 package ilarkesto.integration.ftp;
 
-import ilarkesto.base.Sys;
-import ilarkesto.base.Utl;
-import ilarkesto.core.auth.LoginData;
-import ilarkesto.core.auth.LoginDataProvider;
-import ilarkesto.core.base.Filepath;
-import ilarkesto.core.base.MultilineBuilder;
-import ilarkesto.core.base.Str;
-import ilarkesto.core.logging.Log;
-import ilarkesto.io.IO;
-import ilarkesto.io.IO.StringInputStream;
-import ilarkesto.json.JsonObject;
-import ilarkesto.swing.LoginPanel;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,6 +31,19 @@ import java.util.List;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+
+import ilarkesto.base.Sys;
+import ilarkesto.base.Utl;
+import ilarkesto.core.auth.LoginData;
+import ilarkesto.core.auth.LoginDataProvider;
+import ilarkesto.core.base.Filepath;
+import ilarkesto.core.base.MultilineBuilder;
+import ilarkesto.core.base.Str;
+import ilarkesto.core.logging.Log;
+import ilarkesto.io.IO;
+import ilarkesto.io.IO.StringInputStream;
+import ilarkesto.json.JsonObject;
+import ilarkesto.swing.LoginPanel;
 
 public class FtpClient {
 
@@ -252,7 +252,7 @@ public class FtpClient {
 
 		FTPFile ftpFile = getFile(path);
 		if (isUpToDate(ftpFile, file)) {
-			log.info("  Skipping upload, already there:", path);
+			log.debug("  Skipping upload, already there:", path);
 			return;
 		}
 
@@ -358,7 +358,7 @@ public class FtpClient {
 			createDir(parent);
 		}
 
-		log.info("Create dir:", path);
+		log.debug("Create dir:", path);
 		boolean created;
 		try {
 			created = client.makeDirectory(path);
